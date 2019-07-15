@@ -1,4 +1,4 @@
-package lambda.codeRunner
+package lambda.coderunner
 
 import scala.sys.process._
 import cats.data.EitherT

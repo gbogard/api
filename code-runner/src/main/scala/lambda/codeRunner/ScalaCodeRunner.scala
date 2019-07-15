@@ -1,6 +1,6 @@
-package lambda.codeRunner
+package lambda.coderunner
 
-import cats.effect.IO
+import cats.effect._
 import cats.data.EitherT
 import cats.implicits._
 import java.io.File
@@ -8,7 +8,8 @@ import coursier.cache._
 import coursier._
 import coursier.interop.cats._
 import scala.sys.process._
-import lambda.codeRunner.ScalaCodeRunner._
+import lambda.coderunner.ScalaCodeRunner._
+import Utils._
 
 case class ScalaCodeRunner(
     mainClass: String,
@@ -17,9 +18,13 @@ case class ScalaCodeRunner(
 
   import ScalaCodeRunner._
 
-  def run(files: List[File]): EitherT[IO, String, String] = for {
-    dependencies <- fetchDependencies
-  } yield ""
+  def run(files: List[File]): ProcessResult[IO] = wrapEitherInResource(createTemporaryFolder[IO](), (folder: File) => {
+    for {
+      dependencies <- fetchDependencies
+      _ <- compileFiles(files, dependencies, folder)
+      output <- run(folder, mainClass)
+    } yield output
+  })
 
   private val fetchDependencies: EitherT[IO, String, Seq[File]] = {
     val coursierIO =
@@ -33,11 +38,11 @@ case class ScalaCodeRunner(
       files: Seq[File],
       classPath: Seq[File],
       destFolder: File
-  ): EitherT[IO, String, String] = {
+  ): ProcessResult[IO] = {
     val classPathStr = classPath.map(_.getAbsolutePath()).mkString(":")
     val destFolderStr = destFolder.getAbsolutePath()
 
-    val compilerOutputs = files.map(
+    val compilerOutputs = files.toList.map(
       file =>
         StringProcessLogger.run(
           Process(
@@ -46,14 +51,14 @@ case class ScalaCodeRunner(
         )
     )
 
-    // TODO : change this
-    compilerOutputs.head
+    flattenProcessResults(compilerOutputs)
   }
 
   private def run(
-    classPathFolder: File,
+    compiledClassesFolder: File,
     mainClass: String,
   ): EitherT[IO, String, String] = ???
+
 }
 
 object ScalaCodeRunner {
