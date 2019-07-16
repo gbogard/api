@@ -1,0 +1,12 @@
+
+lambda/does-not-compile.sc:3: error: type mismatch;
+ found   : String("toto")
+ required: Int
+  add("toto", "tata")
+      ^
+lambda/does-not-compile.sc:3: error: type mismatch;
+ found   : String("tata")
+ required: Int
+  add("toto", "tata")
+              ^
+two errors found

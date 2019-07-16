@@ -9,8 +9,8 @@ class StringProcessLogger extends ProcessLogger() {
   var stdErr = ""
 
   def buffer[T](f: => T): T = f
-  def err(s: => String): Unit = stdErr += "\r\n" + s
-  def out(s: => String): Unit = stdOut += "\r\n" + s
+  def err(s: => String): Unit = stdErr += s + "\r\n"
+  def out(s: => String): Unit = stdOut += s + "\r\n"
 }
 
 object StringProcessLogger {

@@ -10,6 +10,7 @@ import cats.Monad
 import cats.Parallel
 import scala.concurrent.duration._
 import scala.concurrent.duration.FiniteDuration
+import scala.io.Source
 
 object Utils {
 
@@ -45,12 +46,16 @@ object Utils {
     EitherT {
       results.parTraverse(_.value) map { eithers =>
         eithers.partition(_.isLeft) match {
-          case (Nil, outputs) => Right(outputs.mkString)
-          case (outputs, _)   => Left(outputs.mkString)
+          case (Nil, outputs) => Right(outputs.map(_.right.get).mkString)
+          case (outputs, _)   => Left(outputs.map(_.left.get).mkString)
         }
       }
     }
   }
+
+  def readResource[F[_]: Sync](resourceName: String): F[File] = Sync[F].delay {
+    new File(getClass().getClassLoader().getResource(resourceName).toURI())
+  } 
 
   def withTimeout(process: ProcessResult[IO], timeout: FiniteDuration)(
       implicit timer: Timer[IO], cs: ContextShift[IO]
