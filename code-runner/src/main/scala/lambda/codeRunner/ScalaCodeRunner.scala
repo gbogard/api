@@ -1,17 +1,19 @@
 package lambda.coderunner
 
-import cats.effect._
-import cats.data.EitherT
-import cats.implicits._
 import java.io.File
-import coursier.cache._
-import coursier._
-import coursier.interop.cats._
-import scala.sys.process._
-import lambda.coderunner.ScalaCodeRunner._
-import Utils._
+
+import cats.data.EitherT
+import cats.effect._
 import com.typesafe.scalalogging.StrictLogging
+import coursier._
+import coursier.cache._
+import coursier.interop.cats._
+import lambda.coderunner.ScalaCodeRunner._
+import lambda.coderunner.Utils._
 import org.apache.commons.io.FileUtils
+
+import scala.sys.process._
+import scala.concurrent.duration._
 
 case class ScalaCodeRunner(
     mainClass: String,
@@ -21,14 +23,14 @@ case class ScalaCodeRunner(
 
   import ScalaCodeRunner._
 
-  def run(files: List[File]): ProcessResult[IO] =
+  def run(files: List[File], timeout: FiniteDuration = 30 seconds): ProcessResult[IO] =
     wrapEitherInResource(
       createTemporaryFolder[IO](),
       (folder: File) => {
         for {
           dependencies <- fetchDependencies
-          _ <- compileFiles(files, dependencies, folder)
-          output <- run(folder, mainClass)
+          _ <- compileFiles(files, dependencies, folder) 
+          output <- withTimeout(run(folder, mainClass), timeout) 
         } yield output
       }
     )
@@ -56,24 +58,12 @@ case class ScalaCodeRunner(
         s"-cp ${dependenciesClasses.map(_.getAbsolutePath()).mkString(":")}"
       } else ""
     val destFolderStr = destFolder.getAbsolutePath()
+    val target = files.map(_.getAbsoluteFile()).mkString(" ")
 
-    val moveFilesToFolder = IO {
-      files.foreach { f =>
-        FileUtils.copyFileToDirectory(f, destFolder, false)
-        logger.debug(
-          "Copied Scala source file {} to {}",
-          f.getAbsolutePath(),
-          destFolderStr
-        )
-      }
-    }
-
-    EitherT.right(moveFilesToFolder) flatMap { _ =>
-      val cmd = s"scalac $classPathFlag -d $destFolderStr $destFolderStr/*.sc*"
-      StringProcessLogger
-        .run(Process(cmd))
-        .leftMap(removePathFromCompilerOutput)
-    }
+    val cmd = s"scalac $classPathFlag -d $destFolderStr $target"
+    StringProcessLogger
+      .run(Process(cmd))
+      .leftMap(removePathFromCompilerOutput)
 
   }
 
@@ -93,16 +83,19 @@ case class ScalaCodeRunner(
 }
 
 object ScalaCodeRunner {
-  implicit val cs = IO.contextShift(scala.concurrent.ExecutionContext.global)
+  implicit val cs: ContextShift[IO] = IO.contextShift(scala.concurrent.ExecutionContext.global)
+  implicit val timer: Timer[IO] = IO.timer(scala.concurrent.ExecutionContext.global)
+
   val cache = FileCache[IO]()
 
   case class ScalaDependency(
       org: String,
       name: String,
-      version: String
+      version: String,
+      scalaVersion: String = "2.12"
   ) {
     def toCoursierDependency = Dependency(
-      Module(Organization(org), ModuleName(name)),
+      Module(Organization(org), ModuleName(s"${name}_$scalaVersion")),
       version
     )
   }

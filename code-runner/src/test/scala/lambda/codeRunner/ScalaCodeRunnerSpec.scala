@@ -5,16 +5,17 @@ import Utils._
 import TestUtils._
 import cats.effect.IO
 import com.github.writethemfirst.approvals.approvers.Approver
+import scala.concurrent.duration._
+import lambda.coderunner.ScalaCodeRunner.ScalaDependency
 
-class ScalaCodeRunnerSpec extends AsyncFunSpec with Matchers {
-  val approver = new Approver()
+class ScalaCodeRunnerSpec extends AsyncFunSpec with Matchers with Approbation {
 
   describe("The Scala Code Runner") {
 
     describe("Single file program") {
 
       describe("When the program compiles") {
-        it("Should return the program output when it runs") {
+        it("Should return the program output when it runs") { approver =>
           testCodeRunner(
             ScalaCodeRunner("Main", Nil),
             "scala/compiles-and-runs.sc" :: Nil,
@@ -26,13 +27,13 @@ class ScalaCodeRunnerSpec extends AsyncFunSpec with Matchers {
           )
         }
 
-        it("Should return the standard error output when the program fails") {
+        it("Should return the standard error output when the program fails") {approver =>
           testCodeRunner(
             ScalaCodeRunner("Main", Nil),
             "scala/compiles-and-fails.sc" :: Nil,
             result =>
               IO {
-                approver.verify(result.left.get) 
+                approver.verify(result.left.get)
                 succeed
               }
           )
@@ -40,20 +41,22 @@ class ScalaCodeRunnerSpec extends AsyncFunSpec with Matchers {
 
         it(
           "Should return an error when the program doesn't exit after a timeout"
-        ) {
+        ) {approver =>
           testCodeRunner(
             ScalaCodeRunner("Main", Nil),
-            "does-not-compile.sc" :: Nil,
+            "scala/timeout.sc" :: Nil,
             result =>
               IO {
-                result shouldBe true
-              }
+                approver.verify(result.left.get)
+                succeed
+              },
+            1 second
           )
         }
       }
 
       describe("When the program does not compile") {
-        it("It should return the compilation output") {
+        it("It should return the compilation output") {approver =>
           testCodeRunner(
             ScalaCodeRunner("Main", Nil),
             "scala/does-not-compile.sc" :: Nil,
@@ -71,12 +74,12 @@ class ScalaCodeRunnerSpec extends AsyncFunSpec with Matchers {
     describe("Multiple files program") {
 
       describe("When the program compiles") {
-        it("Should return the program outputs when it runs") {
+        it("Should return the program outputs when it runs") {approver =>
           testCodeRunner(
-            ScalaCodeRunner("Main", Nil),
+            ScalaCodeRunner("multi.Main", Nil),
             List(
               "scala/multiple-files-program/Operations.scala",
-              "scala/multiple-files-program/Main.scala",
+              "scala/multiple-files-program/Main.scala"
             ),
             result =>
               IO {
@@ -87,12 +90,44 @@ class ScalaCodeRunnerSpec extends AsyncFunSpec with Matchers {
         }
       }
 
-      describe("When the main class is not found") {}
+      describe("When the main class is not found") {
+        it("Should return the output of the Scala interpreter") {approver =>
+          testCodeRunner(
+            ScalaCodeRunner("toto", Nil),
+            List(
+              "scala/multiple-files-program/Operations.scala",
+              "scala/multiple-files-program/Main.scala"
+            ),
+            result =>
+              IO {
+                approver.verify(result.left.get)
+                succeed
+              }
+          )
+        }
+      }
     }
 
     describe("Program with external dependencies") {
 
-      describe("When the program compiles") {}
+      describe("When the program compiles") {
+
+        it("Should return the output of the program") {approver =>
+          testCodeRunner(
+            ScalaCodeRunner("toto", List(
+              ScalaDependency("org.typelevel", "cats-core", "1.6.1")
+            )),
+            List(
+              "scala/with-cats.sc",
+            ),
+            result =>
+              IO {
+                approver.verify(result.left.get)
+                succeed
+              }
+          )
+        }
+      }
     }
   }
 }

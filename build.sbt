@@ -8,7 +8,7 @@ ThisBuild / organizationName := "lambdacademy"
 lazy val root = (project in file("."))
   .settings(
     name := "lambdacademy"
-  )
+  ).aggregate(codeRunner, domain)
 
 lazy val codeRunner = (project in file("code-runner"))
   .settings(
