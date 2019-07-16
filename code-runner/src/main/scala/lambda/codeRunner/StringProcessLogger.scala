@@ -3,6 +3,7 @@ package lambda.coderunner
 import scala.sys.process._
 import cats.data.EitherT
 import cats.effect.IO
+import com.typesafe.scalalogging.StrictLogging
 
 class StringProcessLogger extends ProcessLogger() {
   var stdOut = ""
@@ -13,12 +14,23 @@ class StringProcessLogger extends ProcessLogger() {
   def out(s: => String): Unit = stdOut += s + "\r\n"
 }
 
-object StringProcessLogger {
+object StringProcessLogger extends StrictLogging {
   def run(process: ProcessBuilder): EitherT[IO, String, String] = EitherT {
     IO {
-      val logger = new StringProcessLogger
-      val exitCode = process.!(logger)
-      if (exitCode > 0) Left(logger.stdErr) else Right(logger.stdOut)
+      val processLogger = new StringProcessLogger
+      logger.debug(
+        "Running external process through StringProcessLogger : {}",
+        process
+      )
+      val exitCode = process.!(processLogger)
+      logger.debug(
+        "{} StdOut: {} StdErr: {}",
+        process,
+        processLogger.stdOut,
+        processLogger.stdErr
+      )
+      if (exitCode > 0) Left(processLogger.stdErr)
+      else Right(processLogger.stdOut)
     }
   }
 }

@@ -11,6 +11,7 @@ import scala.sys.process._
 import lambda.coderunner.ScalaCodeRunner._
 import Utils._
 import com.typesafe.scalalogging.StrictLogging
+import org.apache.commons.io.FileUtils
 
 case class ScalaCodeRunner(
     mainClass: String,
@@ -47,26 +48,33 @@ case class ScalaCodeRunner(
 
   private def compileFiles(
       files: Seq[File],
-      classPath: Seq[File],
+      dependenciesClasses: Seq[File],
       destFolder: File
   ): ProcessResult[IO] = {
-    val classPathFlag = if (classPath.nonEmpty) {
-      val cp = classPath.map(_.getAbsolutePath()).mkString(":")
-      s"-cp $cp"
-    } else ""
+    val classPathFlag =
+      if (dependenciesClasses.nonEmpty) {
+        s"-cp ${dependenciesClasses.map(_.getAbsolutePath()).mkString(":")}"
+      } else ""
     val destFolderStr = destFolder.getAbsolutePath()
-    val compilerOutputs = files.toList.map(
-      file => {
-        val cmd =
-          s"scalac $classPathFlag -d $destFolderStr ${file.getAbsolutePath()}"
-        logger.debug("Creating compilation process : {}", cmd)
-        StringProcessLogger
-          .run(Process(cmd))
-          .leftMap(removePathFromCompilerOutput)
-      }
-    )
 
-    flattenProcessResults(compilerOutputs)
+    val moveFilesToFolder = IO {
+      files.foreach { f =>
+        FileUtils.copyFileToDirectory(f, destFolder, false)
+        logger.debug(
+          "Copied Scala source file {} to {}",
+          f.getAbsolutePath(),
+          destFolderStr
+        )
+      }
+    }
+
+    EitherT.right(moveFilesToFolder) flatMap { _ =>
+      val cmd = s"scalac $classPathFlag -d $destFolderStr $destFolderStr/*.sc*"
+      StringProcessLogger
+        .run(Process(cmd))
+        .leftMap(removePathFromCompilerOutput)
+    }
+
   }
 
   private def removePathFromCompilerOutput(output: String): String = {
@@ -79,10 +87,7 @@ case class ScalaCodeRunner(
       mainClass: String
   ): EitherT[IO, String, String] = {
     val cmd = s"scala -cp ${compiledClassesFolder.getAbsolutePath()} $mainClass"
-    logger.debug("Creating Scala process : {}", cmd)
-    StringProcessLogger.run(
-      Process(cmd)
-    )
+    StringProcessLogger.run(Process(cmd))
   }
 
 }

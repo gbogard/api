@@ -11,8 +11,10 @@ import cats.Parallel
 import scala.concurrent.duration._
 import scala.concurrent.duration.FiniteDuration
 import scala.io.Source
+import org.apache.commons.io.FileUtils
+import com.typesafe.scalalogging.StrictLogging
 
-object Utils {
+object Utils extends StrictLogging {
 
   type ProcessResult[F[_]] = EitherT[F, String, String]
 
@@ -22,14 +24,13 @@ object Utils {
   ): Resource[F, File] = {
     val create = s.delay {
       val randomName = UUID.randomUUID().toString()
-      Files.createTempDirectory(randomName).toFile
+      val f = Files.createTempDirectory(randomName).toFile
+      logger.debug("Creating temporary directory {}", f.getAbsolutePath())
+      f
     }
-    def delete(f: File): F[Unit] = {
-      if (f.isDirectory()) {
-        f.listFiles().toList.traverse(delete) *> s.delay { f.delete() }
-      } else {
-        s.delay { f.delete() }
-      }
+    def delete(f: File): F[Unit] = s.delay {
+      logger.debug("Deleting temporary directory {}", f.getAbsolutePath())
+      FileUtils.deleteDirectory(f)
     }
     Resource.make(create)(delete)
   }
@@ -40,32 +41,20 @@ object Utils {
   ): EitherT[F, L, R] =
     EitherT.apply[F, L, R](resource.use(a => either(a).value))
 
-  def flattenProcessResults[F[_], Par[_]](
-      results: List[ProcessResult[F]]
-  )(implicit p: Parallel[F, Par], m: Monad[F]): ProcessResult[F] = {
-    EitherT {
-      results.parTraverse(_.value) map { eithers =>
-        eithers.partition(_.isLeft) match {
-          case (Nil, outputs) => Right(outputs.map(_.right.get).mkString)
-          case (outputs, _)   => Left(outputs.map(_.left.get).mkString)
-        }
-      }
-    }
-  }
-
   def readResource[F[_]: Sync](resourceName: String): F[File] = Sync[F].delay {
     new File(getClass().getClassLoader().getResource(resourceName).toURI())
-  } 
+  }
 
   def withTimeout(process: ProcessResult[IO], timeout: FiniteDuration)(
-      implicit timer: Timer[IO], cs: ContextShift[IO]
+      implicit timer: Timer[IO],
+      cs: ContextShift[IO]
   ): ProcessResult[IO] = {
     EitherT {
       IO.race(
         timer.sleep(timeout),
         process.value
       ) map {
-        case Left(_) => Left("Code execution timed out.")
+        case Left(_)        => Left("Code execution timed out.")
         case Right(process) => process
       }
     }
