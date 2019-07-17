@@ -8,7 +8,7 @@ import com.github.writethemfirst.approvals.approvers.Approver
 import scala.concurrent.duration._
 import lambda.coderunner.ScalaCodeRunner.ScalaDependency
 
-class ScalaCodeRunnerSpec extends AsyncFunSpec with Matchers with Approbation {
+class ScalaCodeRunnerSpec extends Approbation {
 
   describe("The Scala Code Runner") {
 
@@ -27,21 +27,22 @@ class ScalaCodeRunnerSpec extends AsyncFunSpec with Matchers with Approbation {
           )
         }
 
-        it("Should return the standard error output when the program fails") {approver =>
-          testCodeRunner(
-            ScalaCodeRunner("Main", Nil),
-            "scala/compiles-and-fails.sc" :: Nil,
-            result =>
-              IO {
-                approver.verify(result.left.get)
-                succeed
-              }
-          )
+        it("Should return the standard error output when the program fails") {
+          approver =>
+            testCodeRunner(
+              ScalaCodeRunner("Main", Nil),
+              "scala/compiles-and-fails.sc" :: Nil,
+              result =>
+                IO {
+                  approver.verify(result.left.get)
+                  succeed
+                }
+            )
         }
 
         it(
           "Should return an error when the program doesn't exit after a timeout"
-        ) {approver =>
+        ) { approver =>
           testCodeRunner(
             ScalaCodeRunner("Main", Nil),
             "scala/timeout.sc" :: Nil,
@@ -56,7 +57,7 @@ class ScalaCodeRunnerSpec extends AsyncFunSpec with Matchers with Approbation {
       }
 
       describe("When the program does not compile") {
-        it("It should return the compilation output") {approver =>
+        it("It should return the compilation output") { approver =>
           testCodeRunner(
             ScalaCodeRunner("Main", Nil),
             "scala/does-not-compile.sc" :: Nil,
@@ -74,7 +75,7 @@ class ScalaCodeRunnerSpec extends AsyncFunSpec with Matchers with Approbation {
     describe("Multiple files program") {
 
       describe("When the program compiles") {
-        it("Should return the program outputs when it runs") {approver =>
+        it("Should return the program outputs when it runs") { approver =>
           testCodeRunner(
             ScalaCodeRunner("multi.Main", Nil),
             List(
@@ -91,7 +92,7 @@ class ScalaCodeRunnerSpec extends AsyncFunSpec with Matchers with Approbation {
       }
 
       describe("When the main class is not found") {
-        it("Should return the output of the Scala interpreter") {approver =>
+        it("Should return the output of the Scala interpreter") { approver =>
           testCodeRunner(
             ScalaCodeRunner("toto", Nil),
             List(
@@ -112,17 +113,20 @@ class ScalaCodeRunnerSpec extends AsyncFunSpec with Matchers with Approbation {
 
       describe("When the program compiles") {
 
-        it("Should return the output of the program") {approver =>
+        it("Should return the output of the program") { approver =>
           testCodeRunner(
-            ScalaCodeRunner("toto", List(
-              ScalaDependency("org.typelevel", "cats-core", "1.6.1")
-            )),
+            ScalaCodeRunner(
+              "Main",
+              List(
+                ScalaDependency("org.typelevel", "cats-core", "1.6.1")
+              )
+            ),
             List(
-              "scala/with-cats.sc",
+              "scala/with-cats.sc"
             ),
             result =>
               IO {
-                approver.verify(result.left.get)
+                approver.verify(result.right.get)
                 succeed
               }
           )

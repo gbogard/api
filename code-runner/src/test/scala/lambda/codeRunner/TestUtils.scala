@@ -22,12 +22,12 @@ object TestUtils {
       codeRuner.run(files, timeout).value
     ).flatMap(assertion).unsafeToFuture()
 
-  trait Approbation extends org.scalatest.fixture.TestSuite {
+  trait Approbation extends org.scalatest.fixture.AsyncFunSpecLike with Matchers {
     override type FixtureParam = Approver
     protected val approvals = (new Approver).testing(getClass)
-    override def withFixture(test: OneArgTest): Outcome = {
+    override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
       val approver = approvals.writeTo(test.name)
-      withFixture(test.toNoArgTest(approver))
+      super.withFixture(test.toNoArgAsyncTest(approver))
     }
   }
 }
