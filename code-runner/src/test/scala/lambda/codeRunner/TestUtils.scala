@@ -19,8 +19,16 @@ object TestUtils {
     timeout: FiniteDuration = 30 seconds
   ): Future[Assertion] =
     resources.parTraverse(Utils.readResource[IO](_)).flatMap(files =>
-      codeRuner.run(files, timeout).value
+      codeRuner.run(files, timeout).leftMap((normalizeEndings _) andThen limitLines).value
     ).flatMap(assertion).unsafeToFuture()
+
+  // Useful to limit stack traces to first traces so we ramain agnostic of
+  // the underlying JDK when we run tests across multiple platforms
+  private def limitLines(string: String): String =
+    string.split("\n").take(10).mkString("\n")
+
+  private def normalizeEndings(string: String) =
+    string.replaceAll("\r\n", "\n").replaceAll("\r", "\n")
 
   trait Approbation extends org.scalatest.fixture.AsyncFunSpecLike with Matchers {
     override type FixtureParam = Approver

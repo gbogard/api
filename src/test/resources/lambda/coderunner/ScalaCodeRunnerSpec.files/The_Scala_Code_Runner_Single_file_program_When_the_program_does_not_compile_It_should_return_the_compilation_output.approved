@@ -8,4 +8,3 @@ lambda/does-not-compile.sc:3: error: type mismatch;
  required: Int
   add("toto", "tata")
               ^
-two errors found
