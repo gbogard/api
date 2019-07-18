@@ -16,6 +16,7 @@ lazy val codeRunner = (project in file("code-runner"))
     name := "code-runner",
     libraryDependencies ++= Cats.all ++ Coursier.all ++ Log.all ++ Seq(
       commonsIO,
+      scalate,
       scalaTest % Test,
       approvals % Test
     )
