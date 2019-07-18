@@ -1,0 +1,3 @@
+def foo(): Unit = {
+  println("Hello world")
+}
