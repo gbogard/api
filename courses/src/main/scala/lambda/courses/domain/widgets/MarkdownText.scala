@@ -1,6 +1,5 @@
-package lambda.domain.courses.widgets
+package lambda.courses.domain.widgets
 
-import lambda.domain.courses.widgets.widgets._
 
 case class MarkdownText(
     id: WidgetId,

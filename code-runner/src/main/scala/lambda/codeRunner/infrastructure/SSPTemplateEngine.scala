@@ -1,8 +1,9 @@
-package lambda.templating
+package lambda.coderunner.infrastructure
 
 import cats.effect._
 import java.io.File
 import java.util.UUID
+import lambda.coderunner.domain._
 import org.apache.commons.io.FileUtils
 
 class SSPTemplateEngine[F[_]: Sync] extends TemplateEngine[F] {

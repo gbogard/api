@@ -9,7 +9,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "lambdacademy"
   )
-  .aggregate(codeRunner, domain)
+  .aggregate(codeRunner, courses)
 
 lazy val codeRunner = (project in file("code-runner"))
   .settings(
@@ -22,8 +22,8 @@ lazy val codeRunner = (project in file("code-runner"))
     )
   )
 
-lazy val domain = (project in file("domain"))
+lazy val courses = (project in file("courses"))
   .settings(
-    name := "domain",
+    name := "courses",
     libraryDependencies ++= Cats.all
-  )
+  ).dependsOn(codeRunner)

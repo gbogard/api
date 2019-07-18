@@ -1,4 +1,4 @@
-package lambda.coderunner
+package lambda.coderunner.infrastructure
 
 import cats.effect._
 import cats.data.EitherT
@@ -13,10 +13,9 @@ import scala.concurrent.duration.FiniteDuration
 import scala.io.Source
 import org.apache.commons.io.FileUtils
 import com.typesafe.scalalogging.StrictLogging
+import lambda.coderunner.domain.CodeRunner._
 
 object Utils extends StrictLogging {
-
-  type ProcessResult[F[_]] = EitherT[F, String, String]
 
   def createTemporaryFolder[F[_]]()(
       implicit m: Monad[F],

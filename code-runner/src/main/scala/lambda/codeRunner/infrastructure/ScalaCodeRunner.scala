@@ -1,4 +1,4 @@
-package lambda.coderunner
+package lambda.coderunner.infrastructure
 
 import java.io.File
 
@@ -8,8 +8,10 @@ import com.typesafe.scalalogging.StrictLogging
 import coursier._
 import coursier.cache._
 import coursier.interop.cats._
-import lambda.coderunner.ScalaCodeRunner._
-import lambda.coderunner.Utils._
+import lambda.coderunner.domain._
+import CodeRunner._
+import ScalaCodeRunner._
+import Utils._
 import org.apache.commons.io.FileUtils
 
 import scala.sys.process._

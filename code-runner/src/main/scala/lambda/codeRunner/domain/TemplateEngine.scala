@@ -1,4 +1,4 @@
-package lambda.templating
+package lambda.coderunner.domain
 
 import cats.effect._
 import cats.{Monad, Parallel}
@@ -9,7 +9,7 @@ import java.io.File
 trait TemplateEngine[F[_]] {
   def render(file: File, data: Map[String, Any] = Map.empty): Resource[F, File]
 
-  def render[Par[_]](
+  def render(
       files: List[File],
       data: Map[String, Any]
   )(implicit m: Monad[F]): Resource[F, List[File]] =

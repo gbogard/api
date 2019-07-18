@@ -1,4 +1,4 @@
-package lambda.domain.courses.widgets
+package lambda.courses.domain
 
 import cats.data.EitherT
 

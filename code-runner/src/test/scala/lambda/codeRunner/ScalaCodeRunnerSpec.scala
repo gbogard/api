@@ -1,12 +1,13 @@
 package lambda.coderunner
 
 import org.scalatest._
-import Utils._
 import TestUtils._
 import cats.effect.IO
 import com.github.writethemfirst.approvals.approvers.Approver
 import scala.concurrent.duration._
-import lambda.coderunner.ScalaCodeRunner.ScalaDependency
+import lambda.coderunner.infrastructure.ScalaCodeRunner
+import ScalaCodeRunner._
+import lambda.coderunner.infrastructure.Utils._
 
 class ScalaCodeRunnerSpec extends Approbation {
 
