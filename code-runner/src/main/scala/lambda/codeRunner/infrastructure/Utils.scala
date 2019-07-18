@@ -40,10 +40,6 @@ object Utils extends StrictLogging {
   ): EitherT[F, L, R] =
     EitherT.apply[F, L, R](resource.use(a => either(a).value))
 
-  def readResource[F[_]: Sync](resourceName: String): F[File] = Sync[F].delay {
-    new File(getClass().getClassLoader().getResource(resourceName).toURI())
-  }
-
   def withTimeout(process: ProcessResult[IO], timeout: FiniteDuration)(
       implicit timer: Timer[IO],
       cs: ContextShift[IO]

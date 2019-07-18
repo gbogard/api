@@ -7,7 +7,7 @@ import scala.concurrent.duration._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 import com.github.writethemfirst.approvals.approvers.Approver
-import lambda.coderunner.infrastructure.Utils
+import lambda.core.Utils
 import lambda.coderunner.domain.CodeRunner
 
 object TestUtils {

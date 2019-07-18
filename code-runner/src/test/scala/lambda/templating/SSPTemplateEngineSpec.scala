@@ -2,6 +2,7 @@ package lambda.templating
 
 import lambda.coderunner.TestUtils.Approbation
 import lambda.coderunner.infrastructure._
+import lambda.core.Utils
 import org.apache.commons.io.FileUtils
 import cats.effect._
 

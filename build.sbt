@@ -11,6 +11,12 @@ lazy val root = (project in file("."))
   )
   .aggregate(codeRunner, courses)
 
+lazy val core = (project in file("core"))
+  .settings(
+    name := "core",
+    libraryDependencies ++= Cats.all
+  )
+
 lazy val codeRunner = (project in file("code-runner"))
   .settings(
     name := "code-runner",
@@ -21,9 +27,11 @@ lazy val codeRunner = (project in file("code-runner"))
       approvals % Test
     )
   )
+  .dependsOn(core)
 
 lazy val courses = (project in file("courses"))
   .settings(
     name := "courses",
     libraryDependencies ++= Cats.all
-  ).dependsOn(codeRunner)
+  )
+  .dependsOn(core, codeRunner)
