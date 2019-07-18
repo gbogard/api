@@ -8,7 +8,8 @@ ThisBuild / organizationName := "lambdacademy"
 lazy val root = (project in file("."))
   .settings(
     name := "lambdacademy"
-  ).aggregate(codeRunner, domain)
+  )
+  .aggregate(codeRunner, domain)
 
 lazy val codeRunner = (project in file("code-runner"))
   .settings(
@@ -16,11 +17,12 @@ lazy val codeRunner = (project in file("code-runner"))
     libraryDependencies ++= Cats.all ++ Coursier.all ++ Log.all ++ Seq(
       commonsIO,
       scalaTest % Test,
-      approvals % Test,
+      approvals % Test
     )
   )
 
 lazy val domain = (project in file("domain"))
   .settings(
-    name := "domain"
+    name := "domain",
+    libraryDependencies ++= Cats.all
   )
