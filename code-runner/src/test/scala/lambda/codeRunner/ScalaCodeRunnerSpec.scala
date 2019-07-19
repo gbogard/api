@@ -139,7 +139,7 @@ class ScalaCodeRunnerSpec extends Approbation {
       it("Should not be able to read files") { approver =>
         testCodeRunner(
           ScalaCodeRunner("Main", Nil),
-          "scala/security/external-process.sc" :: Nil,
+          "scala/security/read-files.sc" :: Nil,
           result =>
             IO {
               approver.verify(result.left.get)

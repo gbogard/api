@@ -82,10 +82,9 @@ case class ScalaCodeRunner(
       mainClass: String
   ): EitherT[IO, String, String] = EitherT {
     for {
-        securityManagerJar <- Security.securityManagerJar[IO]
       securityPolicyFile <- Security.securityPolicyFile[IO]
-      securityPolicyFlag = s"-Djava.security.policy=${securityPolicyFile.getAbsolutePath()}"
-      cpFlag = s"-cp ${compiledClassesFolder.getAbsolutePath()}:${securityManagerJar.getAbsolutePath()}"
+      securityPolicyFlag = s"-Djava.security.policy==${securityPolicyFile.getAbsolutePath()}"
+      cpFlag = s"-cp ${compiledClassesFolder.getAbsolutePath()}"
       cmd = s"scala $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
       result <- StringProcessLogger.run(Process(cmd)).value
     } yield result
@@ -114,11 +113,8 @@ object ScalaCodeRunner {
   }
 
   object Security {
-    def securityManagerJar[F[_]: Sync] =
-      lambda.core.Utils.readResource[F]("security/pro-grade.jar")
+    val securityMangerFlag = "-Djava.security.manager"
     def securityPolicyFile[F[_]: Sync] =
       lambda.core.Utils.readResource[F]("security/jvm-security.policy")
-    val securityMangerFlag =
-      "-Djava.security.manager=net.sourceforge.prograde.sm.DumpMissingPermissionsJSM"
   }
 }

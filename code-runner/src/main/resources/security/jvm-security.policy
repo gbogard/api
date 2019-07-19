@@ -1,1 +1,3 @@
-priority "deny";
+grant {
+  permission java.util.PropertyPermission "scala.time", "read";
+};
