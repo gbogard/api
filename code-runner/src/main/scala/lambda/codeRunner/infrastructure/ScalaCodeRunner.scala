@@ -25,14 +25,17 @@ case class ScalaCodeRunner(
 
   import ScalaCodeRunner._
 
-  def run(files: List[File], timeout: FiniteDuration = 30 seconds): ProcessResult[IO] =
+  def run(
+      files: List[File],
+      timeout: FiniteDuration = 30 seconds
+  ): ProcessResult[IO] =
     wrapEitherInResource(
       createTemporaryFolder[IO](),
       (folder: File) => {
         for {
           dependencies <- fetchDependencies
-          _ <- compileFiles(files, dependencies, folder) 
-          output <- withTimeout(run(folder, mainClass), timeout) 
+          _ <- compileFiles(files, dependencies, folder)
+          output <- withTimeout(run(folder, mainClass), timeout)
         } yield output
       }
     )
@@ -77,16 +80,24 @@ case class ScalaCodeRunner(
   private def run(
       compiledClassesFolder: File,
       mainClass: String
-  ): EitherT[IO, String, String] = {
-    val cmd = s"scala -cp ${compiledClassesFolder.getAbsolutePath()} $mainClass"
-    StringProcessLogger.run(Process(cmd))
+  ): EitherT[IO, String, String] = EitherT {
+    for {
+        securityManagerJar <- Security.securityManagerJar[IO]
+      securityPolicyFile <- Security.securityPolicyFile[IO]
+      securityPolicyFlag = s"-Djava.security.policy=${securityPolicyFile.getAbsolutePath()}"
+      cpFlag = s"-cp ${compiledClassesFolder.getAbsolutePath()}:${securityManagerJar.getAbsolutePath()}"
+      cmd = s"scala $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
+      result <- StringProcessLogger.run(Process(cmd)).value
+    } yield result
   }
 
 }
 
 object ScalaCodeRunner {
-  implicit val cs: ContextShift[IO] = IO.contextShift(scala.concurrent.ExecutionContext.global)
-  implicit val timer: Timer[IO] = IO.timer(scala.concurrent.ExecutionContext.global)
+  implicit val cs: ContextShift[IO] =
+    IO.contextShift(scala.concurrent.ExecutionContext.global)
+  implicit val timer: Timer[IO] =
+    IO.timer(scala.concurrent.ExecutionContext.global)
 
   val cache = FileCache[IO]()
 
@@ -100,5 +111,14 @@ object ScalaCodeRunner {
       Module(Organization(org), ModuleName(s"${name}_$scalaVersion")),
       version
     )
+  }
+
+  object Security {
+    def securityManagerJar[F[_]: Sync] =
+      lambda.core.Utils.readResource[F]("security/pro-grade.jar")
+    def securityPolicyFile[F[_]: Sync] =
+      lambda.core.Utils.readResource[F]("security/jvm-security.policy")
+    val securityMangerFlag =
+      "-Djava.security.manager=net.sourceforge.prograde.sm.DumpMissingPermissionsJSM"
   }
 }

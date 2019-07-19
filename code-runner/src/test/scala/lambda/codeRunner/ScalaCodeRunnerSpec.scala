@@ -134,5 +134,31 @@ class ScalaCodeRunnerSpec extends Approbation {
         }
       }
     }
+
+    describe("Security measures") {
+      it("Should not be able to read files") { approver =>
+        testCodeRunner(
+          ScalaCodeRunner("Main", Nil),
+          "scala/security/external-process.sc" :: Nil,
+          result =>
+            IO {
+              approver.verify(result.left.get)
+              succeed
+            }
+        )
+      }
+
+      it("Should not be able to launch external processes") { approver =>
+        testCodeRunner(
+          ScalaCodeRunner("Main", Nil),
+          "scala/security/external-process.sc" :: Nil,
+          result =>
+            IO {
+              approver.verify(result.left.get)
+              succeed
+            }
+        )
+      }
+    }
   }
 }
