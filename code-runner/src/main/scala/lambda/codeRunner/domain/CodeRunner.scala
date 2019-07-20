@@ -9,7 +9,7 @@ object CodeRunner {
   type ProcessResult[F[_]] = EitherT[F, String, String]
 }
 
-trait CodeRunner[F[_]] {
+trait CodeRunner[F[_], L <: Language] {
   def run(
       files: List[File],
       timeout: FiniteDuration = 30 seconds

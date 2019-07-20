@@ -2,6 +2,7 @@ package lambda.courses.domain
 
 import Page._
 import lambda.courses.domain.widgets._
+import lambda.coderunner.domain.Language
 
 sealed trait Page {
   def id: PageId
@@ -18,10 +19,10 @@ object Page {
     widgets: List[Widget]
   ) extends Page
 
-  case class CodePage[F[_]](
+  case class CodePage[F[_], L <: Language](
     id: PageId,
     title: String,
     widgets: List[Widget],
-    code: InteractiveCodeWidget[F]
+    code: InteractiveCodeWidget[F, L]
   )
 }

@@ -142,7 +142,7 @@ class ScalaCodeRunnerSpec extends Approbation {
           "scala/security/read-files.sc" :: Nil,
           result =>
             IO {
-              approver.verify(result.left.get)
+              approver.verify(limitLines(result.left.get, 1))
               succeed
             }
         )
@@ -154,7 +154,7 @@ class ScalaCodeRunnerSpec extends Approbation {
           "scala/security/external-process.sc" :: Nil,
           result =>
             IO {
-              approver.verify(result.left.get)
+              approver.verify(limitLines(result.left.get, 1))
               succeed
             }
         )

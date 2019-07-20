@@ -9,6 +9,7 @@ import coursier._
 import coursier.cache._
 import coursier.interop.cats._
 import lambda.coderunner.domain._
+import lambda.coderunner.domain.Language.Scala2
 import CodeRunner._
 import ScalaCodeRunner._
 import Utils._
@@ -20,7 +21,7 @@ import scala.concurrent.duration._
 case class ScalaCodeRunner(
     mainClass: String,
     dependencies: List[ScalaDependency] = Nil
-) extends CodeRunner[IO]
+) extends CodeRunner[IO, Scala2.type]
     with StrictLogging {
 
   import ScalaCodeRunner._
