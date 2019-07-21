@@ -23,6 +23,6 @@ object Page {
     id: PageId,
     title: String,
     widgets: List[Widget],
-    code: InteractiveCodeWidget[F, L]
+    code: InteractiveCodeWidget
   )
 }

@@ -9,12 +9,13 @@ import scala.concurrent.ExecutionContext
 import com.github.writethemfirst.approvals.approvers.Approver
 import lambda.core.Utils
 import lambda.coderunner.domain.CodeRunner
+import lambda.coderunner.domain.Language
 
 object TestUtils {
   implicit private val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
-  def testCodeRunner(
-    codeRuner: CodeRunner[IO],
+  def testCodeRunner[L <: Language](
+    codeRuner: CodeRunner[IO, L],
     resources: List[String],
     assertion: Either[String, String] => IO[Assertion],
     timeout: FiniteDuration = 30 seconds

@@ -10,6 +10,8 @@ class SSPTemplateEngine[F[_]: Sync] extends TemplateEngine[F] {
 
   private val engine = new org.fusesource.scalate.TemplateEngine
 
+  def canRender(file: File): Boolean = engine.canLoad(file.getAbsolutePath())
+
   def render(
       file: File,
       data: Map[String, Any] = Map.empty

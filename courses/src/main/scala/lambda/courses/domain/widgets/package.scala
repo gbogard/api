@@ -12,8 +12,7 @@ package object widgets {
 
   trait StaticWidget extends Widget
 
-  trait InteractiveWidget[F[_], Input, OutputErr, OutputSuccess] extends Widget {
+  trait InteractiveWidget extends Widget {
     def required: Boolean
-    def execute(input: Input): EitherT[F, OutputErr, OutputSuccess]
   }
 }

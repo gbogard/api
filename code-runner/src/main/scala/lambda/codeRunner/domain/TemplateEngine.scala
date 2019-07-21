@@ -9,6 +9,8 @@ import java.io.File
 trait TemplateEngine[F[_]] {
   def render(file: File, data: Map[String, Any] = Map.empty): Resource[F, File]
 
+  def canRender(file: File): Boolean
+
   def render(
       files: List[File],
       data: Map[String, Any]

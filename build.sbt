@@ -32,6 +32,8 @@ lazy val codeRunner = (project in file("code-runner"))
 lazy val courses = (project in file("courses"))
   .settings(
     name := "courses",
-    libraryDependencies ++= Cats.all
+    libraryDependencies ++= Cats.all ++ Seq(
+      scalaTest % Test
+    )
   )
   .dependsOn(core, codeRunner)
