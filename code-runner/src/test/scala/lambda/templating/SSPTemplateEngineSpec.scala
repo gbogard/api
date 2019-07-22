@@ -5,6 +5,7 @@ import lambda.coderunner.infrastructure._
 import lambda.core.Utils
 import org.apache.commons.io.FileUtils
 import cats.effect._
+import java.nio.charset.StandardCharsets
 
 class SSPTemplateEngineSpec extends Approbation {
   val engine = new SSPTemplateEngine[IO]
@@ -18,7 +19,7 @@ class SSPTemplateEngineSpec extends Approbation {
           )
           result <- engine.render(file)
           resultContent <- Resource.liftF(IO {
-            FileUtils.readFileToString(result)
+            FileUtils.readFileToString(result, StandardCharsets.UTF_8)
           })
         } yield resultContent
       ).use { result =>
@@ -38,7 +39,7 @@ class SSPTemplateEngineSpec extends Approbation {
           )
           result <- engine.render(file, Map("name" -> "Guillaume"))
           resultContent <- Resource.liftF(IO {
-            FileUtils.readFileToString(result)
+            FileUtils.readFileToString(result, StandardCharsets.UTF_8)
           })
         } yield resultContent
       ).use { result =>
@@ -58,7 +59,7 @@ class SSPTemplateEngineSpec extends Approbation {
           )
           result <- engine.render(file)
           resultContent <- Resource.liftF(IO {
-            FileUtils.readFileToString(result)
+            FileUtils.readFileToString(result, StandardCharsets.UTF_8)
           })
         } yield resultContent
       ).use { result =>
