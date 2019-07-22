@@ -1,3 +1,5 @@
+# Scala
+
 .metals
 .bloop
 .idea
@@ -6,3 +8,8 @@ target
 *.log
 *.received
 *.orig
+
+# Front
+node_modules
+.cache
+dist

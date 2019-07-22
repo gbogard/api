@@ -1,0 +1,19 @@
+{
+  "name": "lambdacademy-front",
+  "version": "0.1.0",
+  "main": "index.js",
+  "repository": "git@github.com:gbogard/lambdacademy.git",
+  "author": "Guillaume Bogard <bogardguillaume@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "parcel front/showcase/index.html"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.3",
+    "sass": "^1.22.7"
+  },
+  "dependencies": {
+    "bootstrap": "^4.3.1"
+  }
+}
