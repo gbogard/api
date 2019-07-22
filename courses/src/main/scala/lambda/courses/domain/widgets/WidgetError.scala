@@ -7,4 +7,5 @@ object WidgetError {
   case object WrongAnswer extends WidgetError
   case class CodeError(reason: String) extends WidgetError
   case object WrongLanguageForWidget extends WidgetError
+  case object LanguageIsNotSupported extends WidgetError
 }
