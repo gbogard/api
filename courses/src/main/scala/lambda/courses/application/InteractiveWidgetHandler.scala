@@ -34,9 +34,11 @@ object InteractiveWidgetHandler {
       implicit ctx: WidgetHandlerContext[F],
       par: Parallel[F, Par]
   ): Result[F] = (widget, input) match {
-    case (w: MultipleChoices, i: AnswerId)        => EitherT.fromEither(checkMultipleChoices(w, i))
-    case (w: InteractiveCodeWidget, i: CodeInput) => executeInteractiveCode(w, i)
-    case _                                        => EitherT.leftT(WrongInputForWidget)
+    case (w: MultipleChoices, i: AnswerId) => EitherT.fromEither(checkMultipleChoices(w, i))
+    case (w: InteractiveCodeWidget, i: CodeInput) =>
+      if (w.language == i.language) executeInteractiveCode(w, i)
+      else EitherT.leftT(WrongLanguageForWidget)
+    case _ => EitherT.leftT(WrongInputForWidget)
   }
 
   private def checkMultipleChoices(
