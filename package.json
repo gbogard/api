@@ -7,7 +7,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "parcel front/showcase/index.html"
+    "start": "parcel front/showcase/index.html",
+    "build": "parcel build front/showcase/index.html"
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.3",
