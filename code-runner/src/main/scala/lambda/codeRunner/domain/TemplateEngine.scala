@@ -1,9 +1,7 @@
 package lambda.coderunner.domain
 
 import cats.effect._
-import cats.{Monad, Parallel}
-import cats.implicits._
-import cats.syntax._
+import cats.Monad
 import java.io.File
 
 trait TemplateEngine[F[_]] {

@@ -13,7 +13,6 @@ import lambda.coderunner.domain.Language.Scala2
 import CodeRunner._
 import ScalaCodeRunner._
 import Utils._
-import org.apache.commons.io.FileUtils
 
 import scala.sys.process._
 import scala.concurrent.duration._
@@ -107,7 +106,7 @@ object ScalaCodeRunner {
       version: String,
       scalaVersion: String = "2.12"
   ) {
-    def toCoursierDependency = Dependency(
+    def toCoursierDependency = Dependency.of(
       Module(Organization(org), ModuleName(s"${name}_$scalaVersion")),
       version
     )

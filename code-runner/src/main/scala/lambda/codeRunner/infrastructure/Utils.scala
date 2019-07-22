@@ -2,32 +2,25 @@ package lambda.coderunner.infrastructure
 
 import cats.effect._
 import cats.data.EitherT
-import cats.implicits._
 import java.io.File
 import java.nio.file.Files
 import java.util.UUID
-import cats.Monad
-import cats.Parallel
 import scala.concurrent.duration._
 import scala.concurrent.duration.FiniteDuration
-import scala.io.Source
 import org.apache.commons.io.FileUtils
 import com.typesafe.scalalogging.StrictLogging
 import lambda.coderunner.domain.CodeRunner._
 
 object Utils extends StrictLogging {
 
-  def createTemporaryFolder[F[_]]()(
-      implicit m: Monad[F],
-      s: Sync[F]
-  ): Resource[F, File] = {
-    val create = s.delay {
+  def createTemporaryFolder[F[_]: Sync](): Resource[F, File] = {
+    val create = Sync[F].delay {
       val randomName = UUID.randomUUID().toString()
       val f = Files.createTempDirectory(randomName).toFile
       logger.debug("Creating temporary directory {}", f.getAbsolutePath())
       f
     }
-    def delete(f: File): F[Unit] = s.delay {
+    def delete(f: File): F[Unit] = Sync[F].delay {
       logger.debug("Deleting temporary directory {}", f.getAbsolutePath())
       FileUtils.deleteDirectory(f)
     }

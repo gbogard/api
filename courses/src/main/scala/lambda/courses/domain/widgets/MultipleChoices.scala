@@ -1,9 +1,7 @@
 package lambda.courses.domain.widgets
 
-import cats.effect.Sync
 
 import MultipleChoices._
-import cats.data.EitherT
 import WidgetInput._
 
 case class MultipleChoices(

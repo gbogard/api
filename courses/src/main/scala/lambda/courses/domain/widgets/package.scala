@@ -1,7 +1,5 @@
 package lambda.courses.domain
 
-import cats.data.EitherT
-
 package object widgets {
   case class WidgetId(underlying: String) extends AnyVal
 
