@@ -4,7 +4,10 @@ package object widgets {
   case class WidgetId(underlying: String) extends AnyVal
 
   trait Widget {
-    val widgetType: String = this.getClass().getSimpleName().toLowerCase()
+    val widgetType: String = {
+      val className = this.getClass().getSimpleName()
+      s"${className.head.toLower}${className.tail}"
+    }
     def id: WidgetId
   }
 
