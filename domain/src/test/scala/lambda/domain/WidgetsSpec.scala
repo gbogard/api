@@ -13,7 +13,7 @@ class WidgetsSpec extends FunSpec with Matchers {
         WidgetId(""),
         Nil,
         "Main"
-      ).widgetType shouldBe "interactiveCodeWidget"
+      ).widgetType shouldBe "scala2CodeWidget"
     }
 
     it("Should be 'multipleChoices' for MultipleChoices") {

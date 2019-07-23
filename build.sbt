@@ -9,51 +9,45 @@ lazy val root = (project in file("."))
   .settings(
     name := "lambdacademy"
   )
-  .aggregate(codeRunner, courses)
+  .aggregate(domain, infrastructure, application)
 
-lazy val core = (project in file("core"))
+lazy val domain = (project in file("domain"))
   .settings(
-    name := "core",
-    libraryDependencies ++= Cats.all
-  )
-
-lazy val codeRunner = (project in file("code-runner"))
-  .settings(
-    name := "code-runner",
-    testWithCoverage,
-    libraryDependencies ++= Cats.all ++ Coursier.all ++ Log.all ++ Seq(
-      commonsIO,
-      scalate,
-      scalaTest % Test,
-      approvals % Test
-    )
-  )
-  .dependsOn(core)
-
-lazy val courses = (project in file("courses"))
-  .settings(
-    name := "courses",
+    name := "domain",
     testWithCoverage,
     libraryDependencies ++= Cats.all ++ Seq(
+      approvals % Test,
       scalaTest % Test
     )
   )
-  .dependsOn(core, codeRunner)
 
-lazy val gateway = (project in file("gateway"))
+lazy val application = (project in file("application"))
   .settings(
-    name := "gateway",
+    name := "application",
+    testWithCoverage,
+    libraryDependencies ++= Cats.all ++ Seq(
+      approvals % Test,
+      scalaTest % Test
+    )
+  ).dependsOn(domain)
+
+lazy val infrastructure = (project in file("infrastructure"))
+  .settings(
+    name := "infrastructure",
     testWithCoverage,
     libraryDependencies ++= Cats.all
-      ++ Http4s.all
       ++ Log.all
+      ++ Http4s.all
       ++ Circe.all
+      ++ Coursier.all
       ++ Seq(
-        scalaTest % Test,
-        approvals % Test
+        scalate,
+        commonsIO,
+        approvals % Test,
+        scalaTest % Test
       )
-  )
-  .dependsOn(core, courses, codeRunner)
+  ).dependsOn(domain, application)
+
 
 ThisBuild / scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
