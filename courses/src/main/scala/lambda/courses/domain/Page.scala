@@ -19,7 +19,7 @@ object Page {
     widgets: List[Widget]
   ) extends Page
 
-  case class CodePage[F[_], L <: Language](
+  case class CodePage(
     id: PageId,
     title: String,
     widgets: List[Widget],

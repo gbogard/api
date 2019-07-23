@@ -23,6 +23,18 @@ object Dependencies {
     val all: Seq[ModuleID] = Seq(dsl, blazeServer, blazeClient, circeIntegration)
   }
 
+  object Circe {
+    private val version = "0.11.0"
+
+    val core          = "io.circe" %% "circe-core"           % version
+    val generic       = "io.circe" %% "circe-generic"        % version
+    val genericExtras = "io.circe" %% "circe-generic-extras" % version
+    val parser        = "io.circe" %% "circe-parser"         % version
+    val optics        = "io.circe" %% "circe-optics"         % version
+
+    val all: Seq[ModuleID] = Seq(core, generic, genericExtras, parser, optics)
+  }
+
   object Coursier {
     lazy val core = "io.get-coursier" %% "coursier" % "2.0.0-RC2-6"
     lazy val interop = "io.get-coursier" %% "coursier-cats-interop" % "2.0.0-RC2-6"

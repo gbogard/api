@@ -44,10 +44,14 @@ lazy val gateway = (project in file("gateway"))
   .settings(
     name := "gateway",
     testWithCoverage,
-    libraryDependencies ++= Cats.all ++ Http4s.all ++ Log.all ++ Seq(
-      scalaTest % Test,
-      approvals % Test
-    )
+    libraryDependencies ++= Cats.all
+      ++ Http4s.all
+      ++ Log.all
+      ++ Circe.all
+      ++ Seq(
+        scalaTest % Test,
+        approvals % Test
+      )
   )
   .dependsOn(core, courses, codeRunner)
 
