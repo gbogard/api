@@ -8,7 +8,6 @@ import scala.concurrent._
 import cats.implicits._
 import cats.effect._
 import lambda.domain.code.ScalaCodeRunner.ScalaDependency
-import lambda.domain.code.ScalaCodeRunner
 import lambda.infrastructure.Utils
 
 class ScalaCodeRunnerSpec extends Approbation {
@@ -169,25 +168,24 @@ class ScalaCodeRunnerSpec extends Approbation {
     }
   }
 
-  private val codeRunner: ScalaCodeRunner[IO] = new ScalaCodeRunnerImpl
   implicit private val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
-
   private def testCodeRunner(
       mainClass: String,
       dependencies: List[ScalaDependency],
       resources: List[String],
       assertion: Either[String, String] => IO[Assertion],
       timeout: FiniteDuration = 30 seconds
-  ): Future[Assertion] =
+  ): Future[Assertion] = {
     resources
       .parTraverse(Utils.readResource[IO](_))
       .flatMap(
         files =>
-          codeRunner
+          ScalaCodeRunnerImpl
             .run(files, mainClass, dependencies, timeout)
             .leftMap((normalizeEndings _) andThen (limitLines(_)))
             .value
       )
       .flatMap(assertion)
       .unsafeToFuture()
+  }
 }

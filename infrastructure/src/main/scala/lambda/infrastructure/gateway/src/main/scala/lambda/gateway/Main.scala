@@ -7,14 +7,14 @@ import lambda.domain.courses.CourseRepository
 import lambda.application.InteractiveWidgetHandler.WidgetHandlerContext
 import lambda.domain.code.ScalaCodeRunner
 import lambda.infrastructure.code.ScalaCodeRunnerImpl
+import lambda.infrastructure.courses.LibraryCourseRepository
 
 object Main extends IOApp {
 
   val templateEngine: TemplateEngine[IO] = new SSPTemplateEngine[IO]
 
-  // TODO : fix this
-  val courseRepository: CourseRepository[IO] = ???
-  val scala2CodeRunner: ScalaCodeRunner[IO] = new ScalaCodeRunnerImpl
+  val courseRepository: CourseRepository[IO] = LibraryCourseRepository
+  val scala2CodeRunner: ScalaCodeRunner[IO] = ScalaCodeRunnerImpl
 
   val widgetHandlerContext = WidgetHandlerContext(
     scala2CodeRunner = scala2CodeRunner,

@@ -16,9 +16,7 @@ import lambda.infrastructure.Utils._
 import scala.sys.process._
 import scala.concurrent.duration._
 
-class ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
-
-  import ScalaCodeRunnerImpl._
+object ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
 
   def run(
       files: List[File],
@@ -87,24 +85,22 @@ class ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
     } yield result
   }
 
-}
-
-object ScalaCodeRunnerImpl {
-  implicit val cs: ContextShift[IO] =
+  implicit private val cs: ContextShift[IO] =
     IO.contextShift(scala.concurrent.ExecutionContext.global)
-  implicit val timer: Timer[IO] =
+  implicit private val timer: Timer[IO] =
     IO.timer(scala.concurrent.ExecutionContext.global)
 
-  val cache = FileCache[IO]()
+  private val cache = FileCache[IO]()
 
-  def toCoursierDependency(dep: ScalaDependency) = Dependency.of(
+  private def toCoursierDependency(dep: ScalaDependency) = Dependency.of(
     Module(Organization(dep.org), ModuleName(s"${dep.name}_${dep.scalaVersion}")),
     dep.version
   )
 
-  object Security {
+  private object Security {
     val securityMangerFlag = "-Djava.security.manager"
     def securityPolicyFile[F[_]: Sync] =
       readResource[F]("security/jvm-security.policy")
   }
+
 }

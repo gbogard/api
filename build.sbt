@@ -14,7 +14,6 @@ lazy val root = (project in file("."))
 lazy val domain = (project in file("domain"))
   .settings(
     name := "domain",
-    testWithCoverage,
     libraryDependencies ++= Cats.all ++ Seq(
       approvals % Test,
       scalaTest % Test
@@ -24,7 +23,6 @@ lazy val domain = (project in file("domain"))
 lazy val application = (project in file("application"))
   .settings(
     name := "application",
-    testWithCoverage,
     libraryDependencies ++= Cats.all ++ Seq(
       approvals % Test,
       scalaTest % Test
@@ -34,7 +32,6 @@ lazy val application = (project in file("application"))
 lazy val infrastructure = (project in file("infrastructure"))
   .settings(
     name := "infrastructure",
-    testWithCoverage,
     libraryDependencies ++= Cats.all
       ++ Log.all
       ++ Http4s.all
@@ -46,7 +43,12 @@ lazy val infrastructure = (project in file("infrastructure"))
         approvals % Test,
         scalaTest % Test
       )
-  ).dependsOn(domain, application)
+  ).dependsOn(domain, application, library)
+
+  lazy val library = (project in file("library"))
+    .settings(
+      name := "library",
+    ).dependsOn(domain) 
 
 
 ThisBuild / scalacOptions ++= Seq(
@@ -101,10 +103,3 @@ ThisBuild / scalacOptions ++= Seq(
 ThisBuild / coverageEnabled := true
 ThisBuild / coverageMinimum := 90
 ThisBuild / coverageFailOnMinimum := true
-
-lazy val testWithCoverage = (test in Test) := Def
-  .sequential(
-    (test in Test),
-    (coverageReport in Test)
-  )
-  .value

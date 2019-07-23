@@ -22,18 +22,22 @@ object CourseService {
       courseRepository.getCourses().flatMap(Ok(_))
 
     case GET -> Root / "courses" / id =>
-      courseRepository.getCourse(CourseId(id)).flatMap(Ok(_))
+      courseRepository.getCourse(CourseId(id)).value flatMap {
+        case Some(course) => Ok(course)
+        case None         => NotFound()
+      }
 
     case req @ POST -> Root / "checkWidget" / widgetId =>
       req.attemptAs[WidgetInput].value.flatMap {
         case Right(widgetInput) =>
-          courseRepository.getWidget(WidgetId(widgetId)) flatMap {
-            case w: InteractiveWidget =>
+          courseRepository.getWidget(WidgetId(widgetId)).value flatMap {
+            case Some(w: InteractiveWidget) =>
               InteractiveWidgetHandler[IO, IO.Par](w, widgetInput).value flatMap {
                 case Right(output) => Ok(output)
                 case Left(error)   => BadRequest(error)
               }
-            case _ => NotFound("Widget is not interactive")
+            case Some(_) => NotFound("Widget is not interactive")
+            case _       => NotFound()
           }
         case Left(failure) => BadRequest(failure.message)
       }

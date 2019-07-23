@@ -67,7 +67,6 @@ object InteractiveWidgetHandler {
         EitherT(renderFiles(s.baseFiles, input.code) use { renderedFiles =>
           processResultToWidgetResult(ctx.scala2CodeRunner.run(renderedFiles, s.mainClass, s.dependencies)).value
         })
-      case _ => EitherT.leftT(WrongLanguageForWidget)
     }
 
   def processResultToWidgetResult[F[_]: Sync](pr: ProcessResult[F]): Result[F] =
