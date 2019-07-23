@@ -1,14 +1,13 @@
 package lambda.courses.application
 
 import org.scalatest._
-import lambda.coderunner.domain.CodeRunner
 import cats.Monad
 import cats.effect._
 import cats.data.EitherT
 import java.io.File
 import scala.concurrent.duration.FiniteDuration
 import lambda.coderunner.infrastructure.SSPTemplateEngine
-import lambda.coderunner.domain.Language
+import lambda.coderunner.domain._
 import lambda.courses.application.InteractiveWidgetHandler.WidgetHandlerContext
 import lambda.courses.domain.widgets.InteractiveCodeWidget
 import lambda.courses.domain.widgets.`package`.WidgetId
@@ -196,11 +195,6 @@ class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
     )
   }
 
-  private def mockCodeRunner[L <: Language](result: CodeRunner.ProcessResult[IO]) =
-    new CodeRunner[IO, L] {
-      def run(files: List[File], timeout: FiniteDuration) = result
-    }
-
   private def mockTemplateEngine(output: List[File]) = new TemplateEngine[IO] {
     def canRender(file: File) = true
     def render(file: File, data: Map[String, Any]) = Resource.pure(file)
@@ -211,9 +205,16 @@ class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
   }
 
   private def mockContext(
-      scala2CodeRunnerResult: CodeRunner.ProcessResult[IO] = EitherT.rightT("")
+      scala2CodeRunnerResult: ProcessResult[IO] = EitherT.rightT("")
   ) = WidgetHandlerContext[IO](
-    scala2CodeRunner = mockCodeRunner(scala2CodeRunnerResult),
+    scala2CodeRunner = new ScalaCodeRunner[IO] {
+      def run(
+          files: List[File],
+          mainClass: String,
+          dependencies: List[ScalaCodeRunner.ScalaDependency],
+          timeout: FiniteDuration
+      ): lambda.coderunner.domain.ProcessResult[IO] = scala2CodeRunnerResult
+    },
     templateEngine = new SSPTemplateEngine[IO]
   )
 

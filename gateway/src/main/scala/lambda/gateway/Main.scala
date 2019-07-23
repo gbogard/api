@@ -5,10 +5,8 @@ import lambda.coderunner.infrastructure.SSPTemplateEngine
 import lambda.coderunner.domain.TemplateEngine
 import lambda.courses.domain.CourseRepository
 import lambda.courses.application.InteractiveWidgetHandler.WidgetHandlerContext
-import lambda.coderunner.domain.CodeRunner
-import lambda.coderunner.domain.Language.Scala2
-import lambda.coderunner.infrastructure.ScalaCodeRunner
 import lambda.coderunner.domain.ScalaCodeRunner
+import lambda.coderunner.infrastructure.ScalaCodeRunnerImpl
 
 object Main extends IOApp {
 
@@ -16,7 +14,7 @@ object Main extends IOApp {
 
   // TODO : fix this
   val courseRepository: CourseRepository[IO] = ???
-  val scala2CodeRunner: ScalaCodeRunner[IO] = new ScalaCodeRunner[IO]
+  val scala2CodeRunner: ScalaCodeRunner[IO] = new ScalaCodeRunnerImpl
 
   val widgetHandlerContext = WidgetHandlerContext(
     scala2CodeRunner = scala2CodeRunner,

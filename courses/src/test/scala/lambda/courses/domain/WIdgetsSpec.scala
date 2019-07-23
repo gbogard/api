@@ -2,19 +2,17 @@ package lambda.courses.domain
 
 import org.scalatest._
 import lambda.courses.domain.widgets._
-import lambda.coderunner.domain.Language.Scala2
 import lambda.courses.domain.widgets.WidgetInput.AnswerId
+import lambda.courses.domain.widgets.InteractiveCodeWidget._
 
 class WidgetsSpec extends FunSpec with Matchers {
 
   describe("Widget type") {
-    it("Should be 'interactiveCodeWidget' for InteractiveCodeWidget") {
-      InteractiveCodeWidget(
+    it("Should be 'scala2CodeWidget' for Scala2CodeWidget") {
+      Scala2CodeWidget(
         WidgetId(""),
-        language = Scala2,
-        defaultValue = "",
-        baseFiles = Nil,
-        required = false
+        Nil,
+        "Main"
       ).widgetType shouldBe "interactiveCodeWidget"
     }
 
