@@ -9,38 +9,35 @@ import coursier._
 import coursier.cache._
 import coursier.interop.cats._
 import lambda.coderunner.domain._
-import lambda.coderunner.domain.Language.Scala2
-import CodeRunner._
-import ScalaCodeRunner._
+import lambda.coderunner.domain.ScalaCodeRunner
+import lambda.coderunner.domain.ScalaCodeRunner._
 import Utils._
 
 import scala.sys.process._
 import scala.concurrent.duration._
 
-case class ScalaCodeRunner(
-    mainClass: String,
-    dependencies: List[ScalaDependency] = Nil
-) extends CodeRunner[IO, Scala2.type]
-    with StrictLogging {
+class ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
 
-  import ScalaCodeRunner._
+  import ScalaCodeRunnerImpl._
 
   def run(
       files: List[File],
+      mainClass: String,
+      dependencies: List[ScalaDependency] = Nil,
       timeout: FiniteDuration = 30 seconds
   ): ProcessResult[IO] =
     wrapEitherInResource(
       createTemporaryFolder[IO](),
       (folder: File) => {
         for {
-          dependencies <- fetchDependencies
+          dependencies <- fetchDependencies(dependencies)
           _ <- compileFiles(files, dependencies, folder)
           output <- withTimeout(run(folder, mainClass), timeout)
         } yield output
       }
     )
 
-  private val fetchDependencies: EitherT[IO, String, Seq[File]] =
+  private def fetchDependencies(dependencies: List[ScalaDependency]): EitherT[IO, String, Seq[File]] =
     if (dependencies.nonEmpty) {
       logger.debug(
         "Fetching scala dependencies using Coursier : {}",
@@ -48,7 +45,7 @@ case class ScalaCodeRunner(
       )
       val coursierIO =
         Fetch(cache)
-          .addDependencies(dependencies.map(_.toCoursierDependency): _*)
+          .addDependencies(dependencies.map(toCoursierDependency(_)): _*)
           .io
       EitherT.right(coursierIO)
     } else EitherT.rightT(Nil)
@@ -92,7 +89,7 @@ case class ScalaCodeRunner(
 
 }
 
-object ScalaCodeRunner {
+object ScalaCodeRunnerImpl {
   implicit val cs: ContextShift[IO] =
     IO.contextShift(scala.concurrent.ExecutionContext.global)
   implicit val timer: Timer[IO] =
@@ -100,17 +97,10 @@ object ScalaCodeRunner {
 
   val cache = FileCache[IO]()
 
-  case class ScalaDependency(
-      org: String,
-      name: String,
-      version: String,
-      scalaVersion: String = "2.12"
-  ) {
-    def toCoursierDependency = Dependency.of(
-      Module(Organization(org), ModuleName(s"${name}_$scalaVersion")),
-      version
-    )
-  }
+  def toCoursierDependency(dep: ScalaDependency) = Dependency.of(
+    Module(Organization(dep.org), ModuleName(s"${dep.name}_${dep.scalaVersion}")),
+    dep.version
+  )
 
   object Security {
     val securityMangerFlag = "-Djava.security.manager"

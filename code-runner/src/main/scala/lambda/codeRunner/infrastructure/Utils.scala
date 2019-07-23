@@ -9,7 +9,7 @@ import scala.concurrent.duration._
 import scala.concurrent.duration.FiniteDuration
 import org.apache.commons.io.FileUtils
 import com.typesafe.scalalogging.StrictLogging
-import lambda.coderunner.domain.CodeRunner._
+import lambda.coderunner.domain._
 
 object Utils extends StrictLogging {
 

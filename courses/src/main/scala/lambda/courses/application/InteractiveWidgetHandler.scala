@@ -16,10 +16,9 @@ import java.io.File
 object InteractiveWidgetHandler {
 
   type Result[F[_]] = EitherT[F, WidgetError, WidgetOutput]
-  private type CodeRunnerFn[F[_]] = (List[File]) => CodeRunner.ProcessResult[F]
 
   case class WidgetHandlerContext[F[_]: Sync](
-      scala2CodeRunner: CodeRunner[F, Scala2.type],
+      scala2CodeRunner: ScalaCodeRunner[IO],
       templateEngine: TemplateEngine[F]
   )
 

@@ -8,6 +8,7 @@ import lambda.courses.application.InteractiveWidgetHandler.WidgetHandlerContext
 import lambda.coderunner.domain.CodeRunner
 import lambda.coderunner.domain.Language.Scala2
 import lambda.coderunner.infrastructure.ScalaCodeRunner
+import lambda.coderunner.domain.ScalaCodeRunner
 
 object Main extends IOApp {
 
@@ -15,7 +16,7 @@ object Main extends IOApp {
 
   // TODO : fix this
   val courseRepository: CourseRepository[IO] = ???
-  val scala2CodeRunner: CodeRunner[IO, Scala2.type] = ScalaCodeRunner("", Nil)
+  val scala2CodeRunner: ScalaCodeRunner[IO] = new ScalaCodeRunner[IO]
 
   val widgetHandlerContext = WidgetHandlerContext(
     scala2CodeRunner = scala2CodeRunner,
