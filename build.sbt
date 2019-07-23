@@ -40,6 +40,17 @@ lazy val courses = (project in file("courses"))
   )
   .dependsOn(core, codeRunner)
 
+lazy val gateway = (project in file("gateway"))
+  .settings(
+    name := "gateway",
+    testWithCoverage,
+    libraryDependencies ++= Cats.all ++ Http4s.all ++ Log.all ++ Seq(
+      scalaTest % Test,
+      approvals % Test
+    )
+  )
+  .dependsOn(core, courses, codeRunner)
+
 ThisBuild / scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
   "-encoding",
