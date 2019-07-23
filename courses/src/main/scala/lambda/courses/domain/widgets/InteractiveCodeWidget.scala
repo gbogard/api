@@ -1,11 +1,22 @@
 package lambda.courses.domain.widgets
 
 import lambda.coderunner.domain._
+import lambda.coderunner.domain.ScalaCodeRunner.ScalaDependency
+import lambda.coderunner.domain.Language.Scala2
 
-case class InteractiveCodeWidget(
-    id: WidgetId,
-    language: Language,
-    defaultValue: String,
-    baseFiles: List[SourceFile],
-    required: Boolean
-) extends InteractiveWidget
+sealed trait InteractiveCodeWidget extends InteractiveWidget {
+  def defaultValue: String
+  def language: Language
+}
+
+object InteractiveCodeWidget {
+  case class Scala2CodeWidget(
+      id: String,
+      baseFiles: List[SourceFile],
+      mainClass: String,
+      dependencies: List[ScalaDependency] = Nil,
+      required: Boolean = false
+  ) extends InteractiveCodeWidget {
+      val language = Scala2
+  }
+}

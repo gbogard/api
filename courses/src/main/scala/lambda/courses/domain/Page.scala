@@ -2,7 +2,6 @@ package lambda.courses.domain
 
 import Page._
 import lambda.courses.domain.widgets._
-import lambda.coderunner.domain.Language
 
 sealed trait Page {
   def id: PageId
