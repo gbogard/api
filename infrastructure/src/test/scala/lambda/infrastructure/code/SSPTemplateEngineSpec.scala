@@ -1,6 +1,6 @@
 package lambda.infrastructure.code
 
-import lambda.infrastructure.code.TestUtils.Approbation
+import lambda.infrastructure.TestUtils.Approbation
 import lambda.infrastructure.Utils
 import org.apache.commons.io.FileUtils
 import cats.effect._

@@ -1,7 +1,7 @@
 package lambda.infrastructure.code
 
 import org.scalatest.Assertion
-import TestUtils._
+import lambda.infrastructure.TestUtils._
 import cats.effect.IO
 import scala.concurrent.duration._
 import scala.concurrent._

@@ -1,7 +1,8 @@
-package lambda.infrastructure.code
+package lambda.infrastructure
 
 import org.scalatest._
 import com.github.writethemfirst.approvals.approvers.Approver
+import cats.effect.IO
 
 object TestUtils {
 
@@ -12,6 +13,14 @@ object TestUtils {
 
   def normalizeEndings(string: String) =
     string.replaceAll("\r\n", "\n").replaceAll("\r", "\n")
+
+  def serializeResponse(response: org.http4s.Response[IO]): String = {
+    val body = response.as[String].unsafeRunSync()
+    s"""
+    |Status: ${response.status.code}
+    |Body: $body
+    """.stripMargin.trim()
+  }
 
   trait Approbation extends org.scalatest.fixture.AsyncFunSpecLike with Matchers {
     override type FixtureParam = Approver
