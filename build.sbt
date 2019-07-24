@@ -27,7 +27,8 @@ lazy val application = (project in file("application"))
       approvals % Test,
       scalaTest % Test
     )
-  ).dependsOn(domain)
+  )
+  .dependsOn(domain)
 
 lazy val infrastructure = (project in file("infrastructure"))
   .settings(
@@ -43,13 +44,17 @@ lazy val infrastructure = (project in file("infrastructure"))
         approvals % Test,
         scalaTest % Test
       )
-  ).dependsOn(domain, application, library)
+  )
+  .dependsOn(domain, application, library)
 
-  lazy val library = (project in file("library"))
-    .settings(
-      name := "library",
-    ).dependsOn(domain) 
-
+lazy val library = (project in file("library"))
+  .settings(
+    name := "library",
+    libraryDependencies ++= Seq(
+      scalaTest % Test
+    )
+  )
+  .dependsOn(domain)
 
 ThisBuild / scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.

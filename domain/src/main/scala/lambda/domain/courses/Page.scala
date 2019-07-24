@@ -23,5 +23,5 @@ object Page {
     title: String,
     widgets: List[Widget],
     code: InteractiveCodeWidget
-  )
+  ) extends Page
 }
