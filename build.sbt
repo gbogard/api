@@ -9,36 +9,52 @@ lazy val root = (project in file("."))
   .settings(
     name := "lambdacademy"
   )
-  .aggregate(codeRunner, courses)
+  .aggregate(domain, infrastructure, application)
 
-lazy val core = (project in file("core"))
+lazy val domain = (project in file("domain"))
   .settings(
-    name := "core",
-    libraryDependencies ++= Cats.all
-  )
-
-lazy val codeRunner = (project in file("code-runner"))
-  .settings(
-    name := "code-runner",
-    testWithCoverage,
-    libraryDependencies ++= Cats.all ++ Coursier.all ++ Log.all ++ Seq(
-      commonsIO,
-      scalate,
-      scalaTest % Test,
-      approvals % Test
-    )
-  )
-  .dependsOn(core)
-
-lazy val courses = (project in file("courses"))
-  .settings(
-    name := "courses",
-    testWithCoverage,
+    name := "domain",
     libraryDependencies ++= Cats.all ++ Seq(
+      approvals % Test,
       scalaTest % Test
     )
   )
-  .dependsOn(core, codeRunner)
+
+lazy val application = (project in file("application"))
+  .settings(
+    name := "application",
+    libraryDependencies ++= Cats.all ++ Seq(
+      approvals % Test,
+      scalaTest % Test
+    )
+  )
+  .dependsOn(domain)
+
+lazy val infrastructure = (project in file("infrastructure"))
+  .settings(
+    name := "infrastructure",
+    libraryDependencies ++= Cats.all
+      ++ Log.all
+      ++ Http4s.all
+      ++ Circe.all
+      ++ Coursier.all
+      ++ Seq(
+        scalate,
+        commonsIO,
+        approvals % Test,
+        scalaTest % Test
+      )
+  )
+  .dependsOn(domain, application, library)
+
+lazy val library = (project in file("library"))
+  .settings(
+    name := "library",
+    libraryDependencies ++= Seq(
+      scalaTest % Test
+    )
+  )
+  .dependsOn(domain)
 
 ThisBuild / scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -92,10 +108,8 @@ ThisBuild / scalacOptions ++= Seq(
 ThisBuild / coverageEnabled := true
 ThisBuild / coverageMinimum := 90
 ThisBuild / coverageFailOnMinimum := true
-
-lazy val testWithCoverage = (test in Test) := Def
-  .sequential(
-    (test in Test),
-    (coverageReport in Test)
-  )
-  .value
+ThisBuild / coverageExcludedPackages := Seq(
+  "<empty>",
+  ".*lambda\\.infrastructure\\.gateway\\.Main.*",
+  ".*lambda\\.infrastructure\\.gateway\\.Api.*"
+).mkString(";")
