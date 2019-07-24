@@ -1,0 +1,31 @@
+html(lang='en')
+  head
+    title Lambdacademy
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel='stylesheet', href='../scss/global.scss')
+  body
+    .container-with-large-padding
+      h1.text-primary.display-3 The best Scala training
+      p.lead
+        | Learn Scala by doing. Solve interactive exercises and get instant feedback. Acquire
+        | functional programming skills that will make you a better developer and start your Scala career.
+    .container-with-large-padding.bg-light.text-center
+      h2 Why Lambdacademy ?
+      br
+      p.lead
+        | We strongly believe 
+        b functional programming
+        |  skills can help build clean and robust software.
+      p.lead
+        | We love 
+        b Scala
+        |  and we want to create the best Scala learning experience for all developers.
+      p.lead
+        | We think people learn better by 
+        b solving problems
+        | , so we're building the most interactive
+        |       Scala course.
+    .container-with-large-padding.text-center
+      a(href=process.env.DASHBOARD_URL)
+        button.btn.btn-primary Go to Dashboard

@@ -7,14 +7,27 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "parcel front/showcase/index.html",
-    "build": "parcel build front/showcase/index.html"
+    "showcase:start": "parcel front/* front/showcase/index.pug",
+    "showcase:build": "parcel build front/showcase/index.pug",
+    "dashboard:start": "parcel front/dashboard/index.pug --out-dir dist/dashboard --port 1111",
+    "dashboard:build": "parcel build front/dashboard/index.pug --out-dir dist/dashboard",
+    "re:build": "bsb -make-world -clean-world",
+    "re:watch": "bsb -make-world -clean-world -w",
+    "build": "rimraf dist && yarn re:build && yarn dashboard:build && yarn showcase:build",
+    "dev": "concurrently 'yarn re:watch' 'yarn showcase:start' 'yarn dashboard:start'"
   },
   "devDependencies": {
+    "bs-platform": "5.0.6",
+    "bsb-js": "^1.1.7",
+    "concurrently": "4.1.1",
     "parcel-bundler": "^1.12.3",
+    "parcel-plugin-compress": "^1.0.10",
+    "pug": "^2.0.4",
+    "rimraf": "^2.6.3",
     "sass": "^1.22.7"
   },
   "dependencies": {
-    "bootstrap": "^4.3.1"
+    "bootstrap": "^4.3.1",
+    "reason-react": "0.7.0"
   }
 }

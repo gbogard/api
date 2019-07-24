@@ -1,0 +1,1 @@
+[@bs.val] external showcaseUrl: string = "process.env.SHOWCASE_URL";

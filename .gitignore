@@ -13,3 +13,5 @@ target
 node_modules
 .cache
 dist
+.merlin
+lib/
