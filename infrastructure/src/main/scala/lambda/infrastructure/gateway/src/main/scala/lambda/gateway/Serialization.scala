@@ -43,8 +43,6 @@ object Serialization {
     case e: CodeError           => e.asJson
     case WrongInputForWidget    => error("Wrong input for widget")
     case WrongAnswer            => error("Wrong answer")
-    case WrongLanguageForWidget => error("Wrong language for widget")
-    case LanguageIsNotSupported => error("Language is not supported")
   }
 
   implicit val courseEncoder: Encoder[Course] = deriveEncoder[Course]

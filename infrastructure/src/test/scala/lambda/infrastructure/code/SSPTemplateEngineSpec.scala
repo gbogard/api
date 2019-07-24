@@ -16,9 +16,9 @@ class SSPTemplateEngineSpec extends Approbation {
           file <- Resource.liftF(
             Utils.readResource[IO]("templating/simple-template.ssp")
           )
-          result <- engine.render(file)
+          result <- engine.render(file :: Nil)
           resultContent <- Resource.liftF(IO {
-            FileUtils.readFileToString(result, StandardCharsets.UTF_8)
+            FileUtils.readFileToString(result.head, StandardCharsets.UTF_8)
           })
         } yield resultContent
       ).use { result =>
@@ -36,9 +36,9 @@ class SSPTemplateEngineSpec extends Approbation {
           file <- Resource.liftF(
             Utils.readResource[IO]("templating/template-with-arg.ssp")
           )
-          result <- engine.render(file, Map("name" -> "Guillaume"))
+          result <- engine.render(file :: Nil, Map("name" -> "Guillaume"))
           resultContent <- Resource.liftF(IO {
-            FileUtils.readFileToString(result, StandardCharsets.UTF_8)
+            FileUtils.readFileToString(result.head, StandardCharsets.UTF_8)
           })
         } yield resultContent
       ).use { result =>
@@ -56,9 +56,9 @@ class SSPTemplateEngineSpec extends Approbation {
           file <- Resource.liftF(
             Utils.readResource[IO]("templating/includes/Main.ssp")
           )
-          result <- engine.render(file)
+          result <- engine.render(file :: Nil)
           resultContent <- Resource.liftF(IO {
-            FileUtils.readFileToString(result, StandardCharsets.UTF_8)
+            FileUtils.readFileToString(result.head, StandardCharsets.UTF_8)
           })
         } yield resultContent
       ).use { result =>

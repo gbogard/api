@@ -13,9 +13,9 @@ class SSPTemplateEngine[F[_]: Sync] extends TemplateEngine[F] {
 
   def canRender(file: File): Boolean = engine.canLoad(file.getAbsolutePath())
 
-  def render(
+  private def renderSingleFile(
       file: File,
-      data: Map[String, Any] = Map.empty
+      data: Map[String, Any]
   ): Resource[F, File] = {
     val acquire = Sync[F] delay {
       val output = engine.layout(file.getAbsolutePath(), data)
@@ -28,4 +28,10 @@ class SSPTemplateEngine[F[_]: Sync] extends TemplateEngine[F] {
     }
     Resource.make(acquire)(release)
   }
+
+  def render(files: List[File], data: Map[String, Any] = Map.empty): Resource[F, List[File]] =
+    files.map(renderSingleFile(_, data)).foldLeft(Resource.pure[F, List[File]](Nil)) {
+      case (listResource, fileResource) =>
+        listResource.flatMap(list => fileResource.map(file => list :+ file))
+    }
 }

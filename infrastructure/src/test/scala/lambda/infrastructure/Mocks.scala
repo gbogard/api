@@ -49,10 +49,10 @@ object Mocks {
   def mockTemplateEngine(): TemplateEngine[IO] = new TemplateEngine[IO] {
     def canRender(file: java.io.File): Boolean = true
     def render(
-        file: java.io.File,
-        data: Map[String, Any]
-    ): cats.effect.Resource[cats.effect.IO, java.io.File] =
-      Resource.pure(file)
+        files: List[java.io.File],
+        data: Map[String, Any] = Map.empty
+    ): cats.effect.Resource[cats.effect.IO, List[java.io.File]] =
+      Resource.pure(files)
   }
 
 }

@@ -7,8 +7,8 @@ import lambda.domain.courses.widgets._
 
 object LibraryCourseRepository extends CourseRepository[IO] {
 
-  val courses = lambda.library.courses
-  val widgets: List[Widget] = lambda.library.widgets
+  private val courses = lambda.library.courses
+  private val widgets: List[Widget] = lambda.library.widgets
 
   def getCourse(id: lambda.domain.courses.Course.CourseId): OptionT[IO, lambda.domain.courses.Course] =
     OptionT.fromOption(courses.find(_.id == id))

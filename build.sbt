@@ -108,3 +108,8 @@ ThisBuild / scalacOptions ++= Seq(
 ThisBuild / coverageEnabled := true
 ThisBuild / coverageMinimum := 90
 ThisBuild / coverageFailOnMinimum := true
+ThisBuild / coverageExcludedPackages := Seq(
+  "<empty>",
+  ".*lambda\\.infrastructure\\.gateway\\.Main.*",
+  ".*lambda\\.infrastructure\\.gateway\\.Api.*"
+).mkString(";")

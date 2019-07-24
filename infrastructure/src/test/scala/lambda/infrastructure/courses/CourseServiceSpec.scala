@@ -1,7 +1,7 @@
 package lambda.infrastructure.courses
 
 import cats.effect.IO
-import io.circe.Json
+import io.circe._
 import io.circe.syntax._
 import lambda.domain.courses.widgets._
 import lambda.domain.courses.widgets.WidgetInput._
@@ -117,6 +117,41 @@ class CourseServiceSpec extends AsyncFunSpec with Matchers {
           .unsafeToFuture()
       }
 
+      describe("ScalaCodeWidget") {
+        val widget = InteractiveCodeWidget.Scala2CodeWidget(
+          WidgetId("scala2"),
+          Nil,
+          "Main"
+        )
+
+        implicit val repo = mockCourseRepository(singleWidgetResult = {
+          case id if id == widget.id => Some(widget)
+          case _                     => None
+        })
+
+        implicit val ctx = mockWidgetHandlerContext()
+        val service = CourseService()
+
+        it("Return an error when the given input isn't a CodeInput") {
+          val request = Request[IO](
+            Method.POST,
+            Uri.unsafeFromString("/checkWidget/scala2")
+          ).withEntity(Json.obj("answerId" -> Json.fromInt(4)))
+
+          service
+            .run(request)
+            .value
+            .map(_.get)
+            .map(res => {
+              res.status.code shouldBe 400
+              res.as[Json].unsafeRunSync() shouldBe
+                Json.obj("error" -> Json.fromString("Wrong input for widget"))
+            })
+            .unsafeToFuture()
+
+        }
+      }
+
       describe("Multiple choices widget") {
         val widget = MultipleChoices(
           WidgetId("id"),
@@ -148,7 +183,11 @@ class CourseServiceSpec extends AsyncFunSpec with Matchers {
           service
             .run(request)
             .value
-            .map(_.get.status.code shouldBe 200)
+            .map(_.get)
+            .map(res => {
+              res.status.code shouldBe 200
+              res.as[Json].unsafeRunSync() shouldBe Json.obj("success" -> Json.fromString("Right answer"))
+            })
             .unsafeToFuture()
         }
 
@@ -161,7 +200,11 @@ class CourseServiceSpec extends AsyncFunSpec with Matchers {
           service
             .run(request)
             .value
-            .map(_.get.status.code shouldBe 400)
+            .map(_.get)
+            .map(res => {
+              res.status.code shouldBe 400
+              res.as[Json].unsafeRunSync() shouldBe Json.obj("error" -> Json.fromString("Wrong answer"))
+            })
             .unsafeToFuture()
         }
       }

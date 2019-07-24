@@ -1,7 +1,6 @@
 package lambda.application
 
 import org.scalatest._
-import cats.Monad
 import cats.effect._
 import cats.data.EitherT
 import java.io.File
@@ -51,11 +50,10 @@ class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
           userInput = "def toto(): Int = 42"
           ctx = mockContext().copy(templateEngine = new TemplateEngine[IO] {
             def canRender(file: File) = true
-            def render(file: File, data: Map[String, Any]) = Resource.pure(file)
-            override def render(
+            def render(
                 files: List[File],
                 data: Map[String, Any]
-            )(implicit m: Monad[IO]): Resource[IO, List[File]] = {
+            ): Resource[IO, List[File]] = {
               Resource
                 .liftF(receivedUserInputDeferred.complete(data("userInput").asInstanceOf[String]))
                 .map(_ => files)
@@ -178,11 +176,10 @@ class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
 
   private def mockTemplateEngine(output: List[File]) = new TemplateEngine[IO] {
     def canRender(file: File) = true
-    def render(file: File, data: Map[String, Any]) = Resource.pure(file)
-    override def render(
+    def render(
         files: List[File],
         data: Map[String, Any]
-    )(implicit m: Monad[IO]) = Resource.pure(output)
+    ) = Resource.pure(output)
   }
 
   private def mockContext(
