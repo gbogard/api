@@ -13,4 +13,7 @@ blocks:
       - name: Run some code
         commands:
           - sem-version scala 2.12
+          # Uncomment the following line to pull your code,
+          # then proceed by adding your custom commands:
+          - checkout
           - sbt test
