@@ -10,7 +10,7 @@
     "showcase:start": "parcel front/* front/showcase/index.pug",
     "showcase:build": "parcel build front/showcase/index.pug",
     "dashboard:start": "parcel front/dashboard/index.pug --out-dir dist/dashboard --port 1111",
-    "dashboard:build": "parcel build front/dashboard/index.pug --out-dir dist/dashboard --public-url ./dashboard/",
+    "dashboard:build": "parcel build front/dashboard/index.pug --out-dir dist/dashboard --public-url /dashboard/",
     "re:build": "bsb -make-world -clean-world",
     "re:watch": "bsb -make-world -clean-world -w",
     "build": "rimraf dist && yarn re:build && yarn dashboard:build && yarn showcase:build",

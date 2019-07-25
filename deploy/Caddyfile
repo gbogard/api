@@ -1,0 +1,6 @@
+localhost:80 {
+  root /www/front
+  rewrite /dashboard/{path} {
+    to dashboard/{path} dashboard/index.html
+  } 
+}
