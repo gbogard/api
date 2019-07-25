@@ -1,0 +1,16 @@
+# For more Scala information and examples, see:
+# https://docs.semaphoreci.com/article/111-language-scala
+version: v1.0
+name: Hello Semaphore
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Test
+    task:
+      jobs:
+      - name: Run some code
+        commands:
+          - sem-version scala 2.12
+          - sbt test
