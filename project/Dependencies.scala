@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.0.8"
-  lazy val approvals = "com.github.writethemfirst" % "approvals-java" % "0.9.0"
+  lazy val approvals = "com.github.writethemfirst" % "approvals-java" % "0.10.0"
   lazy val commonsIO = "commons-io" % "commons-io" % "2.6"
   lazy val scalate = "org.scalatra.scalate" %% "scalate-core" % "1.9.4"
 
