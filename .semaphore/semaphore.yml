@@ -11,6 +11,7 @@ blocks:
     task:
       prologue:
         commands:
+          - sudo unlink /usr/bin/X11
           - sem-version scala 2.12
           # - https://docs.semaphoreci.com/article/54-toolbox-reference#cache
           - cache restore sbt-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt),sbt-$SEMAPHORE_GIT_BRANCH,sbt-master
