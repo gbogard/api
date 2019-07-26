@@ -1,7 +1,7 @@
 # For more Scala information and examples, see:
 # https://docs.semaphoreci.com/article/111-language-scala
 version: v1.0
-name: Hello Semaphore
+name: Root pipeline
 agent:
   machine:
     type: e1-standard-2
@@ -21,7 +21,7 @@ blocks:
       - name: Test Scala 
         commands:
 
-          - sbt clean test
+          - sbt test
           # Fails if coverage is below threshold
           - sbt coverageAggregate
       epilogue:
@@ -54,3 +54,6 @@ blocks:
             - docker build -t front -f deploy/front.Dockerfile .
             - docker tag front "${ECR_REGISTRY}:${SEMAPHORE_GIT_SHA:0:7}"
             - docker push "${ECR_REGISTRY}:${SEMAPHORE_GIT_SHA:0:7}"
+promotions:
+  - name: Deploy
+    pipeline_file: build-and-deploy.yml
