@@ -1,4 +1,4 @@
-localhost:80 {
+localhost:80 lambdacademy.dev {
   root /www/front
   rewrite /dashboard/{path} {
     to dashboard/{path} dashboard/index.html

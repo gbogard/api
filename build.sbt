@@ -43,8 +43,9 @@ lazy val infrastructure = (project in file("infrastructure"))
         commonsIO,
         approvals % Test,
         scalaTest % Test
-      )
+      ),
   )
+  .enablePlugins(JavaAppPackaging, AshScriptPlugin)
   .dependsOn(domain, application, library)
 
 lazy val library = (project in file("library"))

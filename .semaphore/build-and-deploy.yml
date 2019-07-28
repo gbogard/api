@@ -11,8 +11,10 @@ blocks:
         # TODO: change as required
         - name: AWS_DEFAULT_REGION
           value: eu-west-1
-        - name: ECR_REGISTRY
+        - name: ECR_REGISTRY_FRONT
           value: 945151552117.dkr.ecr.eu-west-1.amazonaws.com/lambdacademy-front
+        - name: ECR_REGISTRY_BACK
+          value: 945151552117.dkr.ecr.eu-west-1.amazonaws.com/lambdacademy-back
       secrets:
         - name: AWS
       prologue:
@@ -26,5 +28,8 @@ blocks:
         - name: Build and push front
           commands:
             - docker build -t front -f deploy/front.Dockerfile .
-            - docker tag front "${ECR_REGISTRY}:${SEMAPHORE_GIT_SHA:0:7}"
-            - docker push "${ECR_REGISTRY}:${SEMAPHORE_GIT_SHA:0:7}"
+            - docker build -t back -f deploy/back.Dockerfile .
+            - docker tag back "${ECR_REGISTRY_FRONT}:${SEMAPHORE_GIT_BRANCH}"
+            - docker tag front "${ECR_REGISTRY_BACK}:${SEMAPHORE_GIT_BRANCH}"
+            - docker push "${ECR_REGISTRY_FRONT}:${SEMAPHORE_GIT_BRANCH}"
+            - docker push "${ECR_REGISTRY_BACK}:${SEMAPHORE_GIT_BRANCH}"
