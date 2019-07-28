@@ -28,10 +28,10 @@ blocks:
         - name: Build and push front
           commands:
             - docker build -t front -f deploy/front.Dockerfile .
-            - docker tag front "${ECR_REGISTRY_BACK}:${SEMAPHORE_GIT_BRANCH}"
+            - docker tag front "${ECR_REGISTRY_FRONT}:${SEMAPHORE_GIT_BRANCH}"
             - docker push "${ECR_REGISTRY_FRONT}:${SEMAPHORE_GIT_BRANCH}"
         - name: Build and push back
           commands:
             - docker build -t back -f deploy/back.Dockerfile .
-            - docker tag back "${ECR_REGISTRY_FRONT}:${SEMAPHORE_GIT_BRANCH}"
+            - docker tag back "${ECR_REGISTRY_BACK}:${SEMAPHORE_GIT_BRANCH}"
             - docker push "${ECR_REGISTRY_BACK}:${SEMAPHORE_GIT_BRANCH}"
