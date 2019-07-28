@@ -1,4 +1,5 @@
 localhost:80 lambdacademy.dev {
+  tls off
   root /www/front
   rewrite /dashboard/{path} {
     to dashboard/{path} dashboard/index.html
@@ -10,9 +11,11 @@ localhost:8080 {
 }
 
 www.lambdacademy.dev {
-    redir https://lambdacademy.dev{uri}
+  tls off
+  redir https://lambdacademy.dev{uri}
 }
 
 api.lambdacademy.dev {
+  tls off
   proxy / api:8080
 }
