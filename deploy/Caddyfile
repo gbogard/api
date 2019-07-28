@@ -4,3 +4,11 @@ localhost:80 lambdacademy.dev {
     to dashboard/{path} dashboard/index.html
   } 
 }
+
+www.lambdacademy.dev {
+    redir https://lambdacademy.dev{uri}
+}
+
+api.lambdacademy.dev {
+  proxy /api api:8080
+}
