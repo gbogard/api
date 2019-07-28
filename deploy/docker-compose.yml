@@ -1,8 +1,8 @@
 version: '3'
 services:
-  backend:
+  api:
     image: 945151552117.dkr.ecr.eu-west-1.amazonaws.com/lambdacademy-back:semaphore-setup
-  redis:
+  front:
     image: 945151552117.dkr.ecr.eu-west-1.amazonaws.com/lambdacademy-back:semaphore-setup
     ports:
       - "80:80"
