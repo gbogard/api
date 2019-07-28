@@ -28,10 +28,20 @@ blocks:
         - name: Build and push front
           commands:
             - docker build -t front -f deploy/front.Dockerfile .
-            - docker tag front "${ECR_REGISTRY_FRONT}:${SEMAPHORE_GIT_BRANCH}"
-            - docker push "${ECR_REGISTRY_FRONT}:${SEMAPHORE_GIT_BRANCH}"
+            - docker tag front "${ECR_REGISTRY_FRONT}:latest"
+            - docker push "${ECR_REGISTRY_FRONT}:latest"
         - name: Build and push back
           commands:
             - docker build -t back -f deploy/back.Dockerfile .
-            - docker tag back "${ECR_REGISTRY_BACK}:${SEMAPHORE_GIT_BRANCH}"
-            - docker push "${ECR_REGISTRY_BACK}:${SEMAPHORE_GIT_BRANCH}"
+            - docker tag back "${ECR_REGISTRY_BACK}:latest"
+            - docker push "${ECR_REGISTRY_BACK}:latest"
+  - name: "Deploy"
+    task:
+      secrets:
+        - name: SERVER
+      jobs:
+        - name: "Deploy on server via SSH"
+          commands:
+            - ssh -i $SERVER_KEY $SERVER_USER@$SERVER_HOST "aws ecr get-login --no-include-email | bash"
+            - scp -i $SERVER_KEY -r deploy/* $SERVER_USER@$SERVER_HOST:/home/lambda
+            - ssh -i $SERVER_KEY $SERVER_USER@$SERVER_HOST "docker-compose -f /home/lambda/docker-compose.yml up -d"
