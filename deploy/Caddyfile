@@ -5,10 +5,14 @@ localhost:80 lambdacademy.dev {
   } 
 }
 
+localhost:8080 {
+  proxy / api:8080
+}
+
 www.lambdacademy.dev {
     redir https://lambdacademy.dev{uri}
 }
 
 api.lambdacademy.dev {
-  proxy /api api:8080
+  proxy / api:8080
 }
