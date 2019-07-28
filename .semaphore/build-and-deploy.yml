@@ -42,6 +42,6 @@ blocks:
       jobs:
         - name: "Deploy on server via SSH"
           commands:
-            - ssh -i $SERVER_KEY $SERVER_USER@$SERVER_HOST "aws ecr get-login --no-include-email | bash"
-            - scp -i $SERVER_KEY -r deploy/* $SERVER_USER@$SERVER_HOST:/home/lambda
-            - ssh -i $SERVER_KEY $SERVER_USER@$SERVER_HOST "docker-compose -f /home/lambda/docker-compose.yml up -d"
+            - ssh -i /home/semaphore/SERVER_KEY $SERVER_USER@$SERVER_HOST "aws ecr get-login --no-include-email | bash"
+            - scp -i /home/semaphore/SERVER_KEY -r deploy/* $SERVER_USER@$SERVER_HOST:/home/lambda
+            - ssh -i /home/semaphore/SERVER_KEY $SERVER_USER@$SERVER_HOST "docker-compose -f /home/lambda/docker-compose.yml up -d"
