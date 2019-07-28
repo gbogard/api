@@ -33,6 +33,9 @@ lazy val application = (project in file("application"))
 lazy val infrastructure = (project in file("infrastructure"))
   .settings(
     name := "infrastructure",
+    mainClass in assembly := Some("lambda.infrastructure.gateway.Main"),
+    assemblyJarName in assembly := "lambdacademy.jar",
+    test in assembly := {},
     libraryDependencies ++= Cats.all
       ++ Log.all
       ++ Http4s.all
@@ -45,7 +48,6 @@ lazy val infrastructure = (project in file("infrastructure"))
         scalaTest % Test
       ),
   )
-  .enablePlugins(JavaAppPackaging, AshScriptPlugin)
   .dependsOn(domain, application, library)
 
 lazy val library = (project in file("library"))
@@ -106,7 +108,8 @@ ThisBuild / scalacOptions ++= Seq(
   "-Ywarn-value-discard" // Warn when non-Unit expression results are unused.
 )
 
-ThisBuild / coverageEnabled := true
+coverageEnabled in(Test, compile) := true
+coverageEnabled in(Compile, compile) := false
 ThisBuild / coverageMinimum := 90
 ThisBuild / coverageFailOnMinimum := true
 ThisBuild / coverageExcludedPackages := Seq(
