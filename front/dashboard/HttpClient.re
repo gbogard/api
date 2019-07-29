@@ -6,31 +6,33 @@ type result('a) =
 
 let fetch =
     (
+      ~endpoint,
       ~baseUrl=Configuration.apiUrl,
       ~method=Fetch.Get,
       ~body=?,
       ~headers=?,
-      ~endpoint,
+      (),
     ) =>
   Js.Promise.(
     Fetch.fetchWithInit(
       baseUrl ++ "/" ++ endpoint,
-      Fetch.RequestInit.make(~method_=method, ~headers?, ~body=?body)()
+      Fetch.RequestInit.make(~method_=method, ~headers?, ~body?, ()),
     )
     |> then_(response => resolve(Success(response)))
   );
 
 let fetchJson =
     (
+      ~endpoint,
       ~baseUrl=Configuration.apiUrl,
       ~method=Fetch.Get,
       ~decoder: Serialization.decoder('a),
       ~headers=?,
       ~body=?,
-      ~endpoint,
+      (),
     ) =>
   Js.Promise.(
-    fetch(~baseUrl, ~endpoint, ~method, ~headers?, ~body?)
+    fetch(~baseUrl, ~endpoint, ~method, ~headers?, ~body?, ())
     |> then_(result =>
          switch (result) {
          | Success(response) =>

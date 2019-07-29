@@ -3,7 +3,7 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Fetch from "bs-fetch/src/Fetch.js";
 
-function $$fetch$1($staropt$star, $staropt$star$1, body, headers, endpoint) {
+function $$fetch$1(endpoint, $staropt$star, $staropt$star$1, body, headers, param) {
   var baseUrl = $staropt$star !== undefined ? $staropt$star : process.env.API_URL;
   var method_ = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Get */0;
   return fetch(baseUrl + ("/" + endpoint), Fetch.RequestInit[/* make */0](method_, headers, body, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined)(/* () */0)).then((function (response) {
@@ -11,10 +11,10 @@ function $$fetch$1($staropt$star, $staropt$star$1, body, headers, endpoint) {
               }));
 }
 
-function fetchJson($staropt$star, $staropt$star$1, decoder, headers, body, endpoint) {
+function fetchJson(endpoint, $staropt$star, $staropt$star$1, decoder, headers, body, param) {
   var baseUrl = $staropt$star !== undefined ? $staropt$star : process.env.API_URL;
   var method_ = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Get */0;
-  return $$fetch$1(baseUrl, method_, body, headers, endpoint).then((function (result) {
+  return $$fetch$1(endpoint, baseUrl, method_, body, headers, /* () */0).then((function (result) {
                 if (typeof result === "number") {
                   return Promise.resolve(/* Failure */2);
                 } else {
