@@ -28,7 +28,7 @@ object Api {
     val app = (courseService).orNotFound
 
     BlazeServerBuilder[IO]
-      .bindHttp(8080)
+      .bindHttp(8080, "0.0.0.0")
       .withHttpApp(app)
       .resource
       .use(_ => IO.never)

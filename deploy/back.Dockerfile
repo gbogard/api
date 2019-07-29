@@ -11,6 +11,15 @@ COPY project ./project
 
 RUN sbt infrastructure/assembly
 
-FROM mcr.microsoft.com/java/jdk:11u3-zulu-alpine
-COPY --from=build-deps /usr/src/app/infrastructure/target/scala-2.12 /usr/app
+FROM openjdk:11-slim
+
+WORKDIR /usr/app
+COPY --from=build-deps /usr/src/app/infrastructure/target/scala-2.12 .
+COPY install-deps.sh .
+
+RUN apt-get update
+RUN apt-get install -y wget
+RUN /bin/bash install-deps.sh
+
+EXPOSE 8080
 CMD ["java", "-jar", "/usr/app/lambdacademy.jar"]
