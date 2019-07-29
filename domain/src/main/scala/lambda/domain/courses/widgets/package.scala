@@ -8,12 +8,16 @@ package object widgets {
   case class MarkdownText(
       id: WidgetId,
       content: String
-  ) extends StaticWidget
+  ) extends StaticWidget {
+    val widgetType: String = "markdownText"
+  }
   case class MultipleChoices(
       id: WidgetId,
       required: Boolean,
       question: MultipleChoices.Question
-  ) extends InteractiveWidget
+  ) extends InteractiveWidget {
+    val widgetType: String = "multipleChoices"
+  }
 
   object MultipleChoices {
 
@@ -37,16 +41,15 @@ package object widgets {
         defaultValue: String = "",
         dependencies: List[ScalaDependency] = Nil,
         required: Boolean = false
-    ) extends InteractiveCodeWidget
+    ) extends InteractiveCodeWidget {
+      val widgetType = "scala2CodeWidget"
+    }
   }
 
   case class WidgetId(underlying: String) extends AnyVal
 
   sealed trait Widget {
-    val widgetType: String = {
-      val className = this.getClass().getSimpleName()
-      s"${className.head.toLower}${className.tail}"
-    }
+    val widgetType: String
     def id: WidgetId
   }
 

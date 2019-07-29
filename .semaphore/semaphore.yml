@@ -1,0 +1,37 @@
+# For more Scala information and examples, see:
+# https://docs.semaphoreci.com/article/111-language-scala
+version: v1.0
+name: Root pipeline
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Test
+    task:
+      prologue:
+        commands:
+          - checkout
+          - sem-version scala 2.12
+          - bash install-deps.sh
+          # - https://docs.semaphoreci.com/article/54-toolbox-reference#cache
+          - cache restore sbt-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt),sbt-$SEMAPHORE_GIT_BRANCH,sbt-master
+          - cache restore ivy2-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt),ivy2-$SEMAPHORE_GIT_BRANCH,ivy2-master
+          - cache restore gradle-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt),gradle-$SEMAPHORE_GIT_BRANCH,gradle-master
+      jobs:
+      - name: Test Scala 
+        commands:
+
+          - sbt test
+          # Fails if coverage is below threshold
+          - sbt coverageAggregate
+      epilogue:
+        commands:
+        - cd $HOME
+        - ls -lah
+        - cache store sbt-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt) .sbt
+        - cache store ivy2-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt) .ivy2/cache
+        - cache store gradle-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt) .gradle/caches
+promotions:
+  - name: Deploy
+    pipeline_file: build-and-deploy.yml

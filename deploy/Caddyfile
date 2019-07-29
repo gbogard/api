@@ -1,6 +1,21 @@
-localhost:80 {
+localhost:80 lambdacademy.dev {
+  tls hey@guillaumebogard.dev
   root /www/front
   rewrite /dashboard/{path} {
     to dashboard/{path} dashboard/index.html
   } 
+}
+
+localhost:8080 {
+  proxy / api:8080
+}
+
+www.lambdacademy.dev {
+  tls hey@guillaumebogard.dev
+  redir https://lambdacademy.dev{uri}
+}
+
+api.lambdacademy.dev {
+  tls hey@guillaumebogard.dev
+  proxy / api:8080
 }

@@ -13,4 +13,5 @@ FROM abiosoft/caddy
 
 COPY --from=build-deps /usr/src/app/dist /www/front
 COPY ./deploy/Caddyfile /etc/Caddyfile
+ENV ACME_AGREE true
 EXPOSE 80
