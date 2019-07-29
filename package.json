@@ -7,8 +7,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "showcase:start": "parcel front/* front/showcase/index.pug",
-    "showcase:build": "parcel build front/showcase/index.pug",
+    "showcase:start": "parcel front/* front/showcase/index.pug --out-dir dist/showcase",
+    "showcase:build": "parcel build front/showcase/index.pug --out-dir dist/showcase",
     "dashboard:start": "parcel front/dashboard/index.pug --out-dir dist/dashboard --port 1111",
     "dashboard:build": "parcel build front/dashboard/index.pug --out-dir dist/dashboard --public-url /dashboard/",
     "re:build": "bsb -make-world -clean-world",
