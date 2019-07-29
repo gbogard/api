@@ -9,10 +9,8 @@ RUN yarn
 ENV NODE_ENV=production
 RUN yarn build
 
-FROM nginx:stable-alpine 
+FROM abiosoft/caddy 
 
-RUN rm /etc/nginx/conf.d/default.conf
-
-COPY --from=build-deps /usr/src/app/dist /usr/share/nginx/html
-COPY  ./deploy/nginx.conf /etc/nginx
+COPY --from=build-deps /usr/src/app/dist /www/front
+COPY ./deploy/Caddyfile /etc/Caddyfile
 EXPOSE 80
