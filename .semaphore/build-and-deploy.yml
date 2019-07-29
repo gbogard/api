@@ -39,6 +39,10 @@ blocks:
     task:
       secrets:
         - name: SERVER
+      prologue:
+        commands:
+          - checkout
+          - chmod 400 /home/semaphore/SERVER_KEY
       jobs:
         - name: "Deploy on server via SSH"
           commands:
