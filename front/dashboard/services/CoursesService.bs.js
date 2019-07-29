@@ -7,11 +7,8 @@ function fetchCourses(param) {
   return HttpClient$Lambdacademy.fetchJson("/courses", undefined, undefined, Serialization$Lambdacademy.Decode[/* courseManifests */1], undefined, undefined, /* () */0);
 }
 
-var courses = fetchCourses(/* () */0);
-
 export {
   fetchCourses ,
-  courses ,
   
 }
-/* courses Not a pure module */
+/* No side effect */

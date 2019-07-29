@@ -1,8 +1,4 @@
-type result('a) =
-  | NotAsked
-  | Loading
-  | Failure
-  | Success('a);
+open Utils;
 
 let fetch =
     (

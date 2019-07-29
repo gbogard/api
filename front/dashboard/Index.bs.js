@@ -2,11 +2,25 @@
 
 import * as React from "react";
 import * as ReactDOMRe from "reason-react/src/ReactDOMRe.js";
-import * as Hello$Lambdacademy from "./components/Hello.bs.js";
+import * as ReasonReactRouter from "reason-react/src/ReasonReactRouter.js";
+import * as CoursesScene$Lambdacademy from "./scenes/CoursesScene.bs.js";
 
-ReactDOMRe.renderToElementWithId(React.createElement(Hello$Lambdacademy.make, { }), "app");
+function Index$Router(Props) {
+  var url = ReasonReactRouter.useUrl(undefined, /* () */0);
+  var match = url[/* path */0];
+  if (match) {
+    return "Not found";
+  } else {
+    return React.createElement(CoursesScene$Lambdacademy.make, { });
+  }
+}
+
+var Router = /* module */[/* make */Index$Router];
+
+ReactDOMRe.renderToElementWithId(React.createElement(Index$Router, { }), "app");
 
 export {
+  Router ,
   
 }
 /*  Not a pure module */
