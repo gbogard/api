@@ -1,0 +1,1 @@
+type decoder('a) = Js.Json.t => 'a
