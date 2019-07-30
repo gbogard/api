@@ -1,4 +1,5 @@
 localhost:80 lambdacademy.dev {
+  ratelimit * * 4 8 second
   tls hey@guillaumebogard.dev
   root /www/front
   rewrite /dashboard/{path} {
@@ -16,6 +17,7 @@ www.lambdacademy.dev {
 }
 
 api.lambdacademy.dev {
+  ratelimit * * 4 8 second
   tls hey@guillaumebogard.dev
   proxy / api:8080
 }
