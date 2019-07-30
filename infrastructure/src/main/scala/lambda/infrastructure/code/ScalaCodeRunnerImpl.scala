@@ -12,6 +12,7 @@ import lambda.domain.code._
 import lambda.domain.code.ScalaCodeRunner
 import lambda.domain.code.ScalaCodeRunner._
 import lambda.infrastructure.Utils._
+import lambda.infrastructure.ExternalDependencies.Scala2
 
 import scala.sys.process._
 import scala.concurrent.duration._
@@ -60,7 +61,7 @@ object ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
     val destFolderStr = destFolder.getAbsolutePath()
     val target = files.map(_.getAbsoluteFile()).mkString(" ")
 
-    val cmd = s"scalac $classPathFlag -d $destFolderStr $target"
+    val cmd = s"${Scala2.scalac} $classPathFlag -d $destFolderStr $target"
     StringProcessLogger
       .run(Process(cmd))
       .leftMap(removePathFromCompilerOutput)
@@ -80,7 +81,7 @@ object ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
       securityPolicyFile <- Security.securityPolicyFile[IO]
       securityPolicyFlag = s"-Djava.security.policy==${securityPolicyFile.getAbsolutePath()}"
       cpFlag = s"-cp ${compiledClassesFolder.getAbsolutePath()}"
-      cmd = s"scala $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
+      cmd = s"${Scala2.scala} $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
       result <- StringProcessLogger.run(Process(cmd)).value
     } yield result
   }
