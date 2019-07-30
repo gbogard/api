@@ -13,7 +13,7 @@ function CoursesScene(Props) {
   var match$1 = Store$Lambdacademy.useStore(/* () */0);
   console.log(match$1[0]);
   var fetchData = function (param) {
-    CoursesService$Lambdacademy.fetchCourses(/* () */0).then((function (res) {
+    CoursesService$Lambdacademy.fetchCourses(undefined, undefined)(undefined, undefined, /* () */0).then((function (res) {
             Curry._1(setCourses, (function (param) {
                     return res;
                   }));

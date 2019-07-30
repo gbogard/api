@@ -3,8 +3,18 @@
 import * as HttpClient$Lambdacademy from "../HttpClient.bs.js";
 import * as Serialization$Lambdacademy from "../Serialization.bs.js";
 
-function fetchCourses(param) {
-  return HttpClient$Lambdacademy.fetchJson("/courses", undefined, undefined, Serialization$Lambdacademy.Decode[/* courseManifests */1], undefined, undefined, /* () */0);
+var arg = Serialization$Lambdacademy.Decode[/* courseManifests */1];
+
+function fetchCourses(param, param$1) {
+  return (function (param$2, param$3, param$4) {
+      var param$5 = param;
+      var param$6 = param$1;
+      var param$7 = arg;
+      var param$8 = param$2;
+      var param$9 = param$3;
+      var param$10 = param$4;
+      return HttpClient$Lambdacademy.fetchJson("/courses", param$5, param$6, param$7, param$8, param$9, param$10);
+    });
 }
 
 export {
