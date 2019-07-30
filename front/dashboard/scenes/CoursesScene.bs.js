@@ -2,6 +2,7 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
+import * as Store$Lambdacademy from "../Store.bs.js";
 import * as CoursesService$Lambdacademy from "../services/CoursesService.bs.js";
 
 function CoursesScene(Props) {
@@ -9,6 +10,8 @@ function CoursesScene(Props) {
           return /* NotAsked */0;
         }));
   var setCourses = match[1];
+  var match$1 = Store$Lambdacademy.useStore(/* () */0);
+  console.log(match$1[0]);
   var fetchData = function (param) {
     CoursesService$Lambdacademy.fetchCourses(/* () */0).then((function (res) {
             Curry._1(setCourses, (function (param) {

@@ -4,6 +4,9 @@ open Js.Promise;
 [@react.component]
 let make = () => {
   let (courses, setCourses) = React.useState(() => NotAsked);
+  let (store, _) = Store.useStore();
+
+  Js.Console.log(store)
 
   let fetchData = () =>
     CoursesService.fetchCourses()

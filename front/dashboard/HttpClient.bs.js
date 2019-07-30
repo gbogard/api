@@ -16,7 +16,7 @@ function fetchJson(endpoint, $staropt$star, $staropt$star$1, decoder, headers, b
   var method_ = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Get */0;
   return $$fetch$1(endpoint, baseUrl, method_, body, headers, /* () */0).then((function (result) {
                 if (typeof result === "number") {
-                  return Promise.resolve(/* Failure */2);
+                  return Promise.resolve(/* Failed */2);
                 } else {
                   return result[0].json().then((function (json) {
                                   return Promise.resolve(Curry._1(decoder, json));

@@ -1,5 +1,5 @@
 type result('a) =
   | NotAsked
   | Loading
-  | Failure
+  | Failed
   | Success('a);

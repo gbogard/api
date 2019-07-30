@@ -35,7 +35,7 @@ let fetchJson =
            Fetch.Response.json(response)
            |> then_(json => resolve(decoder(json)))
            |> then_(res => resolve(Success(res)))
-         | _ => resolve(Failure)
+         | _ => resolve(Failed)
          }
        )
   );

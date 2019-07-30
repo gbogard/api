@@ -3,6 +3,7 @@
 import * as React from "react";
 import * as ReactDOMRe from "reason-react/src/ReactDOMRe.js";
 import * as ReasonReactRouter from "reason-react/src/ReasonReactRouter.js";
+import * as Store$Lambdacademy from "./Store.bs.js";
 import * as CoursesScene$Lambdacademy from "./scenes/CoursesScene.bs.js";
 
 function Index$Router(Props) {
@@ -17,10 +18,15 @@ function Index$Router(Props) {
 
 var Router = /* module */[/* make */Index$Router];
 
+var app = React.createElement(Store$Lambdacademy.Provider[/* make */2], {
+      children: React.createElement(Index$Router, { })
+    });
+
 ReactDOMRe.renderToElementWithId(React.createElement(Index$Router, { }), "app");
 
 export {
   Router ,
+  app ,
   
 }
-/*  Not a pure module */
+/* app Not a pure module */
