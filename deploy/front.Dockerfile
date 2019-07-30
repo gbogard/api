@@ -9,7 +9,7 @@ RUN yarn
 ENV NODE_ENV=production
 RUN yarn build
 
-FROM abiosoft/caddy 
+FROM gbogard/caddy
 
 COPY --from=build-deps /usr/src/app/dist /www/front
 COPY ./deploy/Caddyfile /etc/Caddyfile
