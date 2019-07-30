@@ -11,7 +11,7 @@ let fetch =
     ) =>
   Js.Promise.(
     Fetch.fetchWithInit(
-      baseUrl ++ "/" ++ endpoint,
+      baseUrl ++ endpoint,
       Fetch.RequestInit.make(~method_=method, ~headers?, ~body?, ()),
     )
     |> then_(response => resolve(Success(response)))

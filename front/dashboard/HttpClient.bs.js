@@ -6,7 +6,7 @@ import * as Fetch from "bs-fetch/src/Fetch.js";
 function $$fetch$1(endpoint, $staropt$star, $staropt$star$1, body, headers, param) {
   var baseUrl = $staropt$star !== undefined ? $staropt$star : process.env.API_URL;
   var method_ = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Get */0;
-  return fetch(baseUrl + ("/" + endpoint), Fetch.RequestInit[/* make */0](method_, headers, body, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined)(/* () */0)).then((function (response) {
+  return fetch(baseUrl + endpoint, Fetch.RequestInit[/* make */0](method_, headers, body, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined)(/* () */0)).then((function (response) {
                 return Promise.resolve(/* Success */[response]);
               }));
 }
