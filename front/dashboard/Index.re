@@ -2,8 +2,22 @@ module Router = {
   [@react.component]
   let make = () => {
     let url = ReasonReactRouter.useUrl();
+    let extractBasePathRegex = [%bs.re "/https?:\/\/.*?\/(.*)/"];
+    let basePathLength =
+      extractBasePathRegex
+      ->Js.Re.exec_(Configuration.dashboardUrl)
+      ->Belt.Option.flatMap(result =>
+          Js.Re.captures(result)[1] |> Js.Nullable.toOption
+        )
+      ->Belt.Option.map(path => Js.String.split("/", path) |> Array.length)
+      ->Belt.Option.getWithDefault(0);
 
-    switch (url.path) {
+    let urlToMatchAgainst =
+      url.path
+      ->Belt.List.drop(basePathLength)
+      ->Belt.Option.getWithDefault([]);
+
+    switch (urlToMatchAgainst) {
     | [] => <CoursesScene />
     | _ => React.string("Not found")
     };
