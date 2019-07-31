@@ -8,14 +8,9 @@ module CoursesList = {
       {
         courseManifests
         |> List.map((courseManifest: courseManifest) =>
-             <a
-               key={courseManifest.id}
-               href="#"
-               onClick={
-                 _ => ReasonReactRouter.push("/courses/" ++ courseManifest.id)
-               }>
+             <Link href={"/courses/" ++ courseManifest.id}>
                <li> {React.string(courseManifest.title)} </li>
-             </a>
+             </Link>
            )
         |> Array.of_list
         |> React.array

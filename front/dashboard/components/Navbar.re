@@ -11,10 +11,14 @@ let make = (~background: background=Primary) => {
     };
 
   <nav className={"navbar navbar-expand-lg navbar-dark " ++ bgClass}>
-    <a className="navbar-brand" href="#"> {React.string("Lambdacademy")} </a>
+    <Link className="navbar-brand" href=Configuration.showcaseUrl>
+      {React.string("Lambdacademy")}
+    </Link>
     <ul className="navbar-nav mr-auto">
       <li className="nav-item active">
-        <a className="nav-link" href="#"> {React.string("Lambdacademy")} </a>
+        <Link className="nav-link" href="/">
+          {React.string("Lambdacademy")}
+        </Link>
       </li>
     </ul>
   </nav>;

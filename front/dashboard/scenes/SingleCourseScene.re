@@ -7,7 +7,7 @@ let make = (~id: string) => {
   let ({courses}, dispatch) = Store.useStore();
   React.useEffect0(() => {
     dispatch(CoursesAction(FetchCourse(id)));
-    None;
+    Some(() => dispatch(CoursesAction(SetCurrentCourse(NotAsked))));
   });
 
   <div>
