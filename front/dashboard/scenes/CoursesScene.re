@@ -1,24 +1,16 @@
-open Utils;
+open Types;
+open Store;
+open Courses;
+
 open Js.Promise;
 
 [@react.component]
 let make = () => {
-  let (courses, setCourses) = React.useState(() => NotAsked);
-  let (store, _) = Store.useStore();
-
-  Js.Console.log(store)
-
-  let fetchData = () =>
-    CoursesService.fetchCourses()
-    |> then_(res => {
-         setCourses(_ => res);
-         resolve();
-       })
-    |> ignore;
+  let (store, dispatch) = Store.useStore();
 
   React.useEffect0(() => {
-    fetchData();
-    None;
+    dispatch(CoursesAction(FetchCourses))
+    None
   });
 
   <div> {React.string("Courses List")} </div>;

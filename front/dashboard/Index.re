@@ -12,4 +12,4 @@ module Router = {
 
 let app = <Store.Provider> <Router /> </Store.Provider>;
 
-ReactDOMRe.renderToElementWithId(<Router />, "app");
+ReactDOMRe.renderToElementWithId(app, "app");
