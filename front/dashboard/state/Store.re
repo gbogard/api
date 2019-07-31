@@ -3,19 +3,13 @@ type action =
   | UsersAction(Users.action);
 
 module State = {
-
   type t = {
     courses: Courses.State.t,
     users: Users.State.t,
-  }
+  };
 
-  let initial = {
-    courses: Courses.State.initial,
-    users: Users.State.initial,
-  }
-
+  let initial = {courses: Courses.State.initial, users: Users.State.initial};
 };
-
 
 module Provider = {
   let ctx = React.createContext((State.initial, _action => ()));
@@ -23,18 +17,18 @@ module Provider = {
 
   [@react.component]
   let make = (~children) => {
-    let (usersState, usersDispatch) = ReactUpdate.useReducer(Users.State.initial, Users.State.reducer);
-    let (coursesState, coursesDispatch) = ReactUpdate.useReducer(Courses.State.initial, Courses.State.reducer);
-    
-    let combinedState: State.t = {
-      courses: coursesState,
-      users: usersState
-    };
+    let (usersState, usersDispatch) =
+      ReactUpdate.useReducer(Users.State.initial, Users.State.reducer);
+    let (coursesState, coursesDispatch) =
+      ReactUpdate.useReducer(Courses.State.initial, Courses.State.reducer);
 
-    let combinedDispatch = action => switch action {
-    | UsersAction(action) => usersDispatch(action)
-    | CoursesAction(action) => coursesDispatch(action)
-    };
+    let combinedState: State.t = {courses: coursesState, users: usersState};
+
+    let combinedDispatch = action =>
+      switch (action) {
+      | UsersAction(action) => usersDispatch(action)
+      | CoursesAction(action) => coursesDispatch(action)
+      };
 
     React.createElement(
       provider,

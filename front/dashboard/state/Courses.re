@@ -7,27 +7,23 @@ type action =
   | FetchCourses;
 
 module Effects = {
-
-  let fetchCourses = ({ send }) => {
+  let fetchCourses = ({send}) => {
     CoursesService.fetchCourses()
-      |> then_(res => resolve(send(SetCourses(res))))
-      |> ignore
-    None
-  }
+    |> then_(res => resolve(send(SetCourses(res))))
+    |> ignore;
+    None;
+  };
 };
 
 module State = {
-  type t = {
-    courses: result(list(courseManifest))
-  }
+  type t = {list: result(list(courseManifest))};
 
-  let initial = {
-    courses: NotAsked
-  }
+  let initial = {list: NotAsked};
 
   let reducer = (action, _state) =>
     switch (action) {
-    | FetchCourses => UpdateWithSideEffects({courses: Loading}, Effects.fetchCourses) 
-    | SetCourses(courses) => Update({courses: courses})
+    | FetchCourses =>
+      UpdateWithSideEffects({list: Loading}, Effects.fetchCourses)
+    | SetCourses(courses) => Update({list: courses})
     };
 };

@@ -8,10 +8,10 @@ type courseManifest = {
   id: string,
   title: string,
   description: string,
-  tags: list(string)
-}
+  tags: list(string),
+};
 
 type user = {
   id: string,
   username: string,
-}
+};

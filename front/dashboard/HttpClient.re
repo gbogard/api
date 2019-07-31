@@ -15,6 +15,7 @@ let fetch =
       Fetch.RequestInit.make(~method_=method, ~headers?, ~body?, ()),
     )
     |> then_(response => resolve(Success(response)))
+    |> catch(_ => resolve(Failed))
   );
 
 let fetchJson =

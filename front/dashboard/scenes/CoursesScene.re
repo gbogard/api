@@ -1,17 +1,31 @@
+open Store.State;
 open Types;
-open Store;
 open Courses;
 
-open Js.Promise;
+module CoursesList = {
+  let make = courses =>
+    <ul>
+      {
+        courses
+        |> List.map(course => <li> {React.string(course.title)} </li>)
+        |> Array.of_list
+        |> React.array
+      }
+    </ul>;
+};
 
 [@react.component]
 let make = () => {
-  let (store, dispatch) = Store.useStore();
+  let ({courses}, dispatch) = Store.useStore();
 
   React.useEffect0(() => {
-    dispatch(CoursesAction(FetchCourses))
-    None
+    dispatch(CoursesAction(FetchCourses));
+    None;
   });
 
-  <div> {React.string("Courses List")} </div>;
+  <div>
+    <Navbar />
+    <h1> {React.string("Courses list")} </h1>
+    <ul> {Loader.renderResult(CoursesList.make, courses.list)} </ul>
+  </div>;
 };

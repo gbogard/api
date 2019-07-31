@@ -16,10 +16,20 @@
     "build": "rimraf dist && yarn re:build && yarn dashboard:build && yarn showcase:build",
     "dev": "concurrently 'yarn re:watch' 'yarn showcase:start' 'yarn dashboard:start'"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{re,rei}": ["refmt --in-place", "git add"]
+  },
   "devDependencies": {
     "bs-platform": "5.0.6",
     "bsb-js": "^1.1.7",
     "concurrently": "4.1.1",
+    "husky": "^3.0.2",
+    "lint-staged": "^9.2.1",
     "parcel-bundler": "^1.12.3",
     "parcel-plugin-compress": "^1.0.10",
     "pug": "^2.0.4",
