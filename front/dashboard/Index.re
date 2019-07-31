@@ -17,8 +17,12 @@ module Router = {
       ->Belt.List.drop(basePathLength)
       ->Belt.Option.getWithDefault([]);
 
+    Js.log(Array.of_list(url.path));
+    Js.log(Array.of_list(urlToMatchAgainst));
+
     switch (urlToMatchAgainst) {
     | [] => <CoursesScene />
+    | ["courses", id] => <SingleCourseScene id />
     | _ => React.string("Not found")
     };
   };

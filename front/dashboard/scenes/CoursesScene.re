@@ -3,11 +3,20 @@ open Types;
 open Courses;
 
 module CoursesList = {
-  let make = courses =>
+  let make = courseManifests =>
     <ul>
       {
-        courses
-        |> List.map(course => <li> {React.string(course.title)} </li>)
+        courseManifests
+        |> List.map((courseManifest: courseManifest) =>
+             <a
+               key={courseManifest.id}
+               href="#"
+               onClick={
+                 _ => ReasonReactRouter.push("/courses/" ++ courseManifest.id)
+               }>
+               <li> {React.string(courseManifest.title)} </li>
+             </a>
+           )
         |> Array.of_list
         |> React.array
       }

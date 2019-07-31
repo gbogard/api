@@ -4,7 +4,9 @@ open Js.Promise;
 
 type action =
   | SetCourses(result(list(courseManifest)))
-  | FetchCourses;
+  | SetCurrentCourse(result(course))
+  | FetchCourses
+  | FetchCourse(string);
 
 module Effects = {
   let fetchCourses = ({send}) => {
@@ -13,17 +15,33 @@ module Effects = {
     |> ignore;
     None;
   };
+
+  let fetchCourse = (id, {send}) => {
+    CoursesService.fetchCourse(id)
+    |> then_(res => resolve(send(SetCurrentCourse(res))))
+    |> ignore;
+    None;
+  };
 };
 
 module State = {
-  type t = {list: result(list(courseManifest))};
+  type t = {
+    list: result(list(courseManifest)),
+    currentCourse: result(course),
+  };
 
-  let initial = {list: NotAsked};
+  let initial = {list: NotAsked, currentCourse: NotAsked};
 
-  let reducer = (action, _state) =>
+  let reducer = (action, state) =>
     switch (action) {
     | FetchCourses =>
-      UpdateWithSideEffects({list: Loading}, Effects.fetchCourses)
-    | SetCourses(courses) => Update({list: courses})
+      UpdateWithSideEffects({...state, list: Loading}, Effects.fetchCourses)
+    | FetchCourse(id) =>
+      UpdateWithSideEffects(
+        {...state, currentCourse: Loading},
+        Effects.fetchCourse(id),
+      )
+    | SetCourses(courses) => Update({...state, list: courses})
+    | SetCurrentCourse(course) => Update({...state, currentCourse: course})
     };
 };
