@@ -20,6 +20,7 @@
     "reason-react",
     "bs-fetch",
     "bs-css",
+    "rationale",
     "@glennsl/bs-json",
     "reason-react-update"
   ],

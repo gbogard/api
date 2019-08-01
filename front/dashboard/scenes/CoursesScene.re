@@ -8,7 +8,9 @@ module CoursesList = {
       {
         courseManifests
         |> List.map((course: courseManifest) =>
-             <div className="col-md-4"> <CourseItem course /> </div>
+             <div className="col-md-4" key={course.id}>
+               <CourseItem course />
+             </div>
            )
         |> Array.of_list
         |> React.array
