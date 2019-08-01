@@ -1,0 +1,15 @@
+.course-item {
+  background: $light;
+  height: 100%;
+
+  .img-container {
+    height: 150px;
+    background-size: cover;
+  }
+
+  .title {
+    color: $white;
+    background: $primary;
+    padding: $spacer;
+  }
+}

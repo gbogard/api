@@ -6,7 +6,8 @@ import lambda.domain.courses.widgets._
 package object library {
 
   lazy val courses = List(
-    ATourOfScala.course
+    ATourOfScala.course,
+    TamingCats.course,
   )
 
   lazy val widgets: List[Widget] = courses.flatMap(_.pages).flatMap {

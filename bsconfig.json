@@ -19,6 +19,7 @@
   "bs-dependencies": [
     "reason-react",
     "bs-fetch",
+    "bs-css",
     "@glennsl/bs-json",
     "reason-react-update"
   ],
