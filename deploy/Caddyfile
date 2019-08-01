@@ -1,20 +1,19 @@
 (common) {
   ratelimit * / 4 6 second
-  tls hey@guillaumebogard.dev
-  dns cloudflare
+  tls off
 }
 
-www.lambdacademy.dev {
+www.lambdacademy.dev:80 {
   import common
   redir https://lambdacademy.dev{uri}
 }
 
-lambdacademy.dev {
+lambdacademy.dev:80 {
   import common
   root /www/front/showcase
 }
 
-dashboard.lambdacademy.dev {
+dashboard.lambdacademy.dev:80 {
   import common
   root /www/front/dashboard
   rewrite {
@@ -22,7 +21,7 @@ dashboard.lambdacademy.dev {
   } 
 }
 
-api.lambdacademy.dev {
+api.lambdacademy.dev:80 {
   import common
   proxy / api:8080
 }
