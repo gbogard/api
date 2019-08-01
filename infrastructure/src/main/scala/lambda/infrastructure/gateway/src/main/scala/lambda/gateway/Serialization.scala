@@ -25,14 +25,12 @@ object Serialization {
   implicit val widgetIdDecoder: Decoder[WidgetId] = deriveUnwrappedDecoder
   implicit val widgetIdEncoder: Encoder[WidgetId] = deriveUnwrappedEncoder
 
-  implicit val codeWidgetEncoder: Encoder[InteractiveCodeWidget] = deriveEncoder
-  implicit val multipleChoicesWidgetEncoder: Encoder[MultipleChoices] = deriveEncoder
-
-  implicit val widgetEncoder: Encoder[Widget] = Encoder.instance {
-    case w: MultipleChoices       => w.asJson
-    case w: InteractiveCodeWidget => w.asJson
-    case w: MarkdownText          => w.asJson
-  }
+  implicit val widgetEncoder: Encoder[Widget] =
+    Encoder.instance {
+      case w: MultipleChoices       => withType(w.widgetType, w)
+      case w: InteractiveCodeWidget => withType(w.widgetType, w)
+      case w: MarkdownText          => withType(w.widgetType, w)
+    }
 
   implicit val widgetOutputEncoder: Encoder[WidgetOutput] = Encoder.instance {
     case o: CodeOutput => o.asJson
@@ -40,15 +38,18 @@ object Serialization {
   }
 
   implicit val widgetErrorEncoder: Encoder[WidgetError] = Encoder.instance {
-    case e: CodeError           => e.asJson
-    case WrongInputForWidget    => error("Wrong input for widget")
-    case WrongAnswer            => error("Wrong answer")
+    case e: CodeError        => e.asJson
+    case WrongInputForWidget => error("Wrong input for widget")
+    case WrongAnswer         => error("Wrong answer")
+  }
+
+  implicit val PageEncoder: Encoder[Page] = Encoder.instance {
+    case p: SimplePage => withType("simplePage", p)
+    case p: CodePage   => withType("codePage", p)
   }
 
   implicit val courseEncoder: Encoder[Course] = deriveEncoder[Course]
   implicit val courseManifestEncoder: Encoder[CourseManifest] = deriveEncoder[CourseManifest]
-  implicit val SimplePageEncoder: Encoder[SimplePage] = deriveEncoder[SimplePage]
-  implicit val CodePageEncoder: Encoder[CodePage] = deriveEncoder[CodePage]
 
   implicit val widgetInputDecoder: Decoder[WidgetInput] = List[Decoder[WidgetInput]](
     Decoder[AnswerId].widen,
@@ -57,4 +58,6 @@ object Serialization {
 
   private def error(msg: String): Json = Json.obj("error" -> Json.fromString(msg))
   private def success(msg: String): Json = Json.obj("success" -> Json.fromString(msg))
+  private def withType[A: ObjectEncoder](`type`: String, a: A): Json =
+    a.asJsonObject.add("type", Json.fromString(`type`)).asJson
 }
