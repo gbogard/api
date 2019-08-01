@@ -32,7 +32,8 @@ object Api {
       anyMethod = true,
       allowedOrigins = Set(
         "http://localhost:1111",
-        "https://lambdacademy.dev"
+        "https://lambdacademy.dev",
+        "https://dashboard.lambdacademy.dev"
       ),
       allowCredentials = false,
       maxAge = 1.day.toSeconds
