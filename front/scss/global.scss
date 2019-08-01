@@ -37,4 +37,7 @@ $dark:          $gray-800;
 $body-bg: $gray-100;
 
 @import "~bootstrap/scss/bootstrap.scss";
-@import "./containers.scss"
+@import "./containers.scss";
+
+// Import components
+@import "./components/CourseItem.scss";

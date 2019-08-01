@@ -15,5 +15,6 @@ node_modules
 dist
 .merlin
 lib/
+*.bs.js
 
 deps

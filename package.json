@@ -8,18 +8,31 @@
   "private": true,
   "scripts": {
     "showcase:start": "parcel front/* front/showcase/index.pug",
-    "showcase:build": "parcel build front/showcase/index.pug",
+    "showcase:build": "parcel build front/showcase/index.pug --out-dir dist/showcase",
     "dashboard:start": "parcel front/dashboard/index.pug --out-dir dist/dashboard --port 1111",
-    "dashboard:build": "parcel build front/dashboard/index.pug --out-dir dist/dashboard --public-url /dashboard/",
+    "dashboard:build": "parcel build front/dashboard/index.pug --out-dir dist/dashboard",
     "re:build": "bsb -make-world -clean-world",
     "re:watch": "bsb -make-world -clean-world -w",
     "build": "rimraf dist && yarn re:build && yarn dashboard:build && yarn showcase:build",
     "dev": "concurrently 'yarn re:watch' 'yarn showcase:start' 'yarn dashboard:start'"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{re,rei}": [
+      "refmt --in-place",
+      "git add"
+    ]
+  },
   "devDependencies": {
-    "bs-platform": "5.0.6",
+    "bs-platform": "^5.0.6",
     "bsb-js": "^1.1.7",
     "concurrently": "4.1.1",
+    "husky": "^3.0.2",
+    "lint-staged": "^9.2.1",
     "parcel-bundler": "^1.12.3",
     "parcel-plugin-compress": "^1.0.10",
     "pug": "^2.0.4",
@@ -27,7 +40,11 @@
     "sass": "^1.22.7"
   },
   "dependencies": {
+    "@glennsl/bs-json": "^4.0.0",
     "bootstrap": "^4.3.1",
-    "reason-react": "0.7.0"
+    "bs-css": "^9.0.1",
+    "bs-fetch": "^0.5.0",
+    "reason-react": "0.7.0",
+    "reason-react-update": "^0.1.1"
   }
 }

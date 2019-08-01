@@ -7,7 +7,9 @@ import lambda.application.InteractiveWidgetHandler.WidgetHandlerContext
 import org.http4s.implicits._
 import org.http4s.server.blaze._
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 import lambda.infrastructure.gateway.services.CourseService
+import org.http4s.server.middleware._
 
 object Api {
 
@@ -25,7 +27,19 @@ object Api {
 
     val courseService = CourseService()
 
-    val app = (courseService).orNotFound
+    val corsConfig = CORSConfig(
+      anyOrigin = false,
+      anyMethod = true,
+      allowedOrigins = Set(
+        "http://localhost:1111",
+        "https://lambdacademy.dev",
+        "https://dashboard.lambdacademy.dev"
+      ),
+      allowCredentials = false,
+      maxAge = 1.day.toSeconds
+    )
+
+    val app = CORS(courseService, corsConfig).orNotFound
 
     BlazeServerBuilder[IO]
       .bindHttp(8080, "0.0.0.0")

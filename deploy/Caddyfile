@@ -1,26 +1,27 @@
 (common) {
-  ratelimit * / 4 8 second
-  tls hey@guillaumebogard.dev
+  ratelimit * / 4 6 second
+  tls off
 }
 
-localhost:80 lambdacademy.dev {
+www.lambdacademy.dev:80 {
   import common
-  root /www/front
-  rewrite /dashboard/{path} {
-    to dashboard/{path} dashboard/index.html
-  } 
-}
-
-localhost:8080 {
-  import common
-  proxy / api:8080
-}
-
-www.lambdacademy.dev {
   redir https://lambdacademy.dev{uri}
 }
 
-api.lambdacademy.dev {
+lambdacademy.dev:80 {
+  import common
+  root /www/front/showcase
+}
+
+dashboard.lambdacademy.dev:80 {
+  import common
+  root /www/front/dashboard
+  rewrite {
+    to {path} {path}/ /index.html
+  } 
+}
+
+api.lambdacademy.dev:80 {
   import common
   proxy / api:8080
 }

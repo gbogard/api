@@ -1,4 +1,5 @@
 package lambda.library
+
 import lambda.domain.courses.Page.SimplePage
 import lambda.domain.courses.Page.PageId
 import lambda.domain.courses.Course
@@ -43,7 +44,7 @@ object ATourOfScala {
   val course = Course(
     CourseId(id),
     "A tour of Scala",
-    "",
+    "Scala is an expressive, statically typed programming language that is both functional and object oriented.",
     Nil,
     List(
       firstPage
