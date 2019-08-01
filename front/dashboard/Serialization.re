@@ -4,6 +4,7 @@ type decoder('a) = Js.Json.t => 'a;
 
 module Decode = {
   exception WrongWidgetType;
+  exception WrongLanguage;
 
   let courseManifest = json =>
     Json.Decode.{
@@ -25,6 +26,15 @@ module Decode = {
     };
 
   let courses = Json.Decode.list(course);
+
+  let language = language =>
+    language
+    |> Json.Decode.string
+    |> (
+      fun
+      | "scala" => Scala2
+      | _ => raise(WrongLanguage)
+    );
 
   let widget = json: Widget.t => {
     let decodeMarkdownText = json: Widget.markdownText =>
@@ -55,11 +65,21 @@ module Decode = {
       };
     };
 
+    let decodeInteractiveCode = json: Widget.interactiveCode =>
+      Json.Decode.{
+        id: json |> field("id", string),
+        defaultValue: json |> field("defaultValue", string),
+        language: json |> field("language", language),
+        required: json |> field("required", bool),
+      };
+
     let widgetType = json |> Json.Decode.field("type", Json.Decode.string);
     switch (widgetType) {
     | "markdownText" => Widget.MarkdownText(decodeMarkdownText(json))
     | "multipleChoices" =>
       Widget.MultipleChoices(decodeMultipleChoices(json))
+    | "interactiveCode" =>
+      Widget.InteractiveCode(decodeInteractiveCode(json))
     | _ => raise(WrongWidgetType)
     };
   };

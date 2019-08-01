@@ -35,6 +35,7 @@ package object widgets {
   sealed trait InteractiveCodeWidget extends InteractiveWidget {
     def defaultValue: String
     def language: Language
+    val widgetType: String = "interactiveCode"
   }
 
   object InteractiveCodeWidget {
@@ -46,7 +47,6 @@ package object widgets {
         dependencies: List[ScalaDependency] = Nil,
         required: Boolean = false
     ) extends InteractiveCodeWidget {
-      val widgetType = "scala2CodeWidget"
       val language = Scala2
     }
   }

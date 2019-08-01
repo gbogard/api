@@ -6,6 +6,7 @@ import lambda.domain.courses.Course
 import lambda.domain.courses.Course.CourseId
 import lambda.domain.courses.widgets._
 import lambda.domain.courses.widgets.MultipleChoices._
+import lambda.domain.courses.widgets.InteractiveCodeWidget._
 import lambda.domain.courses.widgets.WidgetInput.AnswerId
 
 object ATourOfScala {
@@ -37,6 +38,11 @@ object ATourOfScala {
             Answer(AnswerId(3), "A low-level, system programming language")
           )
         )
+      ),
+      Scala2CodeWidget(
+        widgetId(1, 3),
+        baseFiles = Nil,
+        mainClass = "Main"
       )
     )
   )
