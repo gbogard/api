@@ -1,9 +1,11 @@
 (common) {
-  ratelimit * / 4 8 second
+  ratelimit * / 4 6 second
   tls hey@guillaumebogard.dev
+  dns cloudflare
 }
 
 www.lambdacademy.dev {
+  import common
   redir https://lambdacademy.dev{uri}
 }
 
