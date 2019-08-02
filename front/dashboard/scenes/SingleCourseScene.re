@@ -5,15 +5,27 @@ open Rationale;
 
 module SimplePage = {
   [@react.component]
-  let make = (~page: Page.simplePage) =>
-    <div className="container-fluid px-0 h-100">
-      <div className="row">
-        <div className="col-md-2 col-lg-1">
-          {React.string("Foo bar baz")}
-        </div>
-        <div className="col"> <h2> {React.string(page.title)} </h2> </div>
+  let make = (~page: Page.simplePage, ~course) => {
+    let firstPageId =
+      course.pages |> RList.head |> Option.map(Utils.Page.extractId);
+    let isFirstPage =
+      firstPageId |> Option.map(id => id === page.id) |> Option.default(false);
+
+    <div className="simple-page-layout">
+      <Navbar />
+      <div className="sidebar" />
+      <div className="content">
+        {
+          if (isFirstPage) {
+            <p> {React.string(course.description)} </p>;
+          } else {
+            React.null;
+          }
+        }
+        <h2> {React.string(page.title)} </h2>
       </div>
     </div>;
+  };
 };
 
 module CodePage = {
@@ -28,7 +40,7 @@ let findPage = (course, id) =>
 let renderCourse = (pageIdOpt, course) => {
   let pageOpt = pageIdOpt |> Option.flatMap(findPage(course));
   switch (pageOpt) {
-  | Some(Page.SimplePage(p)) => <SimplePage page=p />
+  | Some(Page.SimplePage(p)) => <SimplePage page=p course />
   | Some(Page.CodePage(p)) => <CodePage page=p />
   | _ => React.null
   };
@@ -43,13 +55,8 @@ let make = (~id: string) => {
     Some(() => dispatch(CoursesAction(SetCurrentCourse(NotAsked))));
   });
 
-  <div>
-    <Navbar />
-    {
-      Loader.renderResult(
-        renderCourse(courses.currentPageId),
-        courses.currentCourse,
-      )
-    }
-  </div>;
+  Loader.renderResult(
+    renderCourse(courses.currentPageId),
+    courses.currentCourse,
+  );
 };
