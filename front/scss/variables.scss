@@ -27,7 +27,8 @@ $success:       $green;
 $info:          $cyan;
 $warning:       $purple;
 $danger:        $orange;
-$light:         $white;
+$light:         $gray-200;
+$very-light:    $gray-100;
 $dark:          $gray-800;
 
 $body-bg: $gray-100;
@@ -37,3 +38,5 @@ $spacer: 1.5rem;
 $mediumBreakPoint: 768px;
 $largeBreakPoint: 1200px;
 $veryLargeBreakPoint: 1500px;
+
+$baseBorderRadius: .25rem;

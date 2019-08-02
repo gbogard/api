@@ -3,11 +3,13 @@ $main-colors: (
   light: $light,
   dark: $dark,
   info: $info,
-  danger: $danger
+  danger: $danger,
+  white: $white,
+  very-light: $very-light,
 );
 
 @each $name, $color in $main-colors {
-  .text-#{$name} {
+  .text-#{"" + $name} {
     color: $color;
   }
 }

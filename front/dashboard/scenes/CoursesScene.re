@@ -8,7 +8,7 @@ module CoursesList = {
       {
         courseManifests
         |> List.map((course: courseManifest) =>
-             <div className="col col-3" key={course.id}>
+             <div className="col col-3 col-md" key={course.id}>
                <CourseItem course />
              </div>
            )

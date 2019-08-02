@@ -205,16 +205,17 @@ $base-unit: 8px;
 //////////////////
 //Media Queries
 //////////////////
-.col-md {
-  @include breakPoint($mediumBreakPoint) {
+@media only screen and (max-width: $mediumBreakPoint) {
+  .col-sm {
     flex: 100%;
     max-width: 100%;
   }
 }
 
-.col-lg {
-  @include breakPoint($largeBreakPoint) {
+@media only screen and (max-width: $largeBreakPoint) {
+  .col-md {
     flex: 100%;
     max-width: 100%;
   }
 }
+
