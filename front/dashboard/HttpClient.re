@@ -15,7 +15,10 @@ let fetch =
       Fetch.RequestInit.make(~method_=method, ~headers?, ~body?, ()),
     )
     |> then_(response => resolve(Success(response)))
-    |> catch(_ => resolve(Failed))
+    |> catch(e => {
+         Js.Console.error(e);
+         resolve(Failed);
+       })
   );
 
 let fetchJson =
@@ -39,4 +42,8 @@ let fetchJson =
          | _ => resolve(Failed)
          }
        )
+    |> catch(error => {
+         Js.Console.error(error);
+         resolve(Failed);
+       })
   );

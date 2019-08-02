@@ -6,7 +6,14 @@ open Rationale;
 module SimplePage = {
   [@react.component]
   let make = (~page: Page.simplePage) =>
-    <div> <h2> {React.string(page.title)} </h2> </div>;
+    <div className="container-fluid px-0 h-100">
+      <div className="row">
+        <div className="col-md-2 col-lg-1">
+          {React.string("Foo bar baz")}
+        </div>
+        <div className="col"> <h2> {React.string(page.title)} </h2> </div>
+      </div>
+    </div>;
 };
 
 module CodePage = {
@@ -38,7 +45,6 @@ let make = (~id: string) => {
 
   <div>
     <Navbar />
-    <h1> {React.string("Course details")} </h1>
     {
       Loader.renderResult(
         renderCourse(courses.currentPageId),

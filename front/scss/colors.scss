@@ -1,0 +1,19 @@
+$main-colors: (
+  primary: $primary,
+  light: $light,
+  dark: $dark,
+  info: $info,
+  danger: $danger
+);
+
+@each $name, $color in $main-colors {
+  .text-#{$name} {
+    color: $color;
+  }
+}
+
+@each $name, $color in $main-colors {
+  .bg-#{$name} {
+    background: $color;
+  }
+}

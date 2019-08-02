@@ -41,7 +41,6 @@
   },
   "dependencies": {
     "@glennsl/bs-json": "^4.0.0",
-    "bootstrap": "^4.3.1",
     "bs-css": "^9.0.1",
     "bs-fetch": "^0.5.0",
     "rationale": "^0.1.10",

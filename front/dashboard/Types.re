@@ -20,7 +20,7 @@ module Widget = {
 
   module MultipleChoices = {
     type proposition = {
-      id: string,
+      id: int,
       value: string,
     };
 

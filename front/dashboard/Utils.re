@@ -12,4 +12,9 @@ module Page = {
     fun
     | Page.SimplePage(p) => p.id
     | Page.CodePage(p) => p.id;
+
+  let extractTitle =
+    fun
+    | Page.SimplePage(p) => p.title
+    | Page.CodePage(p) => p.title;
 };

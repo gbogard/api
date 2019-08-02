@@ -4,11 +4,11 @@ open Courses;
 
 module CoursesList = {
   let make = courseManifests =>
-    <div className="row my-4 row-eq-height">
+    <div className="grid">
       {
         courseManifests
         |> List.map((course: courseManifest) =>
-             <div className="col-md-4" key={course.id}>
+             <div className="col col-3" key={course.id}>
                <CourseItem course />
              </div>
            )

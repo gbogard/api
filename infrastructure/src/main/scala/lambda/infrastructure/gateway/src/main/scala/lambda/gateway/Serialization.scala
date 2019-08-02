@@ -25,6 +25,9 @@ object Serialization {
   implicit val widgetIdDecoder: Decoder[WidgetId] = deriveUnwrappedDecoder
   implicit val widgetIdEncoder: Encoder[WidgetId] = deriveUnwrappedEncoder
 
+  implicit val answerIdDecoder: Decoder[AnswerId] = deriveUnwrappedDecoder
+  implicit val answerIdEncoder: Encoder[AnswerId] = deriveUnwrappedEncoder
+
   implicit val interactiveCodeWidgetEncoder: ObjectEncoder[InteractiveCodeWidget] =
     ObjectEncoder.instance {
       case w: InteractiveCodeWidget.Scala2CodeWidget =>
@@ -33,9 +36,10 @@ object Serialization {
 
   implicit val widgetEncoder: Encoder[Widget] =
     Encoder.instance {
-      case w: MultipleChoices       => withType(w.widgetType, w)
-      case w: InteractiveCodeWidget => withType(w.widgetType, w)
-      case w: MarkdownText          => withType(w.widgetType, w)
+      case w: MultipleChoices => withType(w.widgetType, w)
+      case w: InteractiveCodeWidget =>
+        withType(w.widgetType, w).asObject.get.add("language", Json.fromString(w.language.id)).asJson
+      case w: MarkdownText => withType(w.widgetType, w)
     }
 
   implicit val widgetOutputEncoder: Encoder[WidgetOutput] = Encoder.instance {

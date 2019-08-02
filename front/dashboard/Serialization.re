@@ -30,7 +30,7 @@ module Decode = {
     let decodeMultipleChoices = json: Widget.MultipleChoices.t => {
       let proposition = json: Widget.MultipleChoices.proposition =>
         Json.Decode.{
-          id: json |> field("id", string),
+          id: json |> field("id", int),
           value: json |> field("value", string),
         };
 
