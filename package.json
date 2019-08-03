@@ -14,7 +14,7 @@
     "re:build": "bsb -make-world -clean-world",
     "re:watch": "bsb -make-world -clean-world -w",
     "build": "rimraf dist && yarn re:build && yarn dashboard:build && yarn showcase:build",
-    "dev": "rimraf dist && concurrently 'yarn re:watch' 'yarn showcase:start' 'yarn dashboard:start'"
+    "dev": "rimraf dist lib && concurrently 'yarn re:watch' 'yarn showcase:start' 'yarn dashboard:start'"
   },
   "husky": {
     "hooks": {

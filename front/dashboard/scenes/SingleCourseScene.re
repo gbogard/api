@@ -3,6 +3,12 @@ open Store.State;
 open Courses;
 open Rationale;
 
+let renderWidgets = widgets =>
+  widgets
+  |> List.map(w => <WidgetComponent widget=w />)
+  |> Array.of_list
+  |> React.array;
+
 module SimplePage = {
   [@react.component]
   let make = (~page: Page.simplePage, ~course, ~setCurrentPage) => {
@@ -29,6 +35,7 @@ module SimplePage = {
           }
         }
         <h2> {React.string(page.title)} </h2>
+        {page.widgets |> renderWidgets}
       </div>
     </div>;
   };
