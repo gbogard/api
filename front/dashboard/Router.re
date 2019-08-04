@@ -1,6 +1,3 @@
-let index = "/";
-let singleCourse = id => "/courses" ++ id;
-
 [@react.component]
 let make = () => {
   let url = ReasonReactRouter.useUrl();

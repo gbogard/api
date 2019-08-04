@@ -15,7 +15,11 @@ module InteractiveCode = {
 module MarkdownText = {
   [@react.component]
   let make = (~widget: Widget.markdownText) =>
-    <div> {React.string(widget.content)} </div>;
+    <div
+      dangerouslySetInnerHTML={
+        "__html": Interop.Marked.renderAndSanitize(widget.content),
+      }
+    />;
 };
 
 [@react.component]
