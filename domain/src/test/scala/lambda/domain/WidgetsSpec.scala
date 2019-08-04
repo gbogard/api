@@ -8,12 +8,12 @@ import lambda.domain.courses.widgets.InteractiveCodeWidget._
 class WidgetsSpec extends FunSpec with Matchers {
 
   describe("Widget type") {
-    it("Should be 'scala2CodeWidget' for Scala2CodeWidget") {
+    it("Should be 'interactiveCode' for Scala2CodeWidget") {
       Scala2CodeWidget(
         WidgetId(""),
         Nil,
         "Main"
-      ).widgetType shouldBe "scala2CodeWidget"
+      ).widgetType shouldBe "interactiveCode"
     }
 
     it("Should be 'multipleChoices' for MultipleChoices") {
