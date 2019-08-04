@@ -11,7 +11,15 @@ let make = (~pages: list(Page.t), ~currentPageId, ~onChange) =>
                Utils.Page.extractId(p),
                Utils.Page.extractTitle(p),
              );
-             <li onClick={_ => onChange(id)}> {React.string(title)} </li>;
+             let className =
+               if (id === currentPageId) {
+                 "active";
+               } else {
+                 "";
+               };
+             <li className onClick={_ => onChange(id)}>
+               {React.string(title)}
+             </li>;
            })
         |> Array.of_list
         |> React.array

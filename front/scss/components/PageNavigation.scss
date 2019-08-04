@@ -1,3 +1,19 @@
 .page-navigation {
   border-right: 1px solid $light;
+  overflow-x: hidden;
+  overflow-y: auto;
+  ul {
+    list-style: none;
+    padding: 0;
+    li {
+      cursor: pointer;
+      padding: $spacer / 2;
+      border-left: 3px solid transparent;
+      &.active {
+        font-weight: bold;
+        border-color: $primary;
+        background: $very-light;
+      }
+    }
+  }
 }
