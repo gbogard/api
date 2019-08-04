@@ -5,6 +5,10 @@ $sidebar-width: 320px;
   height: 100vh;
   grid-template-rows: $navbar-height 1fr;
   grid-template-columns: 1fr;
+
+  .content {
+    overflow-y: auto;
+  }
   
   @include breakPoint($largeBreakPoint) {
     grid-template-columns: $sidebar-width 1fr;

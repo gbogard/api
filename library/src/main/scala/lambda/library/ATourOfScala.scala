@@ -19,9 +19,7 @@ object ATourOfScala {
     List(
       MarkdownText(
         widgetId(1, 1),
-        """
-        Hello there
-        """
+        Utils.unsafeTextFromResource("a-tour-of-scala/page1/intro.md")
       ),
       MultipleChoices(
         widgetId(1, 2),
