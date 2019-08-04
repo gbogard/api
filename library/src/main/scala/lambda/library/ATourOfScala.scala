@@ -6,6 +6,7 @@ import lambda.domain.courses.Course
 import lambda.domain.courses.Course.CourseId
 import lambda.domain.courses.widgets._
 import lambda.domain.courses.widgets.MultipleChoices._
+import lambda.domain.courses.widgets.InteractiveCodeWidget._
 import lambda.domain.courses.widgets.WidgetInput.AnswerId
 
 object ATourOfScala {
@@ -37,6 +38,45 @@ object ATourOfScala {
             Answer(AnswerId(3), "A low-level, system programming language")
           )
         )
+      ),
+      Scala2CodeWidget(
+        widgetId(1, 3),
+        baseFiles = Nil,
+        mainClass = "Main"
+      )
+    )
+  )
+
+  private val secondPage = SimplePage(
+    pageId(2),
+    "Expressions",
+    List(
+      MarkdownText(
+        widgetId(1, 1),
+        """
+        Hello there
+        """
+      ),
+      MultipleChoices(
+        widgetId(1, 2),
+        required = true,
+        Question(
+          "What is Scala ?",
+          Answer(
+            AnswerId(1),
+            "An object-oriented AND functional programming language"
+          ),
+          List(
+            Answer(AnswerId(2), "A general-purpose, object-oriented language only"),
+            Answer(AnswerId(3), "A functional programming language only"),
+            Answer(AnswerId(3), "A low-level, system programming language")
+          )
+        )
+      ),
+      Scala2CodeWidget(
+        widgetId(1, 3),
+        baseFiles = Nil,
+        mainClass = "Main"
       )
     )
   )
@@ -47,7 +87,8 @@ object ATourOfScala {
     "Scala is an expressive, statically typed programming language that is both functional and object oriented.",
     Nil,
     List(
-      firstPage
+      firstPage,
+      secondPage
     )
   )
 

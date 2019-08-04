@@ -3,8 +3,11 @@ package lambda.domain.courses
 import lambda.domain.courses.widgets.WidgetInput._
 import lambda.domain.code.ScalaCodeRunner.ScalaDependency
 import lambda.domain.code.SourceFile
+import lambda.domain.code.Language.Scala2
+import lambda.domain.code.Language
 
 package object widgets {
+
   case class MarkdownText(
       id: WidgetId,
       content: String
@@ -31,6 +34,8 @@ package object widgets {
 
   sealed trait InteractiveCodeWidget extends InteractiveWidget {
     def defaultValue: String
+    def language: Language
+    val widgetType: String = "interactiveCode"
   }
 
   object InteractiveCodeWidget {
@@ -42,7 +47,7 @@ package object widgets {
         dependencies: List[ScalaDependency] = Nil,
         required: Boolean = false
     ) extends InteractiveCodeWidget {
-      val widgetType = "scala2CodeWidget"
+      val language = Scala2
     }
   }
 

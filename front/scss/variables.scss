@@ -1,0 +1,42 @@
+$white:    #fff;
+$gray-100: #f8f9fa;
+$gray-200: #ddd;
+$gray-300: #ccc;
+$gray-400: #bbb;
+$gray-500: #adb5bd;
+$gray-600: #777;
+$gray-700: #444;
+$gray-800: #373a3c;
+$gray-900: #212529;
+$black:    #000;
+
+$blue:    #007bff;
+$indigo:  #6610f2;
+$purple:  #9B479F;
+$pink:    #e83e8c;
+$red:     #D9230F;
+$orange:  #D9831F;
+$yellow:  #ffc107;
+$green:   #469408;
+$teal:    #20c997;
+$cyan:    #029ACF;
+
+$primary:       $red;
+$secondary:     $white;
+$success:       $green;
+$info:          $cyan;
+$warning:       $purple;
+$danger:        $orange;
+$light:         $gray-200;
+$very-light:    $gray-100;
+$dark:          $gray-800;
+
+$body-bg: $gray-100;
+
+$spacer: 1.5rem;
+
+$mediumBreakPoint: 768px;
+$largeBreakPoint: 1200px;
+$veryLargeBreakPoint: 1500px;
+
+$baseBorderRadius: .25rem;

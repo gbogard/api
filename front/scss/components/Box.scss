@@ -1,0 +1,15 @@
+.box {
+  background: $white;
+  border: solid 1px $light;
+  border-radius: $baseBorderRadius;
+  margin-bottom: $spacer;
+  .title {
+    padding: $spacer;
+    border-bottom: solid 1px $light;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .content {
+    padding: $spacer;
+  }
+}

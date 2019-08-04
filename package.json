@@ -14,7 +14,7 @@
     "re:build": "bsb -make-world -clean-world",
     "re:watch": "bsb -make-world -clean-world -w",
     "build": "rimraf dist && yarn re:build && yarn dashboard:build && yarn showcase:build",
-    "dev": "concurrently 'yarn re:watch' 'yarn showcase:start' 'yarn dashboard:start'"
+    "dev": "rimraf dist lib && concurrently 'yarn re:watch' 'yarn showcase:start' 'yarn dashboard:start'"
   },
   "husky": {
     "hooks": {
@@ -41,9 +41,9 @@
   },
   "dependencies": {
     "@glennsl/bs-json": "^4.0.0",
-    "bootstrap": "^4.3.1",
     "bs-css": "^9.0.1",
     "bs-fetch": "^0.5.0",
+    "rationale": "^0.1.10",
     "reason-react": "0.7.0",
     "reason-react-update": "^0.1.1"
   }

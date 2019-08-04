@@ -4,11 +4,13 @@ open Courses;
 
 module CoursesList = {
   let make = courseManifests =>
-    <div className="row my-4 row-eq-height">
+    <div className="grid">
       {
         courseManifests
         |> List.map((course: courseManifest) =>
-             <div className="col-md-4"> <CourseItem course /> </div>
+             <div className="col col-3 col-md" key={course.id}>
+               <CourseItem course />
+             </div>
            )
         |> Array.of_list
         |> React.array

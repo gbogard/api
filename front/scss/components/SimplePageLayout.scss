@@ -1,0 +1,16 @@
+$sidebar-width: 320px;
+
+.simple-page-layout {
+  display: grid;
+  height: 100vh;
+  grid-template-rows: $navbar-height 1fr;
+  grid-template-columns: 1fr;
+  
+  @include breakPoint($largeBreakPoint) {
+    grid-template-columns: $sidebar-width 1fr;
+
+    .navbar {
+      grid-column: 1 / 3;
+    }
+  }
+}
