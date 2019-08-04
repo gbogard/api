@@ -14,7 +14,7 @@ let courseImg =
 
 [@react.component]
 let make = (~course: courseManifest) =>
-  <Link href={"/courses/" ++ course.id}>
+  <Link href={Router.singleCourse(course.id)}>
     <div className="course-item">
       <div className={"img-container " ++ courseImg} />
       <h5 className="title"> {React.string(course.title)} </h5>
