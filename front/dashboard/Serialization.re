@@ -76,6 +76,14 @@ module Decode = {
       );
   };
 
+  module WidgetOutput = {
+    let decode = _json => RightAnswer;
+  };
+
+  module WidgetError = {
+    let decode = _json => WrongAnswer;
+  };
+
   module Page = {
     let simplePage = json: Page.simplePage =>
       Json.Decode.{
@@ -122,7 +130,7 @@ module Encode = {
     let multipleChoicesInput = (input: multipleChoicesInput) =>
       Json.Encode.(object_([("answerId", string(input.answerId))]));
 
-    let multipleChoices =
+    let encode =
       fun
       | MultipleChoicesInput(input) => multipleChoicesInput(input);
   };

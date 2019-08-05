@@ -3,7 +3,6 @@ type result('a) =
   | Loading
   | Failed
   | Success('a);
-
 type user = {
   id: string,
   username: string,
@@ -56,6 +55,18 @@ module WidgetInput = {
   type t =
     | MultipleChoicesInput(multipleChoicesInput);
 };
+
+type widgetOutput =
+  | RightAnswer;
+
+type widgetError =
+  | WrongAnswer;
+
+type widgetState =
+  | Initial
+  | Pending
+  | Right(widgetOutput)
+  | Wrong(widgetError);
 
 module Page = {
   type simplePage = {
