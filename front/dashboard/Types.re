@@ -50,6 +50,13 @@ module Widget = {
     | InteractiveCode(interactiveCode);
 };
 
+module WidgetInput = {
+  type multipleChoicesInput = {answerId: string};
+
+  type t =
+    | MultipleChoicesInput(multipleChoicesInput);
+};
+
 module Page = {
   type simplePage = {
     id: string,

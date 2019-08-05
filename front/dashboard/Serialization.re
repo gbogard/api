@@ -114,3 +114,16 @@ module Decode = {
 
   let courses = Json.Decode.list(course);
 };
+
+module Encode = {
+  module WidgetInput = {
+    open WidgetInput;
+
+    let multipleChoicesInput = (input: multipleChoicesInput) =>
+      Json.Encode.(object_([("answerId", string(input.answerId))]));
+
+    let multipleChoices =
+      fun
+      | MultipleChoicesInput(input) => multipleChoicesInput(input);
+  };
+};
