@@ -77,10 +77,14 @@ module Decode = {
   };
 
   module WidgetOutput = {
+    open WidgetOutput;
+
     let decode = _json => RightAnswer;
   };
 
   module WidgetError = {
+    open WidgetError;
+
     let decode = _json => WrongAnswer;
   };
 

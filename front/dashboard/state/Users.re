@@ -1,11 +1,11 @@
 open Types;
 open ReactUpdate;
 
-type action =
-  | SetCurrentUser(result(user));
+type action('nothing) =
+  | SetCurrentUser(result(user, 'nothing));
 
 module State = {
-  type t = {currentUser: result(user)};
+  type t('nothing) = {currentUser: result(user, 'nothing)};
 
   let initial = {currentUser: NotAsked};
 
