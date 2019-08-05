@@ -25,8 +25,10 @@ object Serialization {
   implicit val widgetIdDecoder: Decoder[WidgetId] = deriveUnwrappedDecoder
   implicit val widgetIdEncoder: Encoder[WidgetId] = deriveUnwrappedEncoder
 
-  implicit val answerIdDecoder: Decoder[AnswerId] = deriveUnwrappedDecoder
-  implicit val answerIdEncoder: Encoder[AnswerId] = deriveUnwrappedEncoder
+  implicit val unwrappedAnswerIdDecoder: Decoder[AnswerId] = deriveUnwrappedDecoder
+  implicit val unwrappedAnswerIdEncoder: Encoder[AnswerId] = deriveUnwrappedEncoder
+
+  val answerIdDecoder: Decoder[AnswerId] = deriveDecoder[AnswerId]
 
   implicit val interactiveCodeWidgetEncoder: ObjectEncoder[InteractiveCodeWidget] =
     ObjectEncoder.instance {
@@ -62,7 +64,7 @@ object Serialization {
   implicit val courseManifestEncoder: Encoder[CourseManifest] = deriveEncoder[CourseManifest]
 
   implicit val widgetInputDecoder: Decoder[WidgetInput] = List[Decoder[WidgetInput]](
-    Decoder[AnswerId].widen,
+    answerIdDecoder.widen,
     Decoder[CodeInput].widen
   ).reduce(_ or _)
 
