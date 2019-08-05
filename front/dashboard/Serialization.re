@@ -71,8 +71,7 @@ module Decode = {
         | "markdownText" => Widget.MarkdownText(decodeMarkdownText(json))
         | "multipleChoices" =>
           Widget.MultipleChoices(decodeMultipleChoices(json))
-        | "interactiveCode" =>
-          Widget.InteractiveCode(decodeInteractiveCode(json))
+        | "scala2Code" => Widget.InteractiveCode(decodeInteractiveCode(json))
         | _ => raise(WrongWidgetType)
       );
   };
