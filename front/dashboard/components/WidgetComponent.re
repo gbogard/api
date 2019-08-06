@@ -1,9 +1,25 @@
 open Types;
+open WidgetInput;
 
 module MultipleChoices = {
   [@react.component]
-  let make = (~widget: Widget.MultipleChoices.t) =>
+  let make =
+      (
+        ~widget: Widget.MultipleChoices.t,
+        ~state: widgetState,
+        ~onCheck: WidgetInput.t => unit,
+      ) => {
+    let (currentlySelectedAnswer, setCurrentlySelectedAnswer) =
+      React.useState(() => None);
+
+    let checkWidget = () =>
+      switch (currentlySelectedAnswer) {
+      | Some(id) => onCheck(MultipleChoicesInput({answerId: id}))
+      | None => ()
+      };
+
     <Box> {React.string(widget.question.value)} </Box>;
+  };
 };
 
 module InteractiveCode = {
@@ -23,9 +39,14 @@ module MarkdownText = {
 };
 
 [@react.component]
-let make = (~widget: Types.Widget.t) =>
+let make =
+    (
+      ~widget: Types.Widget.t,
+      ~state: widgetState,
+      ~onCheck: WidgetInput.t => unit,
+    ) =>
   switch (widget) {
   | InteractiveCode(widget) => <InteractiveCode widget />
-  | MultipleChoices(widget) => <MultipleChoices widget />
+  | MultipleChoices(widget) => <MultipleChoices widget state onCheck />
   | MarkdownText(widget) => <MarkdownText widget />
   };

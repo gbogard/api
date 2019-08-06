@@ -8,7 +8,9 @@ type action =
   | SetCurrentCourse(result(course, nothing))
   | SetCurrentPageId(option(string))
   | FetchCourses
-  | FetchCourse(string);
+  | FetchCourse(string)
+  | CheckWidget(string, WidgetInput.t)
+  | SetWidgetState(string, widgetState);
 
 module Effects = {
   let fetchCourses = ({send}) => {
@@ -34,6 +36,16 @@ module Effects = {
     |> ignore;
     None;
   };
+
+  let checkWidget = (id, widgetInput, {send}) => {
+    CoursesService.checkWidget(id, widgetInput)
+    |> then_(widgetState => {
+         send(SetWidgetState(id, widgetState));
+         resolve();
+       })
+    |> ignore;
+    None;
+  };
 };
 
 module State = {
@@ -53,6 +65,11 @@ module State = {
     widgetsState: Map.empty,
   };
 
+  let setWidgetState = (widgetId, widgetState, state) => {
+    ...state,
+    widgetsState: Map.set(state.widgetsState, widgetId, widgetState),
+  };
+
   let reducer = (action, state) =>
     switch (action) {
     | FetchCourses =>
@@ -65,5 +82,12 @@ module State = {
     | SetCurrentPageId(id) => Update({...state, currentPageId: id})
     | SetCourses(courses) => Update({...state, list: courses})
     | SetCurrentCourse(course) => Update({...state, currentCourse: course})
+    | SetWidgetState(id, widgetState) =>
+      Update(setWidgetState(id, widgetState, state))
+    | CheckWidget(id, input) =>
+      UpdateWithSideEffects(
+        setWidgetState(id, Pending, state),
+        Effects.checkWidget(id, input),
+      )
     };
 };
