@@ -7,6 +7,8 @@ module Decode = {
   exception WrongLanguage;
   exception WrongPageType;
 
+  let nothing = _json => Nothing;
+
   let language = language =>
     language
     |> Json.Decode.string

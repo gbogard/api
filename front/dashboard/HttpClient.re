@@ -9,7 +9,8 @@ let fetch =
       ~body=?,
       ~headers=?,
       (),
-    ) =>
+    )
+    : Js.Promise.t(result(Fetch.Response.t, Fetch.Response.t)) =>
   Js.Promise.(
     Fetch.fetchWithInit(
       baseUrl ++ endpoint,
@@ -30,38 +31,24 @@ let fetch =
        })
   );
 
-let fetchJson =
+let responseToJson =
     (
-      ~endpoint,
-      ~baseUrl=Configuration.apiUrl,
-      ~method=Fetch.Get,
-      ~successDecoder: Serialization.decoder('a),
-      ~errorDecoder: option(Serialization.decoder('b))=?,
-      ~headers=?,
-      ~body=?,
-      (),
-    ) => {
-  let errorDecoder: Serialization.decoder('b) =
-    errorDecoder |> Option.default(successDecoder);
-
-  let decodeResponse = (decoder, response) =>
-    Js.Promise.(
-      Fetch.Response.json(response)
-      |> then_(json => resolve(decoder(json)))
-      |> then_(res => resolve(Success(res)))
-    );
-
+      successDecoder: Serialization.decoder('a),
+      errorDecoder: Serialization.decoder('b),
+      response: result(Fetch.Response.t, Fetch.Response.t),
+    ) =>
   Js.Promise.(
-    fetch(~baseUrl, ~endpoint, ~method, ~headers?, ~body?, ())
-    |> then_(
-         fun
-         | Success(response) => decodeResponse(successDecoder, response)
-         | ClientError(response) => decodeResponse(errorDecoder, response)
-         | _ => resolve(Failed),
-       )
-    |> catch(error => {
-         Js.Console.error(error);
-         resolve(Failed);
-       })
+    switch (response) {
+    | Success(res) =>
+      res
+      |> Fetch.Response.json
+      |> then_(json => resolve(Success(successDecoder(json))))
+    | ClientError(res) =>
+      res
+      |> Fetch.Response.json
+      |> then_(json => resolve(ClientError(errorDecoder(json))))
+    | Failed => resolve(Failed)
+    | NotAsked => resolve(Failed)
+    | Loading => resolve(Loading)
+    }
   );
-};

@@ -1,3 +1,6 @@
+type nothing =
+  | Nothing;
+
 type result('a, 'b) =
   | NotAsked
   | Loading

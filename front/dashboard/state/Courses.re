@@ -4,8 +4,8 @@ open Js.Promise;
 open Belt;
 
 type action =
-  | SetCourses(result(list(courseManifest)))
-  | SetCurrentCourse(result(course))
+  | SetCourses(result(list(courseManifest), nothing))
+  | SetCurrentCourse(result(course, nothing))
   | SetCurrentPageId(option(string))
   | FetchCourses
   | FetchCourse(string);
@@ -37,16 +37,20 @@ module Effects = {
 };
 
 module State = {
+  module Map = Belt.Map.String;
+
   type t = {
-    list: result(list(courseManifest)),
-    currentCourse: result(course),
+    list: result(list(courseManifest), nothing),
+    currentCourse: result(course, nothing),
     currentPageId: option(string),
+    widgetsState: Map.t(widgetState),
   };
 
   let initial = {
     list: NotAsked,
     currentCourse: NotAsked,
     currentPageId: None,
+    widgetsState: Map.empty,
   };
 
   let reducer = (action, state) =>
