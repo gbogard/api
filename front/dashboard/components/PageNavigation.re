@@ -17,7 +17,7 @@ let make = (~pages: list(Page.t), ~currentPageId, ~onChange) =>
                } else {
                  "";
                };
-             <li className onClick={_ => onChange(id)}>
+             <li key=id className onClick={_ => onChange(id)}>
                {React.string(title)}
              </li>;
            })

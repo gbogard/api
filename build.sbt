@@ -9,7 +9,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "lambdacademy"
   )
-  .aggregate(domain, infrastructure, application)
+  .aggregate(domain, infrastructure, application, library)
 
 lazy val domain = (project in file("domain"))
   .settings(

@@ -54,7 +54,7 @@ module Widget = {
 };
 
 module WidgetInput = {
-  type multipleChoicesInput = {answerId: string};
+  type multipleChoicesInput = {answerId: int};
 
   type t =
     | MultipleChoicesInput(multipleChoicesInput);

@@ -13,6 +13,7 @@ let fetchCourse = id =>
 let checkWidget = (id, input: WidgetInput.t): Js.Promise.t(widgetState) =>
   Js.Promise.(
     fetch(
+      ~method=Fetch.Post,
       ~endpoint="/checkWidget/" ++ id,
       ~body=
         Fetch.BodyInit.make(

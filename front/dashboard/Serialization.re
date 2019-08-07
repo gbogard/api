@@ -134,7 +134,7 @@ module Encode = {
     open WidgetInput;
 
     let multipleChoicesInput = (input: multipleChoicesInput) =>
-      Json.Encode.(object_([("answerId", string(input.answerId))]));
+      Json.Encode.(object_([("answerId", int(input.answerId))]));
 
     let encode =
       fun

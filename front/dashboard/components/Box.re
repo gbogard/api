@@ -1,7 +1,7 @@
 open Rationale;
 
 [@react.component]
-let make = (~title=?, ~children) =>
+let make = (~title=?, ~isLoading=false, ~children) =>
   <div className="box">
     {
       title
@@ -9,4 +9,5 @@ let make = (~title=?, ~children) =>
       |> Option.default(React.null)
     }
     <div className="content"> children </div>
+    {isLoading ? <div className="loading-overlay" /> : React.null}
   </div>;
