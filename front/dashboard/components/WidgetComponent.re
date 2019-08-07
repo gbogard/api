@@ -8,6 +8,7 @@ module MultipleChoices = {
         ~widget: Widget.MultipleChoices.t,
         ~state: widgetState,
         ~onCheck: WidgetInput.t => unit,
+        ~resetWidget,
       ) => {
     let (currentlySelectedAnswer, setCurrentlySelectedAnswer) =
       React.useState(() => None);
@@ -21,6 +22,11 @@ module MultipleChoices = {
         |> Belt.List.shuffle
       );
 
+    let selectProposition = (id, _) => {
+      resetWidget();
+      setCurrentlySelectedAnswer(_ => Some(id));
+    };
+
     let checkWidget = () =>
       switch (currentlySelectedAnswer) {
       | Some(id) => onCheck(MultipleChoicesInput({answerId: id}))
@@ -32,17 +38,22 @@ module MultipleChoices = {
       |> List.map((proposition: Widget.MultipleChoices.proposition) => {
            let elementId =
              widget.id ++ "--mc-radio--" ++ string_of_int(proposition.id);
+           let className =
+             switch (state, currentlySelectedAnswer) {
+             | (Right(_), Some(id)) when id === proposition.id => "text-success"
+             | (Wrong(_), Some(id)) when id === proposition.id => "text-danger"
+             | _ => ""
+             };
 
            <div className="radio" key=elementId>
-             <label htmlFor=elementId>
+             <label htmlFor=elementId className>
                <input
                  id=elementId
                  type_="radio"
+                 disabled={Utils.WidgetState.isRight(state)}
                  value={string_of_int(proposition.id)}
                  checked={currentlySelectedAnswer === Some(proposition.id)}
-                 onChange={
-                   _ => setCurrentlySelectedAnswer(_ => Some(proposition.id))
-                 }
+                 onChange={selectProposition(proposition.id)}
                />
                {React.string(" " ++ proposition.value)}
              </label>
@@ -54,15 +65,17 @@ module MultipleChoices = {
     <Box isLoading={state === Pending}>
       <h5> {React.string(widget.question.value)} </h5>
       items
-      <button onClick={_ => checkWidget()}> {React.string("Check!")} </button>
-      {React.string("State :")}
+      <br />
+      <button
+        className="button button-info"
+        onClick={_ => checkWidget()}
+        disabled={Utils.WidgetState.isRight(state)}>
+        {React.string("Check!")}
+      </button>
       {
-        switch (state) {
-        | Right(output) => React.string("Right")
-        | Wrong(_) => React.string("Wrong")
-        | Pending => React.string("Pending")
-        | _ => React.string("Initial")
-        }
+        Utils.WidgetState.isRight(state) ?
+          <i className="ion ion-ios-checkmark-circle text-success" /> :
+          React.null
       }
     </Box>;
   };
@@ -90,9 +103,11 @@ let make =
       ~widget: Types.Widget.t,
       ~state: widgetState,
       ~onCheck: WidgetInput.t => unit,
+      ~resetWidget: unit => unit,
     ) =>
   switch (widget) {
   | InteractiveCode(widget) => <InteractiveCode widget />
-  | MultipleChoices(widget) => <MultipleChoices widget state onCheck />
+  | MultipleChoices(widget) =>
+    <MultipleChoices widget state onCheck resetWidget />
   | MarkdownText(widget) => <MarkdownText widget />
   };

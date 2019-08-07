@@ -27,3 +27,10 @@ module Widget = {
     | MultipleChoices(w) => w.id
     | InteractiveCode(w) => w.id;
 };
+
+module WidgetState = {
+  let isRight =
+    fun
+    | Right(_) => true
+    | _ => false;
+};

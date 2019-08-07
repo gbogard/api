@@ -3,7 +3,7 @@ open Store.State;
 open Courses;
 open Rationale;
 
-let renderWidgets = (widgets, onCheck, widgetsState) =>
+let renderWidgets = (widgets, onCheck, widgetsState, resetWidget) =>
   widgets
   |> List.map(w => {
        let widgetId = Utils.Widget.extractId(w);
@@ -14,6 +14,7 @@ let renderWidgets = (widgets, onCheck, widgetsState) =>
          widget=w
          state
          onCheck={input => onCheck(widgetId, input)}
+         resetWidget={() => resetWidget(widgetId)}
        />;
      })
   |> Array.of_list
@@ -28,6 +29,7 @@ module SimplePage = {
         ~setCurrentPage,
         ~widgetsState,
         ~checkWidget,
+        ~resetWidget,
       ) => {
     let firstPageId =
       course.pages |> RList.head |> Option.map(Utils.Page.extractId);
@@ -52,7 +54,7 @@ module SimplePage = {
           }
         }
         <h2> {React.string(page.title)} </h2>
-        {renderWidgets(page.widgets, checkWidget, widgetsState)}
+        {renderWidgets(page.widgets, checkWidget, widgetsState, resetWidget)}
       </div>
     </div>;
   };
@@ -68,11 +70,25 @@ let findPage = (course, id) =>
   RList.find(p => Utils.Page.extractId(p) == id, course.pages);
 
 let renderCourse =
-    (pageIdOpt, setCurrentPage, widgetsState, checkWidget, course) => {
+    (
+      pageIdOpt,
+      setCurrentPage,
+      widgetsState,
+      checkWidget,
+      resetWidget,
+      course,
+    ) => {
   let pageOpt = pageIdOpt |> Option.flatMap(findPage(course));
   switch (pageOpt) {
   | Some(Page.SimplePage(p)) =>
-    <SimplePage page=p course setCurrentPage widgetsState checkWidget />
+    <SimplePage
+      page=p
+      course
+      setCurrentPage
+      widgetsState
+      checkWidget
+      resetWidget
+    />
   | Some(Page.CodePage(p)) => <CodePage page=p />
   | _ => React.null
   };
@@ -93,12 +109,16 @@ let make = (~id: string) => {
   let checkWidgeet = (id, input) =>
     dispatch(CoursesAction(CheckWidget(id, input)));
 
+  let resetWidget = id =>
+    dispatch(CoursesAction(SetWidgetState(id, Initial)));
+
   Loader.renderResult(
     renderCourse(
       courses.currentPageId,
       setCurrentPage,
       courses.widgetsState,
       checkWidgeet,
+      resetWidget,
     ),
     courses.currentCourse,
   );
