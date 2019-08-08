@@ -1,4 +1,4 @@
-package lambda.coursetemplateengine
+package lambda.courseTemplateEngine
 
 import lambda.domain.courses.widgets._
 import io.circe.yaml.parser

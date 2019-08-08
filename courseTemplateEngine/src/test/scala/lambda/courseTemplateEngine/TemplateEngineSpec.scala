@@ -1,4 +1,4 @@
-package lambda.coursetemplateengine
+package lambda.courseTemplateEngine
 
 import org.scalatest._
 import lambda.domain.courses.widgets._

@@ -7,6 +7,7 @@ COPY application ./application
 COPY domain ./domain
 COPY infrastructure ./infrastructure
 COPY library ./library
+COPY courseTemplateEngine ./courseTemplateEngine
 COPY project ./project
 
 RUN sbt infrastructure/assembly

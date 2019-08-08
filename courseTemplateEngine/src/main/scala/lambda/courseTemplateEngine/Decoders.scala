@@ -1,4 +1,4 @@
-package lambda.coursetemplateengine
+package lambda.courseTemplateEngine
 
 import cats.syntax.functor._
 import io.circe._

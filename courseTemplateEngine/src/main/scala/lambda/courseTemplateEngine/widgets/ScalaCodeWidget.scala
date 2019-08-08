@@ -1,4 +1,4 @@
-package lambda.coursetemplateengine.widgets
+package lambda.courseTemplateEngine.widgets
 import lambda.domain.code.ScalaCodeRunner.ScalaDependency
 
 case class ScalaCodeWidget(
