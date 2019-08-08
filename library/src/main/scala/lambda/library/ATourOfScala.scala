@@ -4,80 +4,11 @@ import lambda.domain.courses.Page.SimplePage
 import lambda.domain.courses.Page.PageId
 import lambda.domain.courses.Course
 import lambda.domain.courses.Course.CourseId
-import lambda.domain.courses.widgets._
-import lambda.domain.courses.widgets.MultipleChoices._
-import lambda.domain.courses.widgets.InteractiveCodeWidget._
-import lambda.domain.courses.widgets.WidgetInput.AnswerId
+import Utils._
 
 object ATourOfScala {
 
   private val id: String = "a-tour-of-scala"
-
-  private val firstPage = SimplePage(
-    pageId(1),
-    "What is Scala ?",
-    List(
-      MarkdownText(
-        widgetId(1, 1),
-        Utils.unsafeTextFromResource("a-tour-of-scala/page1/intro.md")
-      ),
-      MultipleChoices(
-        widgetId(1, 2),
-        required = true,
-        Question(
-          "What is Scala ?",
-          Answer(
-            AnswerId(1),
-            "An object-oriented AND functional programming language"
-          ),
-          List(
-            Answer(AnswerId(2), "A general-purpose, object-oriented language only"),
-            Answer(AnswerId(3), "A functional programming language only"),
-            Answer(AnswerId(4), "A low-level, system programming language")
-          )
-        )
-      ),
-      Scala2CodeWidget(
-        widgetId(1, 3),
-        baseFiles = Nil,
-        mainClass = "Main"
-      )
-    )
-  )
-
-  private val secondPage = SimplePage(
-    pageId(2),
-    "Expressions",
-    List(
-      MarkdownText(
-        widgetId(2, 1),
-        """
-        Hello there
-        """
-      ),
-      MultipleChoices(
-        widgetId(2, 2),
-        required = true,
-        Question(
-          "What is Scala ?",
-          Answer(
-            AnswerId(1),
-            "An object-oriented AND functional programming language"
-          ),
-          List(
-            Answer(AnswerId(2), "A general-purpose, object-oriented language only"),
-            Answer(AnswerId(3), "A functional programming language only"),
-            Answer(AnswerId(4), "A low-level, system programming language")
-          )
-        )
-      ),
-      Scala2CodeWidget(
-        widgetId(2, 3),
-        baseFiles = Nil,
-        mainClass = "Main"
-      )
-    )
-  )
 
   val course = Course(
     CourseId(id),
@@ -85,11 +16,18 @@ object ATourOfScala {
     "Scala is an expressive, statically typed programming language that is both functional and object oriented.",
     Nil,
     List(
-      firstPage,
-      secondPage
+      SimplePage(
+        pageId(1),
+        "What is Scala ?",
+        lambda.coursetemplateengine.parse(unsafeTextFromResource("a-tour-of-scala/1-intro.md"), id).right.get
+      ),
+      SimplePage(
+        pageId(2),
+        "Expressions",
+        lambda.coursetemplateengine.parse(unsafeTextFromResource("a-tour-of-scala/2-expressions.md"), id).right.get
+      )
     )
   )
 
   private def pageId(nb: Int): PageId = PageId(s"$id-page-$nb")
-  private def widgetId(pageNb: Int, widgetNb: Int): WidgetId = WidgetId(s"$id-widget-$pageNb$widgetNb")
 }

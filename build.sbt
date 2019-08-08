@@ -46,9 +46,19 @@ lazy val infrastructure = (project in file("infrastructure"))
         commonsIO,
         approvals % Test,
         scalaTest % Test
-      ),
+      )
   )
   .dependsOn(domain, application, library)
+
+lazy val courseTemplateEngine = (project in file("courseTemplateEngine"))
+  .settings(
+    name := "courseTemplateEngine",
+    libraryDependencies ++= Circe.all ++ Seq(
+      commonsIO,
+      scalaTest % Test
+    )
+  )
+  .dependsOn(domain)
 
 lazy val library = (project in file("library"))
   .settings(
@@ -57,7 +67,7 @@ lazy val library = (project in file("library"))
       scalaTest % Test
     )
   )
-  .dependsOn(domain)
+  .dependsOn(domain, courseTemplateEngine)
 
 ThisBuild / scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -108,8 +118,8 @@ ThisBuild / scalacOptions ++= Seq(
   "-Ywarn-value-discard" // Warn when non-Unit expression results are unused.
 )
 
-coverageEnabled in(Test, compile) := true
-coverageEnabled in(Compile, compile) := false
+coverageEnabled in (Test, compile) := true
+coverageEnabled in (Compile, compile) := false
 ThisBuild / coverageMinimum := 90
 ThisBuild / coverageFailOnMinimum := true
 ThisBuild / coverageExcludedPackages := Seq(
