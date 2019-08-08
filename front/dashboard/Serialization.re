@@ -7,6 +7,8 @@ module Decode = {
   exception WrongLanguage;
   exception WrongPageType;
 
+  let nothing = _json => Nothing;
+
   let language = language =>
     language
     |> Json.Decode.string
@@ -76,6 +78,18 @@ module Decode = {
       );
   };
 
+  module WidgetOutput = {
+    open WidgetOutput;
+
+    let decode = _json => RightAnswer;
+  };
+
+  module WidgetError = {
+    open WidgetError;
+
+    let decode = _json => WrongAnswer;
+  };
+
   module Page = {
     let simplePage = json: Page.simplePage =>
       Json.Decode.{
@@ -113,4 +127,17 @@ module Decode = {
     };
 
   let courses = Json.Decode.list(course);
+};
+
+module Encode = {
+  module WidgetInput = {
+    open WidgetInput;
+
+    let multipleChoicesInput = (input: multipleChoicesInput) =>
+      Json.Encode.(object_([("answerId", int(input.answerId))]));
+
+    let encode =
+      fun
+      | MultipleChoicesInput(input) => multipleChoicesInput(input);
+  };
 };

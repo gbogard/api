@@ -1,4 +1,5 @@
 open Types;
+open Widget;
 
 module Result = {
   let toOption =
@@ -17,4 +18,19 @@ module Page = {
     fun
     | Page.SimplePage(p) => p.title
     | Page.CodePage(p) => p.title;
+};
+
+module Widget = {
+  let extractId =
+    fun
+    | MarkdownText(w) => w.id
+    | MultipleChoices(w) => w.id
+    | InteractiveCode(w) => w.id;
+};
+
+module WidgetState = {
+  let isRight =
+    fun
+    | Right(_) => true
+    | _ => false;
 };

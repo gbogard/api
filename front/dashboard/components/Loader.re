@@ -1,9 +1,9 @@
 open Types;
 
-let renderResult = (fn, result: result('a)) =>
-  switch (result) {
+let renderResult = fn =>
+  fun
   | NotAsked => React.null
   | Loading => React.string("Loading ...")
-  | Failed => React.string("Failed")
-  | Success(data) => fn(data)
-  };
+  | Failed
+  | ClientError(_) => React.string("Failed")
+  | Success(data) => fn(data);

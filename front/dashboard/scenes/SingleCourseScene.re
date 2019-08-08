@@ -3,15 +3,34 @@ open Store.State;
 open Courses;
 open Rationale;
 
-let renderWidgets = widgets =>
+let renderWidgets = (widgets, onCheck, widgetsState, resetWidget) =>
   widgets
-  |> List.map(w => <WidgetComponent widget=w />)
+  |> List.map(w => {
+       let widgetId = Utils.Widget.extractId(w);
+       let state =
+         Courses.State.Map.getWithDefault(widgetsState, widgetId, Initial);
+       <WidgetComponent
+         key={Utils.Widget.extractId(w)}
+         widget=w
+         state
+         onCheck={input => onCheck(widgetId, input)}
+         resetWidget={() => resetWidget(widgetId)}
+       />;
+     })
   |> Array.of_list
   |> React.array;
 
 module SimplePage = {
   [@react.component]
-  let make = (~page: Page.simplePage, ~course, ~setCurrentPage) => {
+  let make =
+      (
+        ~page: Page.simplePage,
+        ~course,
+        ~setCurrentPage,
+        ~widgetsState,
+        ~checkWidget,
+        ~resetWidget,
+      ) => {
     let firstPageId =
       course.pages |> RList.head |> Option.map(Utils.Page.extractId);
     let isFirstPage =
@@ -35,7 +54,7 @@ module SimplePage = {
           }
         }
         <h2> {React.string(page.title)} </h2>
-        {page.widgets |> renderWidgets}
+        {renderWidgets(page.widgets, checkWidget, widgetsState, resetWidget)}
       </div>
     </div>;
   };
@@ -50,10 +69,26 @@ module CodePage = {
 let findPage = (course, id) =>
   RList.find(p => Utils.Page.extractId(p) == id, course.pages);
 
-let renderCourse = (pageIdOpt, setCurrentPage, course) => {
+let renderCourse =
+    (
+      pageIdOpt,
+      setCurrentPage,
+      widgetsState,
+      checkWidget,
+      resetWidget,
+      course,
+    ) => {
   let pageOpt = pageIdOpt |> Option.flatMap(findPage(course));
   switch (pageOpt) {
-  | Some(Page.SimplePage(p)) => <SimplePage page=p course setCurrentPage />
+  | Some(Page.SimplePage(p)) =>
+    <SimplePage
+      page=p
+      course
+      setCurrentPage
+      widgetsState
+      checkWidget
+      resetWidget
+    />
   | Some(Page.CodePage(p)) => <CodePage page=p />
   | _ => React.null
   };
@@ -71,8 +106,20 @@ let make = (~id: string) => {
   let setCurrentPage = id =>
     dispatch(CoursesAction(SetCurrentPageId(Some(id))));
 
+  let checkWidgeet = (id, input) =>
+    dispatch(CoursesAction(CheckWidget(id, input)));
+
+  let resetWidget = id =>
+    dispatch(CoursesAction(SetWidgetState(id, Initial)));
+
   Loader.renderResult(
-    renderCourse(courses.currentPageId, setCurrentPage),
+    renderCourse(
+      courses.currentPageId,
+      setCurrentPage,
+      courses.widgetsState,
+      checkWidgeet,
+      resetWidget,
+    ),
     courses.currentCourse,
   );
 };

@@ -33,7 +33,7 @@ object ATourOfScala {
           List(
             Answer(AnswerId(2), "A general-purpose, object-oriented language only"),
             Answer(AnswerId(3), "A functional programming language only"),
-            Answer(AnswerId(3), "A low-level, system programming language")
+            Answer(AnswerId(4), "A low-level, system programming language")
           )
         )
       ),
@@ -50,13 +50,13 @@ object ATourOfScala {
     "Expressions",
     List(
       MarkdownText(
-        widgetId(1, 1),
+        widgetId(2, 1),
         """
         Hello there
         """
       ),
       MultipleChoices(
-        widgetId(1, 2),
+        widgetId(2, 2),
         required = true,
         Question(
           "What is Scala ?",
@@ -67,12 +67,12 @@ object ATourOfScala {
           List(
             Answer(AnswerId(2), "A general-purpose, object-oriented language only"),
             Answer(AnswerId(3), "A functional programming language only"),
-            Answer(AnswerId(3), "A low-level, system programming language")
+            Answer(AnswerId(4), "A low-level, system programming language")
           )
         )
       ),
       Scala2CodeWidget(
-        widgetId(1, 3),
+        widgetId(2, 3),
         baseFiles = Nil,
         mainClass = "Main"
       )

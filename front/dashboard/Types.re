@@ -1,9 +1,12 @@
-type result('a) =
+type nothing =
+  | Nothing;
+
+type result('a, 'b) =
   | NotAsked
   | Loading
   | Failed
+  | ClientError('b)
   | Success('a);
-
 type user = {
   id: string,
   username: string,
@@ -49,6 +52,29 @@ module Widget = {
     | MultipleChoices(MultipleChoices.t)
     | InteractiveCode(interactiveCode);
 };
+
+module WidgetInput = {
+  type multipleChoicesInput = {answerId: int};
+
+  type t =
+    | MultipleChoicesInput(multipleChoicesInput);
+};
+
+module WidgetOutput = {
+  type t =
+    | RightAnswer;
+};
+
+module WidgetError = {
+  type t =
+    | WrongAnswer;
+};
+
+type widgetState =
+  | Initial
+  | Pending
+  | Right(WidgetOutput.t)
+  | Wrong(WidgetError.t);
 
 module Page = {
   type simplePage = {

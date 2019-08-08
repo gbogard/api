@@ -3,6 +3,7 @@
   border: solid 1px $light;
   border-radius: $baseBorderRadius;
   margin-bottom: $spacer;
+  position: relative;
   .title {
     padding: $spacer;
     border-bottom: solid 1px $light;
@@ -11,5 +12,16 @@
   }
   .content {
     padding: $spacer;
+    h5 {
+      margin-top: $spacer/2;
+    }
+  }
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, .75);
   }
 }
