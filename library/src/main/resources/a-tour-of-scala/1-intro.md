@@ -26,6 +26,25 @@ as *if/else*. We don't make the distinction between expression and statement lik
 
 The powerful *pattern matching* feature allows to destructure and transform expressions in a concise way.
 
+Can you guess what this code does ?
+
+----
+scala:
+  defaultValue: |
+    case class User(name: String, age: Int)
+
+    def greetUser(user: User) = user match {
+      case User("Jane", _) => println("Hi there, Jane")
+      case User("Bob", _) => println("Nice to see you Bob!")
+      case User(name, age) => println(s"Hey there $name, $age is great age to learn Scala!")
+    }
+  
+    greetUser(User("Jane", 28))
+----
+
+Try to modify the last line to get different results. Put "Bob" in place of Jane, or put your own
+name and age!
+
 ### Scala is functional
 
 Scala is a functional language in the sense that functions are first-class citizens. Scala's functions

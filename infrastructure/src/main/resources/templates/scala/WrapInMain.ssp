@@ -1,0 +1,5 @@
+<%@ var userInput:String %>
+
+object Main extends App {
+ ${name}  
+}
