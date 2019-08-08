@@ -83,8 +83,22 @@ module MultipleChoices = {
 
 module InteractiveCode = {
   [@react.component]
-  let make = (~widget: Widget.interactiveCode) =>
-    <Box> {React.string("Interactive code")} </Box>;
+  let make = (~widget: Widget.interactiveCode) => {
+    let editorRef = React.useRef(Js.Nullable.null);
+
+    React.useEffect0(() => {
+      editorRef
+      |> React.Ref.current
+      |> Js.Nullable.toOption
+      |> Belt.Option.getExn
+      |> Interop.Ace.create;
+      None;
+    });
+
+    <div className="code-widget">
+      <div className="editor" ref={ReactDOMRe.Ref.domRef(editorRef)} />
+    </div>;
+  };
 };
 
 module MarkdownText = {

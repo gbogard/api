@@ -1,0 +1,8 @@
+.code-widget {
+  @extend .box;
+  padding: 0;
+
+  .editor {
+    height: 300px;
+  }
+}
