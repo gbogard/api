@@ -23,7 +23,7 @@ class LibraryCourseRepositorySpec extends FunSpec with Matchers {
     }
 
     it("Should return a widget when it exists in the library") {
-      LibraryCourseRepository.getWidget(WidgetId("a-tour-of-scala-widget-11")).value.unsafeRunSync() shouldBe
+      LibraryCourseRepository.getWidget(WidgetId("a-tour-of-scala-intro--widget-0")).value.unsafeRunSync() shouldBe
         Some(ATourOfScala.course.pages.head.asInstanceOf[SimplePage].widgets.head)
     }
 

@@ -19,12 +19,12 @@ object ATourOfScala {
       SimplePage(
         pageId(1),
         "What is Scala ?",
-        lambda.coursetemplateengine.parse(unsafeTextFromResource("a-tour-of-scala/1-intro.md"), id).right.get
+        lambda.coursetemplateengine.parse(unsafeTextFromResource("a-tour-of-scala/1-intro.md"), s"$id-intro").right.get
       ),
       SimplePage(
         pageId(2),
         "Expressions",
-        lambda.coursetemplateengine.parse(unsafeTextFromResource("a-tour-of-scala/2-expressions.md"), id).right.get
+        lambda.coursetemplateengine.parse(unsafeTextFromResource("a-tour-of-scala/2-expressions.md"), s"$id-expressions").right.get
       )
     )
   )
