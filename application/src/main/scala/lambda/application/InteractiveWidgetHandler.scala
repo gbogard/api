@@ -2,7 +2,6 @@ package lambda.application
 
 import cats.effect._
 import cats.implicits._
-import cats.Parallel
 import cats.data.EitherT
 import lambda.domain.code._
 import lambda.domain.code.Language.Scala2
@@ -33,8 +32,7 @@ object InteractiveWidgetHandler {
       widget: InteractiveWidget,
       input: WidgetInput
   )(
-      implicit ctx: WidgetHandlerContext[F],
-      par: Parallel[F, Par]
+      implicit ctx: WidgetHandlerContext[F]
   ): Result[F] = (widget, input) match {
     case (w: MultipleChoices, i: AnswerId)        => EitherT.fromEither(checkMultipleChoices(w, i))
     case (w: InteractiveCodeWidget, i: CodeInput) => executeInteractiveCode(w, i)
@@ -50,9 +48,9 @@ object InteractiveWidgetHandler {
   private def renderFiles[F[_]: Sync, Par[_]](
       files: List[SourceFile],
       userInput: String
-  )(implicit parallel: Parallel[F, Par], ctx: WidgetHandlerContext[F]): Resource[F, List[File]] =
+  )(implicit ctx: WidgetHandlerContext[F]): Resource[F, List[File]] =
     for {
-      baseFiles <- Resource.liftF(files.parTraverse(ctx.sourceFileHandler(_)))
+      baseFiles <- files.traverse(ctx.sourceFileHandler(_))
       (templateFiles, basicFiles) = baseFiles.partition(ctx.templateEngine.canRender)
       params = Map("userInput" -> userInput)
       output <- ctx.templateEngine.render(templateFiles, params)
@@ -61,7 +59,7 @@ object InteractiveWidgetHandler {
   private def executeInteractiveCode[F[_]: Sync, Par[_]](
       widget: InteractiveCodeWidget,
       input: CodeInput
-  )(implicit parallel: Parallel[F, Par], ctx: WidgetHandlerContext[F]): Result[F] =
+  )(implicit ctx: WidgetHandlerContext[F]): Result[F] =
     widget match {
       case s: Scala2CodeWidget if input.language == Scala2 =>
         EitherT(renderFiles(s.baseFiles, input.code) use { renderedFiles =>

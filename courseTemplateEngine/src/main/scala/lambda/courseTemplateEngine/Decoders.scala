@@ -46,7 +46,7 @@ object Decoders {
         InteractiveCodeWidget.Scala2CodeWidget(
           id,
           baseFiles = s.baseFiles
-            .getOrElse(List("templates/scala/WrapInMain.ssp"))
+            .getOrElse(List("/templates/scala/WrapInMain.ssp"))
             .map(SourceFile.ClasspathResource(_)),
           mainClass = s.mainClass.getOrElse("Main"),
           dependencies = s.dependencies.getOrElse(Nil),

@@ -176,15 +176,13 @@ class ScalaCodeRunnerSpec extends Approbation {
       assertion: Either[String, String] => IO[Assertion],
       timeout: FiniteDuration = 30 seconds
   ): Future[Assertion] = {
-    resources
-      .parTraverse(Utils.readResource[IO](_))
-      .flatMap(
-        files =>
-          ScalaCodeRunnerImpl
+    (resources
+      .traverse(Utils.readResource[IO](_)) use { files =>
+      ScalaCodeRunnerImpl
             .run(files, mainClass, dependencies, timeout)
             .leftMap((normalizeEndings _) andThen (limitLines(_)))
             .value
-      )
+      })
       .flatMap(assertion)
       .unsafeToFuture()
   }

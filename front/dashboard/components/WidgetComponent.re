@@ -90,7 +90,8 @@ module InteractiveCode = {
         ~onCheck: WidgetInput.t => unit,
       ) => {
     let editorRef = React.useRef(Js.Nullable.null);
-    let (_editorContent, setEditorContent) =
+
+    let (editorContent, setEditorContent) =
       React.useState(() => widget.defaultValue);
 
     React.useEffect0(() => {
@@ -103,7 +104,7 @@ module InteractiveCode = {
              _,
              Interop.Ace.options(
                ~mode="ace/mode/scala",
-               ~fontSize="1rem",
+               ~fontSize=".75rem",
                ~theme="ace/theme/chrome",
                (),
              ),
@@ -114,8 +115,15 @@ module InteractiveCode = {
       None;
     });
 
+    let checkWidget = _ =>
+      onCheck(
+        WidgetInput.CodeInput({code: editorContent, language: Scala2}),
+      );
+
     <div className="code-widget">
-      <div className="topbar"> <button> {React.string("run")} </button> </div>
+      <div className="topbar">
+        <button onClick=checkWidget> {React.string("run")} </button>
+      </div>
       <div className="editor" ref={ReactDOMRe.Ref.domRef(editorRef)} />
     </div>;
   };

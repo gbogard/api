@@ -14,7 +14,7 @@ module Decode = {
     |> Json.Decode.string
     |> (
       fun
-      | "scala" => Scala2
+      | "scala2" => Scala2
       | _ => raise(WrongLanguage)
     );
 
@@ -130,14 +130,26 @@ module Decode = {
 };
 
 module Encode = {
+  let language =
+    fun
+    | Scala2 => Json.Encode.string("scala2");
   module WidgetInput = {
     open WidgetInput;
 
     let multipleChoicesInput = (input: multipleChoicesInput) =>
       Json.Encode.(object_([("answerId", int(input.answerId))]));
 
+    let codeInput = (input: codeInput) =>
+      Json.Encode.(
+        object_([
+          ("code", string(input.code)),
+          ("language", language(input.language)),
+        ])
+      );
+
     let encode =
       fun
-      | MultipleChoicesInput(input) => multipleChoicesInput(input);
+      | MultipleChoicesInput(input) => multipleChoicesInput(input)
+      | CodeInput(input) => codeInput(input);
   };
 };

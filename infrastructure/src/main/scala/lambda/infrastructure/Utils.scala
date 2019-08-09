@@ -12,9 +12,19 @@ import com.typesafe.scalalogging.StrictLogging
 import lambda.domain.code._
 
 object Utils extends StrictLogging {
+  def readResource[F[_]: Sync](resourceName: String): Resource[F, File] = {
+    def acquire = Sync[F].delay {
+      val id = s"$resourceName-UUID.randomUUID()"
+      val file = File.createTempFile(id, ".resource")
+      FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(resourceName), file)
+      file
+    }
 
-  def readResource[F[_]: Sync](resourceName: String): F[File] = Sync[F].delay {
-    new File(getClass().getClassLoader().getResource(resourceName).toURI())
+    def release(f: File) = Sync[F].delay {
+      f.delete()
+      ()
+    }
+    Resource.make(acquire)(release)
   }
 
   def createTemporaryFolder[F[_]: Sync](): Resource[F, File] = {

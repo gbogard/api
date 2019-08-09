@@ -62,7 +62,6 @@ class TemplateEngineSpec extends FunSpec with Matchers {
     }
 
     it("Should render this complex template properly") {
-      println(template("template-4.md"))
       assert(template("template-4.md").isRight)
     }
   }

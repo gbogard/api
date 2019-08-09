@@ -7,7 +7,7 @@ sealed trait Language {
 object Language {
 
   case object Scala2 extends Language {
-    val id = "scala"
+    val id = "scala2"
   }
   case object Clojure extends Language {
     val id = "clojure"

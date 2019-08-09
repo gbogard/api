@@ -55,9 +55,14 @@ module Widget = {
 
 module WidgetInput = {
   type multipleChoicesInput = {answerId: int};
+  type codeInput = {
+    code: string,
+    language,
+  };
 
   type t =
-    | MultipleChoicesInput(multipleChoicesInput);
+    | MultipleChoicesInput(multipleChoicesInput)
+    | CodeInput(codeInput);
 };
 
 module WidgetOutput = {
