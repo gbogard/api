@@ -12,10 +12,14 @@ import com.typesafe.scalalogging.StrictLogging
 import lambda.domain.code._
 
 object Utils extends StrictLogging {
+
+  def extractExtension(fileName: String): Option[String] =
+    fileName.split('.').lastOption
+
   def readResource[F[_]: Sync](resourceName: String): Resource[F, File] = {
     def acquire = Sync[F].delay {
-      val id = s"$resourceName-UUID.randomUUID()"
-      val file = File.createTempFile(id, ".resource")
+      val id = s"$resourceName-${UUID.randomUUID()}"
+      val file = File.createTempFile(id, "." + extractExtension(resourceName).getOrElse("resource"))
       FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(resourceName), file)
       file
     }

@@ -11,6 +11,11 @@ object TestUtils {
   def limitLines(string: String, limit: Int = 10): String =
     string.split("\n").take(limit).mkString("\n")
 
+  def removeFileRandomIds(fileName: String): String = {
+    val regex = "(\\d|[a-z]|-)*\\.sc:"
+    fileName.replaceAll(regex, "")
+  }
+
   def normalizeEndings(string: String) =
     string.replaceAll("\r\n", "\n").replaceAll("\r", "\n")
 

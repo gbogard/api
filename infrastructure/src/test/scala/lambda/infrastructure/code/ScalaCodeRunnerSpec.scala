@@ -21,7 +21,7 @@ class ScalaCodeRunnerSpec extends Approbation {
           testCodeRunner(
             "Main",
             Nil,
-            "scala/compiles-and-runs.sc" :: Nil,
+            "/scala/compiles-and-runs.sc" :: Nil,
             result =>
               IO {
                 approver.verify(result.right.get)
@@ -34,7 +34,7 @@ class ScalaCodeRunnerSpec extends Approbation {
           testCodeRunner(
             "Main",
             Nil,
-            "scala/compiles-and-fails.sc" :: Nil,
+            "/scala/compiles-and-fails.sc" :: Nil,
             result =>
               IO {
                 approver.verify(result.left.get)
@@ -49,7 +49,7 @@ class ScalaCodeRunnerSpec extends Approbation {
           testCodeRunner(
             "Main",
             Nil,
-            "scala/timeout.sc" :: Nil,
+            "/scala/timeout.sc" :: Nil,
             result =>
               IO {
                 approver.verify(result.left.get)
@@ -65,7 +65,7 @@ class ScalaCodeRunnerSpec extends Approbation {
           testCodeRunner(
             "Main",
             Nil,
-            "scala/does-not-compile.sc" :: Nil,
+            "/scala/does-not-compile.sc" :: Nil,
             result =>
               IO {
                 approver.verify(result.left.get)
@@ -85,8 +85,8 @@ class ScalaCodeRunnerSpec extends Approbation {
             "multi.Main",
             Nil,
             List(
-              "scala/multiple-files-program/Operations.scala",
-              "scala/multiple-files-program/Main.scala"
+              "/scala/multiple-files-program/Operations.scala",
+              "/scala/multiple-files-program/Main.scala"
             ),
             result =>
               IO {
@@ -103,8 +103,8 @@ class ScalaCodeRunnerSpec extends Approbation {
             "toto",
             Nil,
             List(
-              "scala/multiple-files-program/Operations.scala",
-              "scala/multiple-files-program/Main.scala"
+              "/scala/multiple-files-program/Operations.scala",
+              "/scala/multiple-files-program/Main.scala"
             ),
             result =>
               IO {
@@ -127,7 +127,7 @@ class ScalaCodeRunnerSpec extends Approbation {
               ScalaDependency("org.typelevel", "cats-core", "1.6.1")
             ),
             List(
-              "scala/with-cats.sc"
+              "/scala/with-cats.sc"
             ),
             result =>
               IO {
@@ -144,7 +144,7 @@ class ScalaCodeRunnerSpec extends Approbation {
         testCodeRunner(
           "Main",
           Nil,
-          "scala/security/read-files.sc" :: Nil,
+          "/scala/security/read-files.sc" :: Nil,
           result =>
             IO {
               approver.verify(limitLines(result.left.get, 1))
@@ -157,7 +157,7 @@ class ScalaCodeRunnerSpec extends Approbation {
         testCodeRunner(
           "Main",
           Nil,
-          "scala/security/external-process.sc" :: Nil,
+          "/scala/security/external-process.sc" :: Nil,
           result =>
             IO {
               approver.verify(limitLines(result.left.get, 1))
@@ -180,7 +180,7 @@ class ScalaCodeRunnerSpec extends Approbation {
       .traverse(Utils.readResource[IO](_)) use { files =>
       ScalaCodeRunnerImpl
             .run(files, mainClass, dependencies, timeout)
-            .leftMap((normalizeEndings _) andThen (limitLines(_)))
+            .leftMap((normalizeEndings _) andThen (limitLines(_)) andThen (removeFileRandomIds _))
             .value
       })
       .flatMap(assertion)
