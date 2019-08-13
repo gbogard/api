@@ -13,9 +13,7 @@ class SSPTemplateEngineSpec extends Approbation {
     it("Should render the single page template") { approver =>
       (
         for {
-          file <- Resource.liftF(
-            Utils.readResource[IO]("templating/simple-template.ssp")
-          )
+          file <- Utils.readResource[IO]("/templating/simple-template.ssp")
           result <- engine.render(file :: Nil)
           resultContent <- Resource.liftF(IO {
             FileUtils.readFileToString(result.head, StandardCharsets.UTF_8)
@@ -33,9 +31,7 @@ class SSPTemplateEngineSpec extends Approbation {
     it("Should render the single page template with data") { approver =>
       (
         for {
-          file <- Resource.liftF(
-            Utils.readResource[IO]("templating/template-with-arg.ssp")
-          )
+          file <- Utils.readResource[IO]("/templating/template-with-arg.ssp")
           result <- engine.render(file :: Nil, Map("name" -> "Guillaume"))
           resultContent <- Resource.liftF(IO {
             FileUtils.readFileToString(result.head, StandardCharsets.UTF_8)
@@ -53,9 +49,7 @@ class SSPTemplateEngineSpec extends Approbation {
     it("Should render a page with another included page") { approver =>
       (
         for {
-          file <- Resource.liftF(
-            Utils.readResource[IO]("templating/includes/Main.ssp")
-          )
+          file <- Utils.readResource[IO]("/templating/includes/Main.ssp")
           result <- engine.render(file :: Nil)
           resultContent <- Resource.liftF(IO {
             FileUtils.readFileToString(result.head, StandardCharsets.UTF_8)

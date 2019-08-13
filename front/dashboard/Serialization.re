@@ -1,4 +1,5 @@
 open Types;
+open Belt.Result;
 
 type decoder('a) = Js.Json.t => 'a;
 
@@ -14,7 +15,7 @@ module Decode = {
     |> Json.Decode.string
     |> (
       fun
-      | "scala" => Scala2
+      | "scala2" => Scala2
       | _ => raise(WrongLanguage)
     );
 
@@ -81,13 +82,31 @@ module Decode = {
   module WidgetOutput = {
     open WidgetOutput;
 
-    let decode = _json => RightAnswer;
+    let codeOutput = json =>
+      Json.Decode.(CodeOutput(field("output", string, json)));
+
+    let multipleChoices = _json => RightAnswer;
+
+    let decode = json =>
+      [codeOutput, multipleChoices]
+      |> List.map(decoder => Utils.exceptionToResult(() => decoder(json)))
+      |> List.find(isOk)
+      |> Belt.Result.getExn;
   };
 
   module WidgetError = {
     open WidgetError;
 
-    let decode = _json => WrongAnswer;
+    let codeOutput = json =>
+      Json.Decode.(CodeOutput(field("output", string, json)));
+
+    let multipleChoices = _json => WrongAnswer;
+
+    let decode = json =>
+      [codeOutput, multipleChoices]
+      |> List.map(decoder => Utils.exceptionToResult(() => decoder(json)))
+      |> List.find(isOk)
+      |> Belt.Result.getExn;
   };
 
   module Page = {
@@ -130,14 +149,26 @@ module Decode = {
 };
 
 module Encode = {
+  let language =
+    fun
+    | Scala2 => Json.Encode.string("scala2");
   module WidgetInput = {
     open WidgetInput;
 
     let multipleChoicesInput = (input: multipleChoicesInput) =>
       Json.Encode.(object_([("answerId", int(input.answerId))]));
 
+    let codeInput = (input: codeInput) =>
+      Json.Encode.(
+        object_([
+          ("code", string(input.code)),
+          ("language", language(input.language)),
+        ])
+      );
+
     let encode =
       fun
-      | MultipleChoicesInput(input) => multipleChoicesInput(input);
+      | MultipleChoicesInput(input) => multipleChoicesInput(input)
+      | CodeInput(input) => codeInput(input);
   };
 };

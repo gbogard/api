@@ -1,5 +1,4 @@
 open Types;
-open Rationale;
 
 let fetch =
     (

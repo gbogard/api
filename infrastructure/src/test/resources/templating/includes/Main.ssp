@@ -1,5 +1,5 @@
 object Main extends App {
-  ${include("Fn.ssp")} 
+  ${include("/templating/includes/Fn.ssp")} 
 
   foo()
 }

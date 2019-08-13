@@ -1,6 +1,7 @@
 package lambda.infrastructure.gateway.services
 
-import lambda.infrastructure.gateway.Serialization._
+import lambda.infrastructure.gateway.Serialization.Decoders._
+import lambda.infrastructure.gateway.Serialization.Encoders._
 import lambda.domain.courses.CourseRepository
 import cats.effect._
 import org.http4s._

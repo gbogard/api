@@ -91,13 +91,12 @@ object ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
       compiledClassesFolder: File,
       mainClass: String
   ): EitherT[IO, String, String] = EitherT {
-    for {
-      securityPolicyFile <- Security.securityPolicyFile[IO]
-      securityPolicyFlag = s"-Djava.security.policy==${securityPolicyFile.getAbsolutePath()}"
-      cpFlag = s"-cp ${compiledClassesFolder.getAbsolutePath()}"
-      cmd = s"${Scala2.scala} $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
-      result <- StringProcessLogger.run(Process(cmd)).value
-    } yield result
+    Security.securityPolicyFile[IO] use { securityPolicyFile =>
+      val securityPolicyFlag = s"-Djava.security.policy==${securityPolicyFile.getAbsolutePath()}"
+      val cpFlag = s"-cp ${compiledClassesFolder.getAbsolutePath()}"
+      val cmd = s"${Scala2.scala} $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
+      StringProcessLogger.run(Process(cmd)).value
+    }
   }
 
   implicit private val cs: ContextShift[IO] =
@@ -115,7 +114,7 @@ object ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
   private object Security {
     val securityMangerFlag = "-Djava.security.manager"
     def securityPolicyFile[F[_]: Sync] =
-      readResource[F]("security/jvm-security.policy")
+      readResource[F]("/security/jvm-security.policy")
   }
 
 }

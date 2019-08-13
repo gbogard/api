@@ -1,0 +1,13 @@
+.code-widget {
+  @extend .box;
+  padding: 0;
+
+  .topbar {
+    padding: $spacer/2;
+    border-bottom: solid 1px $light;
+  }
+
+  .editor {
+    height: 300px;
+  }
+}

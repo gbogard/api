@@ -83,8 +83,50 @@ module MultipleChoices = {
 
 module InteractiveCode = {
   [@react.component]
-  let make = (~widget: Widget.interactiveCode) =>
-    <Box> {React.string("Interactive code")} </Box>;
+  let make =
+      (
+        ~widget: Widget.interactiveCode,
+        ~state: widgetState,
+        ~onCheck: WidgetInput.t => unit,
+      ) => {
+    let editorRef = React.useRef(Js.Nullable.null);
+
+    let (editorContent, setEditorContent) =
+      React.useState(() => widget.defaultValue);
+
+    React.useEffect0(() => {
+      let editor =
+        editorRef
+        |> React.Ref.current
+        |> Js.Nullable.toOption
+        |> Belt.Option.getExn
+        |> Interop.Ace.create(
+             _,
+             Interop.Ace.options(
+               ~mode="ace/mode/scala",
+               ~fontSize=".75rem",
+               ~theme="ace/theme/chrome",
+               (),
+             ),
+             widget.defaultValue,
+           );
+
+      editor##on("change", () => setEditorContent(_ => editor##getValue()));
+      None;
+    });
+
+    let checkWidget = _ =>
+      onCheck(
+        WidgetInput.CodeInput({code: editorContent, language: Scala2}),
+      );
+
+    <div className="code-widget">
+      <div className="topbar">
+        <button onClick=checkWidget> {React.string("run")} </button>
+      </div>
+      <div className="editor" ref={ReactDOMRe.Ref.domRef(editorRef)} />
+    </div>;
+  };
 };
 
 module MarkdownText = {
@@ -106,7 +148,7 @@ let make =
       ~resetWidget: unit => unit,
     ) =>
   switch (widget) {
-  | InteractiveCode(widget) => <InteractiveCode widget />
+  | InteractiveCode(widget) => <InteractiveCode widget state onCheck />
   | MultipleChoices(widget) =>
     <MultipleChoices widget state onCheck resetWidget />
   | MarkdownText(widget) => <MarkdownText widget />

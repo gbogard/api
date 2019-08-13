@@ -5,7 +5,7 @@ import io.circe._
 import io.circe.syntax._
 import lambda.domain.courses.widgets._
 import lambda.domain.courses.widgets.WidgetInput._
-import lambda.infrastructure.gateway.Serialization._
+import lambda.infrastructure.gateway.Serialization.Encoders._
 import lambda.application.InteractiveWidgetHandler.WidgetHandlerContext
 import lambda.infrastructure.code._
 import lambda.infrastructure.Mocks._
