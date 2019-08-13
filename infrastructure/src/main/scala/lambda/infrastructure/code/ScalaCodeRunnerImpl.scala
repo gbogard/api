@@ -13,9 +13,12 @@ import lambda.domain.code.ScalaCodeRunner
 import lambda.domain.code.ScalaCodeRunner._
 import lambda.infrastructure.Utils._
 import lambda.infrastructure.ExternalDependencies.Scala2
-
+import scala.tools.nsc._
 import scala.sys.process._
 import scala.concurrent.duration._
+import scala.tools.nsc.reporters.StoreReporter
+
+sealed trait ScalaCodeRunnerImpl
 
 object ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
 
@@ -54,23 +57,34 @@ object ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
       dependenciesClasses: Seq[File],
       destFolder: File
   ): ProcessResult[IO] = {
-    val classPathFlag =
-      if (dependenciesClasses.nonEmpty) {
-        s"-cp ${dependenciesClasses.map(_.getAbsolutePath()).mkString(":")}"
-      } else ""
-    val destFolderStr = destFolder.getAbsolutePath()
-    val target = files.map(_.getAbsoluteFile()).mkString(" ")
 
-    val cmd = s"${Scala2.scalac} $classPathFlag -d $destFolderStr $target"
-    StringProcessLogger
-      .run(Process(cmd))
-      .leftMap(removePathFromCompilerOutput)
+    EitherT[IO, String, String] {
+      IO {
+        val reporter = new StoreReporter
+        val settings = new Settings
+        settings.embeddedDefaults[ScalaCodeRunnerImpl]
+        val global = new Global(settings, reporter)
+        val run = new global.Run
+        dependenciesClasses.foreach(f => settings.classpath.append(f.getAbsolutePath()))
+        settings.outdir.value_=(destFolder.getAbsolutePath())
+        run.compile(files.toList.map(_.getAbsolutePath()))
 
-  }
-
-  private def removePathFromCompilerOutput(output: String): String = {
-    val pathRegex = "\\/.*\\/".r
-    pathRegex.replaceAllIn(output, "lambda/")
+        val infos = reporter.infos.toList
+        if (infos.exists(_.severity == reporter.ERROR)) {
+          Left(
+            infos
+              .map(info => {
+                val pathRegex = "\\/.*\\/".r
+                val path = pathRegex.replaceAllIn(info.pos.toString(), "lambda/")
+                s"${info.severity} in $path : ${info.msg}"
+              })
+              .mkString("\r\n\r\n")
+          )
+        } else {
+          Right("Everything is fine")
+        }
+      }
+    }
   }
 
   private def run(
