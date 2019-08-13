@@ -1,6 +1,12 @@
 open Types;
 open Widget;
 
+let exceptionToResult = (fn: unit => 'a) =>
+  switch (fn()) {
+  | result => Belt.Result.Ok(result)
+  | exception ex => Belt.Result.Error(ex)
+  };
+
 module Result = {
   let toOption =
     fun

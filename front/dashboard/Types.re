@@ -67,12 +67,14 @@ module WidgetInput = {
 
 module WidgetOutput = {
   type t =
-    | RightAnswer;
+    | RightAnswer
+    | CodeOutput(string);
 };
 
 module WidgetError = {
   type t =
-    | WrongAnswer;
+    | WrongAnswer
+    | CodeOutput(string);
 };
 
 type widgetState =

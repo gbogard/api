@@ -1,4 +1,5 @@
 open Types;
+open Belt.Result;
 
 type decoder('a) = Js.Json.t => 'a;
 
@@ -81,13 +82,31 @@ module Decode = {
   module WidgetOutput = {
     open WidgetOutput;
 
-    let decode = _json => RightAnswer;
+    let codeOutput = json =>
+      Json.Decode.(CodeOutput(field("output", string, json)));
+
+    let multipleChoices = _json => RightAnswer;
+
+    let decode = json =>
+      [codeOutput, multipleChoices]
+      |> List.map(decoder => Utils.exceptionToResult(() => decoder(json)))
+      |> List.find(isOk)
+      |> Belt.Result.getExn;
   };
 
   module WidgetError = {
     open WidgetError;
 
-    let decode = _json => WrongAnswer;
+    let codeOutput = json =>
+      Json.Decode.(CodeOutput(field("output", string, json)));
+
+    let multipleChoices = _json => WrongAnswer;
+
+    let decode = json =>
+      [codeOutput, multipleChoices]
+      |> List.map(decoder => Utils.exceptionToResult(() => decoder(json)))
+      |> List.find(isOk)
+      |> Belt.Result.getExn;
   };
 
   module Page = {
