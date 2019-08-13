@@ -7,14 +7,16 @@ object Dependencies {
   lazy val scalate = "org.scalatra.scalate" %% "scalate-core" % "1.9.4"
 
   object Scala {
-    lazy val scalac = "org.scala-lang" % "scala-compiler" % "2.12.9"
-    lazy val library = "org.scala-lang" % "scala-library" % "2.12.9"
+    lazy val version = "2.12.9"
+    lazy val scalac = "org.scala-lang" % "scala-compiler" % version
+    lazy val library = "org.scala-lang" % "scala-library" % version
     lazy val all = Seq(scalac, library)
   }
 
   object Cats {
-    lazy val core = "org.typelevel" %% "cats-core" % "2.0.0-M4"
-    lazy val effect = "org.typelevel" %% "cats-effect" % "2.0.0-M4"
+    lazy val version = "2.0.0-M4"
+    lazy val core = "org.typelevel" %% "cats-core" % version
+    lazy val effect = "org.typelevel" %% "cats-effect" % version
     lazy val all = Seq(core, effect)
   }
 
