@@ -41,6 +41,7 @@ lazy val infrastructure = (project in file("infrastructure"))
       ++ Http4s.all
       ++ Circe.all
       ++ Coursier.all
+      ++ Scala.all
       ++ Seq(
         scalate,
         commonsIO,
