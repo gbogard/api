@@ -6,19 +6,27 @@ object Dependencies {
   lazy val commonsIO = "commons-io" % "commons-io" % "2.6"
   lazy val scalate = "org.scalatra.scalate" %% "scalate-core" % "1.9.4"
 
+  object Scala {
+    lazy val version = "2.12.9"
+    lazy val scalac = "org.scala-lang" % "scala-compiler" % version
+    lazy val library = "org.scala-lang" % "scala-library" % version
+    lazy val all = Seq(scalac, library)
+  }
+
   object Cats {
-    lazy val core = "org.typelevel" %% "cats-core" % "2.0.0-M4"
-    lazy val effect = "org.typelevel" %% "cats-effect" % "2.0.0-M4"
+    lazy val version = "2.0.0-M4"
+    lazy val core = "org.typelevel" %% "cats-core" % version
+    lazy val effect = "org.typelevel" %% "cats-effect" % version
     lazy val all = Seq(core, effect)
   }
 
   object Http4s {
     private val version = "0.20.0"
 
-    val dsl              = "org.http4s" %% "http4s-dsl"          % version
-    val blazeServer      = "org.http4s" %% "http4s-blaze-server" % version
-    val blazeClient      = "org.http4s" %% "http4s-blaze-client" % version
-    val circeIntegration = "org.http4s" %% "http4s-circe"        % version
+    val dsl = "org.http4s" %% "http4s-dsl" % version
+    val blazeServer = "org.http4s" %% "http4s-blaze-server" % version
+    val blazeClient = "org.http4s" %% "http4s-blaze-client" % version
+    val circeIntegration = "org.http4s" %% "http4s-circe" % version
 
     val all: Seq[ModuleID] = Seq(dsl, blazeServer, blazeClient, circeIntegration)
   }
@@ -26,12 +34,12 @@ object Dependencies {
   object Circe {
     private val version = "0.11.0"
 
-    val core          = "io.circe" %% "circe-core"           % version
-    val generic       = "io.circe" %% "circe-generic"        % version
+    val core = "io.circe" %% "circe-core" % version
+    val generic = "io.circe" %% "circe-generic" % version
     val genericExtras = "io.circe" %% "circe-generic-extras" % version
-    val parser        = "io.circe" %% "circe-parser"         % version
-    val optics        = "io.circe" %% "circe-optics"         % version
-    val yaml          = "io.circe" %% "circe-yaml" % "0.10.0"
+    val parser = "io.circe" %% "circe-parser" % version
+    val optics = "io.circe" %% "circe-optics" % version
+    val yaml = "io.circe" %% "circe-yaml" % "0.10.0"
 
     val all: Seq[ModuleID] = Seq(core, generic, genericExtras, parser, optics, yaml)
   }

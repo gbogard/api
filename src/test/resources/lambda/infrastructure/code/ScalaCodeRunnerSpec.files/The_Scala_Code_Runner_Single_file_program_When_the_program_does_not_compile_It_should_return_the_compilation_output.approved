@@ -1,10 +1,7 @@
-lambda/does-not-compile.3: error: type mismatch;
+ERROR in source-lambda/does-not-compile.sc,line-3,offset=66 : type mismatch;
  found   : String("toto")
  required: Int
-  add("toto", "tata")
-      ^
-lambda/does-not-compile.3: error: type mismatch;
+
+ERROR in source-lambda/does-not-compile.sc,line-3,offset=74 : type mismatch;
  found   : String("tata")
  required: Int
-  add("toto", "tata")
-              ^

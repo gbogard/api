@@ -66,12 +66,12 @@ module MultipleChoices = {
       <h5> {React.string(widget.question.value)} </h5>
       items
       <br />
-      <button
-        className="button button-info"
+      <Button
+        variant=Button.Info
         onClick={_ => checkWidget()}
         disabled={Utils.WidgetState.isRight(state)}>
         {React.string("Check!")}
-      </button>
+      </Button>
       {
         Utils.WidgetState.isRight(state) ?
           <i className="ion ion-ios-checkmark-circle text-success" /> :
@@ -82,6 +82,12 @@ module MultipleChoices = {
 };
 
 module InteractiveCode = {
+  let renderOutput =
+    fun
+    | Right(CodeOutput(output)) => React.string(output)
+    | Wrong(CodeOutput(output)) => React.string(output)
+    | _ => <Spinner.InlineSpinner />;
+
   [@react.component]
   let make =
       (
@@ -93,6 +99,8 @@ module InteractiveCode = {
 
     let (editorContent, setEditorContent) =
       React.useState(() => widget.defaultValue);
+
+    let (isOutputOpen, setIsOutputOpen) = React.useState(() => false);
 
     React.useEffect0(() => {
       let editor =
@@ -115,6 +123,16 @@ module InteractiveCode = {
       None;
     });
 
+    React.useEffect1(
+      () => {
+        if (state !== Initial && state !== Pending) {
+          setIsOutputOpen(_ => true);
+        };
+        None;
+      },
+      [|state|],
+    );
+
     let checkWidget = _ =>
       onCheck(
         WidgetInput.CodeInput({code: editorContent, language: Scala2}),
@@ -122,9 +140,26 @@ module InteractiveCode = {
 
     <div className="code-widget">
       <div className="topbar">
-        <button onClick=checkWidget> {React.string("run")} </button>
+        <Button
+          variant=Button.Info
+          onClick=checkWidget
+          isLoading={state === Pending}>
+          <i className="ion ion-ios-play" />
+          {React.string("Run")}
+        </Button>
       </div>
       <div className="editor" ref={ReactDOMRe.Ref.domRef(editorRef)} />
+      {
+        isOutputOpen ?
+          <div className="output">
+            <i
+              className="ion ion-ios-close-circle"
+              onClick={_ => setIsOutputOpen(_ => false)}
+            />
+            <div className="content"> {renderOutput(state)} </div>
+          </div> :
+          React.null
+      }
     </div>;
   };
 };

@@ -9,5 +9,9 @@ let make = (~title=?, ~isLoading=false, ~children) =>
       |> Option.default(React.null)
     }
     <div className="content"> children </div>
-    {isLoading ? <div className="loading-overlay" /> : React.null}
+    {
+      isLoading ?
+        <div className="loading-overlay"> <Spinner.InlineSpinner /> </div> :
+        React.null
+    }
   </div>;
