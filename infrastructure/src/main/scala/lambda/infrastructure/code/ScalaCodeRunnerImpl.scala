@@ -18,8 +18,6 @@ import scala.sys.process._
 import scala.concurrent.duration._
 import scala.tools.nsc.reporters.StoreReporter
 
-sealed trait ScalaCodeRunnerImpl
-
 object ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
 
   def run(
@@ -62,7 +60,8 @@ object ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
       IO {
         val reporter = new StoreReporter
         val settings = new Settings
-        settings.embeddedDefaults[ScalaCodeRunnerImpl]
+        settings.embeddedDefaults(getClass.getClassLoader)
+        settings.usejavacp.value_=(true)
         val global = new Global(settings, reporter)
         val run = new global.Run
         dependenciesClasses.foreach(f => settings.classpath.append(f.getAbsolutePath()))
