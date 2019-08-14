@@ -1,6 +1,7 @@
 (common) {
-  ratelimit * / 4 6 second
+  ratelimit * / 3 5 second
   tls off
+  log stdout
 }
 
 www.lambdacademy.dev:80 {
@@ -17,8 +18,8 @@ dashboard.lambdacademy.dev:80 {
   import common
   root /www/front/dashboard
   rewrite {
-    to {path} {path}/ /index.html
-  } 
+    to {path} {path}/ /
+  }
 }
 
 api.lambdacademy.dev:80 {
