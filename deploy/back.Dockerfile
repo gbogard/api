@@ -23,4 +23,4 @@ RUN apt-get install -y wget
 RUN /bin/bash install-deps.sh
 
 EXPOSE 8080
-CMD ["java", "-jar", "/usr/app/lambdacademy.jar"]
+CMD ["java", "-jar", "-Dconfig.resource=application-prod.conf", "/usr/app/lambdacademy.jar"]

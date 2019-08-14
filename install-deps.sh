@@ -5,7 +5,7 @@ mkdir -p $DEPS_PATH
 cd $DEPS_PATH
 
 echo "Downloading Scala in $DEPS_PATH"
-wget https://downloads.lightbend.com/scala/2.12.8/scala-2.12.8.tgz
-tar -zxvf scala-2.12.8.tgz
+wget https://downloads.lightbend.com/scala/2.12.9/scala-2.12.9.tgz
+tar -zxvf scala-2.12.9.tgz
 
 cd $DIR

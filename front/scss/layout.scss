@@ -4,19 +4,24 @@
   }
 }
 
+.with-padding-y {
+  padding-top: $spacer;
+  padding-bottom: $spacer;
+}
+
 .hidden {
   display: none;
 }
 
 .hidden-md {
   @include breakPoint($mediumBreakPoint) {
-    display: none;
+    display: none !important;
   }
 }
 
 .hidden-lg {
   @include breakPoint($largeBreakPoint) {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -218,4 +223,3 @@ $base-unit: 8px;
     max-width: 100%;
   }
 }
-

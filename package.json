@@ -47,7 +47,8 @@
     "dompurify": "^1.0.11",
     "marked": "^0.7.0",
     "rationale": "^0.1.10",
-    "reason-react": "0.7.0",
+    "react-motion-drawer": "^3.1.0",
+    "reason-react": "^0.7.0",
     "reason-react-update": "^0.1.1"
   }
 }

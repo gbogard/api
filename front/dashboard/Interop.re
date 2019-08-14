@@ -42,3 +42,11 @@ module Ace = {
     editor;
   };
 };
+
+module Drawer = {
+  [@bs.module "react-motion-drawer"] [@react.component]
+  external make:
+    (~_open: bool, ~onChange: bool => unit, ~children: React.element) =>
+    React.element =
+    "default";
+};

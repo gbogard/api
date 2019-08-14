@@ -1,6 +1,6 @@
 import Dependencies._
 
-ThisBuild / scalaVersion := "2.12.9"
+ThisBuild / scalaVersion := "2.12.8"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "lambda"
 ThisBuild / organizationName := "lambdacademy"
@@ -42,6 +42,7 @@ lazy val infrastructure = (project in file("infrastructure"))
       ++ Circe.all
       ++ Coursier.all
       ++ Scala.all
+      ++ PureConfig.all
       ++ Seq(
         scalate,
         commonsIO,

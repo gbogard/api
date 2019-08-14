@@ -10,23 +10,12 @@ $gray-800: #373a3c;
 $gray-900: #212529;
 $black:    #000;
 
-$blue:    #007bff;
-$indigo:  #6610f2;
-$purple:  #9B479F;
-$pink:    #e83e8c;
-$red:     #D9230F;
-$orange:  #D9831F;
-$yellow:  #ffc107;
-$green:   #469408;
-$teal:    #20c997;
-$cyan:    #029ACF;
-
-$primary:       $red;
+$primary:       #9799ca;
 $secondary:     $white;
-$success:       $green;
-$info:          $cyan;
-$warning:       $purple;
-$danger:        $orange;
+$success:       #5dcc57;
+$info:          #7bcdba;
+$warning:       #ea8a56;
+$danger:        $warning;
 $light:         $gray-200;
 $very-light:    $gray-100;
 $dark:          $gray-800;

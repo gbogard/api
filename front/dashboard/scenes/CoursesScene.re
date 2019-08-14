@@ -30,7 +30,8 @@ let make = () => {
   <>
     <Navbar background=Navbar.Dark />
     <div className="container">
-      <h1> {React.string("Courses list")} </h1>
+      <h3> {React.string("Courses list")} </h3>
+      <br />
       {Loader.renderResult(CoursesList.make, courses.list)}
     </div>
   </>;

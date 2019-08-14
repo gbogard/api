@@ -6,6 +6,12 @@ object Dependencies {
   lazy val commonsIO = "commons-io" % "commons-io" % "2.6"
   lazy val scalate = "org.scalatra.scalate" %% "scalate-core" % "1.9.4"
 
+  object PureConfig {
+    private val version    = "0.10.1"
+    val core               = "com.github.pureconfig" %% "pureconfig" % version
+    val all: Seq[ModuleID] = Seq(core)
+  }
+
   object Scala {
     lazy val version = "2.12.9"
     lazy val scalac = "org.scala-lang" % "scala-compiler" % version

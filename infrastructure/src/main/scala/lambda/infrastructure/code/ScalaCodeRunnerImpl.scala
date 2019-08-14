@@ -17,8 +17,9 @@ import scala.tools.nsc._
 import scala.sys.process._
 import scala.concurrent.duration._
 import scala.tools.nsc.reporters.StoreReporter
+import lambda.infrastructure.Configuration
 
-object ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
+class ScalaCodeRunnerImpl()(implicit config: Configuration) extends ScalaCodeRunner[IO] with StrictLogging {
 
   def run(
       files: List[File],
@@ -50,6 +51,8 @@ object ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
       EitherT.right(coursierIO)
     } else EitherT.rightT(Nil)
 
+  private val extractPosRegex = ".*?,(.*)".r
+
   private def compileFiles(
       files: Seq[File],
       dependenciesClasses: Seq[File],
@@ -60,8 +63,18 @@ object ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
       IO {
         val reporter = new StoreReporter
         val settings = new Settings
-        settings.embeddedDefaults(getClass.getClassLoader)
-        settings.usejavacp.value_=(true)
+        settings.embeddedDefaults(getClass.getClassLoader())
+
+        /*
+        When the app is packaged in a JAR by assembly, this flag is needed
+        for scala code execution. Otherwise we get "object scala in compiler mirror not found"
+        error.
+
+        But we use this flag with sbt, in dev mode, another error occurs. So we need this flag to
+        be conditional for the runner to work in all cases. Not exactly sure why.
+         */
+        settings.usejavacp.value_=(!config.isDev)
+
         val global = new Global(settings, reporter)
         val run = new global.Run
         dependenciesClasses.foreach(f => settings.classpath.append(f.getAbsolutePath()))
@@ -73,8 +86,8 @@ object ScalaCodeRunnerImpl extends ScalaCodeRunner[IO] with StrictLogging {
           Left(
             infos
               .map(info => {
-                val pathRegex = "\\/.*\\/".r
-                val path = pathRegex.replaceAllIn(info.pos.toString(), "lambda/")
+                val extractPosRegex(pos) = info.pos.toString
+                val path = s"sourceFile.scala,$pos"
                 s"${info.severity} in $path : ${info.msg}"
               })
               .mkString("\r\n\r\n")

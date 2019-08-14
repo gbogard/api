@@ -20,6 +20,48 @@ let renderWidgets = (widgets, onCheck, widgetsState, resetWidget) =>
   |> Array.of_list
   |> React.array;
 
+let renderNavigationButtons = (course, currentPageId, setCurrentPage) => {
+  let currentPageIndex =
+    course.pages
+    |> RList.findIndex(p => Utils.Page.extractId(p) === currentPageId);
+  let previousPage =
+    currentPageIndex
+    |> Option.map(i => i - 1)
+    |> Option.flatMap(RList.nth(_, course.pages));
+  let nextPage =
+    currentPageIndex
+    |> Option.map(i => i + 1)
+    |> Option.flatMap(RList.nth(_, course.pages));
+  let navigate = (page, _) => setCurrentPage(Utils.Page.extractId(page));
+
+  <div className="spaced-container with-padding-y">
+    <div>
+      {
+        previousPage
+        |> Option.map(page =>
+             <Button onClick={navigate(page)}>
+               <i className="ion ion-ios-arrow-back" />
+               {React.string(Utils.Page.extractTitle(page))}
+             </Button>
+           )
+        |> Option.default(React.null)
+      }
+    </div>
+    <div>
+      {
+        nextPage
+        |> Option.map(page =>
+             <Button onClick={navigate(page)}>
+               {React.string(Utils.Page.extractTitle(page))}
+               <i className="ion ion-ios-arrow-forward" />
+             </Button>
+           )
+        |> Option.default(React.null)
+      }
+    </div>
+  </div>;
+};
+
 module SimplePage = {
   [@react.component]
   let make =
@@ -31,32 +73,45 @@ module SimplePage = {
         ~checkWidget,
         ~resetWidget,
       ) => {
+    let (isDrawerOpen, setDrawerOpen) = React.useState(() => false);
+
     let firstPageId =
       course.pages |> RList.head |> Option.map(Utils.Page.extractId);
     let isFirstPage =
       firstPageId |> Option.map(id => id === page.id) |> Option.default(false);
-
-    <div className="simple-page-layout">
-      <Navbar />
+    let navigation =
       <PageNavigation
         pages={course.pages}
         currentPageId={page.id}
         onChange=setCurrentPage
-      />
-      <div className="content container-fluid">
-        {
-          if (isFirstPage) {
-            <Box title="About this course">
-              {React.string(course.description)}
-            </Box>;
-          } else {
-            React.null;
+      />;
+
+    <>
+      <Interop.Drawer
+        _open=isDrawerOpen onChange={state => setDrawerOpen(_ => state)}>
+        navigation
+      </Interop.Drawer>
+      <div className="simple-page-layout">
+        <Navbar onDrawerOpen={() => setDrawerOpen(_ => true)} />
+        navigation
+        <div className="content container-fluid">
+          {
+            if (isFirstPage) {
+              <Box title="About this course">
+                {React.string(course.description)}
+              </Box>;
+            } else {
+              React.null;
+            }
           }
-        }
-        <h2> {React.string(page.title)} </h2>
-        {renderWidgets(page.widgets, checkWidget, widgetsState, resetWidget)}
+          <h2> {React.string(page.title)} </h2>
+          {
+            renderWidgets(page.widgets, checkWidget, widgetsState, resetWidget)
+          }
+          {renderNavigationButtons(course, page.id, setCurrentPage)}
+        </div>
       </div>
-    </div>;
+    </>;
   };
 };
 

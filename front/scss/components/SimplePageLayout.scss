@@ -6,14 +6,20 @@ $sidebar-width: 320px;
   grid-template-rows: $navbar-height 1fr;
   grid-template-columns: 1fr;
 
-  .content {
+  >.content {
     overflow-y: auto;
+    &:after {
+      content: "";
+      display: block;
+      height: $spacer;
+      width: 100%;
+    }
   }
   
   @include breakPoint($largeBreakPoint) {
     grid-template-columns: $sidebar-width 1fr;
 
-    .navbar {
+    .navbar-spacer {
       grid-column: 1 / 3;
     }
   }

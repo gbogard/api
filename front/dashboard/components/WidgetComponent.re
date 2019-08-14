@@ -40,7 +40,7 @@ module MultipleChoices = {
              widget.id ++ "--mc-radio--" ++ string_of_int(proposition.id);
            let className =
              switch (state, currentlySelectedAnswer) {
-             | (Right(_), Some(id)) when id === proposition.id => "text-success"
+             | (Right(_), Some(id)) when id === proposition.id => "text-success text-bold"
              | (Wrong(_), Some(id)) when id === proposition.id => "text-danger"
              | _ => ""
              };
@@ -102,12 +102,15 @@ module InteractiveCode = {
 
     let (isOutputOpen, setIsOutputOpen) = React.useState(() => false);
 
+    let getEditorElement = () =>
+      editorRef
+      |> React.Ref.current
+      |> Js.Nullable.toOption
+      |> Belt.Option.getExn;
+
     React.useEffect0(() => {
       let editor =
-        editorRef
-        |> React.Ref.current
-        |> Js.Nullable.toOption
-        |> Belt.Option.getExn
+        getEditorElement()
         |> Interop.Ace.create(
              _,
              Interop.Ace.options(
@@ -133,10 +136,24 @@ module InteractiveCode = {
       [|state|],
     );
 
+    React.useEffect1(
+      () => {
+        let editor = Interop.Ace.aceEditor##edit(getEditorElement());
+        editor##setValue(editorContent, 1);
+        None;
+      },
+      [|editorContent|],
+    );
+
     let checkWidget = _ =>
       onCheck(
         WidgetInput.CodeInput({code: editorContent, language: Scala2}),
       );
+
+    let resetWidget = _ => {
+      setIsOutputOpen(_ => false);
+      setEditorContent(_ => widget.defaultValue);
+    };
 
     <div className="code-widget">
       <div className="topbar">
@@ -146,6 +163,9 @@ module InteractiveCode = {
           isLoading={state === Pending}>
           <i className="ion ion-ios-play" />
           {React.string("Run")}
+        </Button>
+        <Button onClick=resetWidget>
+          <i className="ion ion-ios-refresh" />
         </Button>
       </div>
       <div className="editor" ref={ReactDOMRe.Ref.domRef(editorRef)} />

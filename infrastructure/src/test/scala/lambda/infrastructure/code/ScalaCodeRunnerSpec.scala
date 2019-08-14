@@ -9,6 +9,7 @@ import cats.implicits._
 import cats.effect._
 import lambda.domain.code.ScalaCodeRunner.ScalaDependency
 import lambda.infrastructure.Utils
+import lambda.infrastructure.Configuration
 
 class ScalaCodeRunnerSpec extends Approbation {
 
@@ -176,13 +177,18 @@ class ScalaCodeRunnerSpec extends Approbation {
       assertion: Either[String, String] => IO[Assertion],
       timeout: FiniteDuration = 30 seconds
   ): Future[Assertion] = {
-    (resources
-      .traverse(Utils.readResource[IO](_)) use { files =>
-      ScalaCodeRunnerImpl
-            .run(files, mainClass, dependencies, timeout)
-            .leftMap((normalizeEndings _) andThen (limitLines(_)) andThen (removeFileRandomIds _))
-            .value
-      })
+    Configuration
+      .load[IO]
+      .flatMap(
+        implicit config =>
+          (resources
+            .traverse(Utils.readResource[IO](_)) use { files =>
+            (new ScalaCodeRunnerImpl)
+              .run(files, mainClass, dependencies, timeout)
+              .leftMap((normalizeEndings _) andThen (limitLines(_)) andThen (removeFileRandomIds _))
+              .value
+          })
+      )
       .flatMap(assertion)
       .unsafeToFuture()
   }
