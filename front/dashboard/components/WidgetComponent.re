@@ -97,9 +97,6 @@ module InteractiveCode = {
       ) => {
     let editorRef = React.useRef(Js.Nullable.null);
 
-    let (editorContent, setEditorContent) =
-      React.useState(() => widget.defaultValue);
-
     let (isOutputOpen, setIsOutputOpen) = React.useState(() => false);
 
     let getEditorElement = () =>
@@ -122,7 +119,6 @@ module InteractiveCode = {
              widget.defaultValue,
            );
 
-      editor##on("change", () => setEditorContent(_ => editor##getValue()));
       None;
     });
 
@@ -136,23 +132,17 @@ module InteractiveCode = {
       [|state|],
     );
 
-    React.useEffect1(
-      () => {
-        let editor = Interop.Ace.aceEditor##edit(getEditorElement());
-        editor##setValue(editorContent, 1);
-        None;
-      },
-      [|editorContent|],
-    );
-
-    let checkWidget = _ =>
-      onCheck(
-        WidgetInput.CodeInput({code: editorContent, language: Scala2}),
-      );
+    let checkWidget = _ => {
+      let code = Interop.Ace.aceEditor##edit(getEditorElement())##getValue();
+      onCheck(WidgetInput.CodeInput({code, language: Scala2}));
+    };
 
     let resetWidget = _ => {
       setIsOutputOpen(_ => false);
-      setEditorContent(_ => widget.defaultValue);
+      Interop.Ace.aceEditor##edit(getEditorElement())##setValue(
+        widget.defaultValue,
+        1,
+      );
     };
 
     <div className="code-widget">
