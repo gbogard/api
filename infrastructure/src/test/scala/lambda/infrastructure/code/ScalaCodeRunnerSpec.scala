@@ -140,6 +140,24 @@ class ScalaCodeRunnerSpec extends Approbation {
       }
     }
 
+    describe("Project that uses Scala utils") {
+      it("Should compile and run successfully") { approver =>
+        testCodeRunner(
+          "Main",
+          Nil,
+          List(
+            "/scala/with-utils.sc"
+          ),
+          result =>
+            IO {
+              println(result)
+              approver.verify(result.right.get)
+              succeed
+            }
+        )
+      }
+    }
+
     describe("Security measures") {
       it("Should not be able to read files") { approver =>
         testCodeRunner(

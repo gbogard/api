@@ -1,7 +1,7 @@
 .code-widget {
   @extend .box;
   padding: 0;
-  min-height: 450px;
+  min-height: 470px;
   display: flex;
   flex-direction: column;
 
@@ -15,11 +15,10 @@
   }
 
   .output {
-    height: 180px;
+    height: 190px;
     border-top: 1px solid $light;
-    display: flex;
-    flex-direction: column;
     position: relative;
+    overflow: hidden;
 
     i {
       position: absolute;
@@ -29,11 +28,14 @@
       cursor: pointer;
     }
 
-    .content {
+    >.content {
+      height: 100%;
       padding: $spacer;
       font-family: monospace;
+      font-size: .9rem;
       background: $very-light;
-      flex-grow: 1;
+      overflow-y: auto;
+      box-sizing: border-box;
     }
   }
 }

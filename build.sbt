@@ -9,8 +9,11 @@ lazy val root = (project in file("."))
   .settings(
     name := "lambdacademy"
   )
-  .aggregate(domain, infrastructure, application, library, courseTemplateEngine)
+  .aggregate(domain, infrastructure, application, library, courseTemplateEngine, scalaUtils)
 
+/**
+ * A project for domain models and interfaces
+ */
 lazy val domain = (project in file("domain"))
   .settings(
     name := "domain",
@@ -20,6 +23,9 @@ lazy val domain = (project in file("domain"))
     )
   )
 
+/**
+ * A project for business logic
+ */
 lazy val application = (project in file("application"))
   .settings(
     name := "application",
@@ -30,6 +36,10 @@ lazy val application = (project in file("application"))
   )
   .dependsOn(domain)
 
+/**
+ * A project for implementations of persistence layer, gateway endpoints,
+ * code runners etc.
+ */
 lazy val infrastructure = (project in file("infrastructure"))
   .settings(
     name := "infrastructure",
@@ -50,8 +60,12 @@ lazy val infrastructure = (project in file("infrastructure"))
         scalaTest % Test
       )
   )
-  .dependsOn(domain, application, library)
+  .dependsOn(domain, application, library, scalaUtils)
 
+/**
+ * A small template engine that turns markdown + yaml files into
+ * a list of Widget from the `domain` project for easier writing of courses
+ */
 lazy val courseTemplateEngine = (project in file("courseTemplateEngine"))
   .settings(
     name := "courseTemplateEngine",
@@ -62,6 +76,22 @@ lazy val courseTemplateEngine = (project in file("courseTemplateEngine"))
   )
   .dependsOn(domain)
 
+/**
+ * A library of utilities that will be added a a dependency for
+ * all scala courses
+ */
+lazy val scalaUtils = (project in file("scala-utils"))
+  .settings(
+    name := "scalaUtils",
+    libraryDependencies ++= Seq(
+      pprint,
+      scalaTest % Test
+    )
+  )
+
+/**
+ * A project for the actual course curriculum
+ */
 lazy val library = (project in file("library"))
   .settings(
     name := "library",

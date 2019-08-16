@@ -82,10 +82,16 @@ module MultipleChoices = {
 };
 
 module InteractiveCode = {
+  let lineBreaks = str =>
+    str
+    |> Js.String.split("\n")
+    |> Array.map(line => <span> {React.string(line)} <br /> </span>)
+    |> React.array;
+
   let renderOutput =
     fun
-    | Right(CodeOutput(output)) => React.string(output)
-    | Wrong(CodeOutput(output)) => React.string(output)
+    | Right(CodeOutput(output)) => lineBreaks(output)
+    | Wrong(CodeOutput(output)) => lineBreaks(output)
     | _ => <Spinner.InlineSpinner />;
 
   [@react.component]

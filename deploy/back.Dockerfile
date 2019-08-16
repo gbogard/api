@@ -8,6 +8,7 @@ COPY domain ./domain
 COPY infrastructure ./infrastructure
 COPY library ./library
 COPY courseTemplateEngine ./courseTemplateEngine
+COPY scala-utils ./scala-utils
 COPY project ./project
 
 RUN sbt infrastructure/assembly
@@ -16,6 +17,7 @@ FROM openjdk:11-slim
 
 WORKDIR /usr/app
 COPY --from=build-deps /usr/src/app/infrastructure/target/scala-2.12 .
+COPY --from=build-deps /usr/src/app/scala-utils/target/scala-2.12/classes ./scala-utils
 COPY install-deps.sh .
 
 RUN apt-get update

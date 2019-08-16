@@ -1,5 +1,2 @@
 <%@ var userInput:String %>
-
-object Main extends App {
- ${unescape(userInput)}  
-}
+object Main extends App { ${unescape(userInput)} }

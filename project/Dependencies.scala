@@ -5,10 +5,11 @@ object Dependencies {
   lazy val approvals = "com.github.writethemfirst" % "approvals-java" % "0.10.0"
   lazy val commonsIO = "commons-io" % "commons-io" % "2.6"
   lazy val scalate = "org.scalatra.scalate" %% "scalate-core" % "1.9.4"
+  lazy val pprint = "com.lihaoyi" %% "pprint" % "0.5.5"
 
   object PureConfig {
-    private val version    = "0.10.1"
-    val core               = "com.github.pureconfig" %% "pureconfig" % version
+    private val version = "0.10.1"
+    val core = "com.github.pureconfig" %% "pureconfig" % version
     val all: Seq[ModuleID] = Seq(core)
   }
 

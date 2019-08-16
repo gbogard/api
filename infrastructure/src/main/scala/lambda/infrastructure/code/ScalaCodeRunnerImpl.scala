@@ -105,7 +105,13 @@ class ScalaCodeRunnerImpl()(implicit config: Configuration) extends ScalaCodeRun
   ): EitherT[IO, String, String] = EitherT {
     Security.securityPolicyFile[IO] use { securityPolicyFile =>
       val securityPolicyFlag = s"-Djava.security.policy==${securityPolicyFile.getAbsolutePath()}"
-      val cpFlag = s"-cp ${compiledClassesFolder.getAbsolutePath()}"
+      val cp = List(
+        compiledClassesFolder.getAbsolutePath(),
+        config.scalaUtilsClassPath
+      )
+      println("IT COMPILED")
+      println(cp)
+      val cpFlag = s"-cp ${cp.mkString(":")}"
       val cmd = s"${Scala2.scala} $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
       StringProcessLogger.run(Process(cmd)).value
     }

@@ -30,6 +30,8 @@ Can you guess what this code does ?
 
 ----
 scala:
+  baseFiles:
+    - /a-tour-of-scala/1-intro/code-template-1.ssp
   defaultValue: |
     case class User(name: String, age: Int)
 
