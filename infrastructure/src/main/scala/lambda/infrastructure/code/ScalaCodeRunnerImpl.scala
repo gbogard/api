@@ -109,8 +109,6 @@ class ScalaCodeRunnerImpl()(implicit config: Configuration) extends ScalaCodeRun
         compiledClassesFolder.getAbsolutePath(),
         config.scalaUtilsClassPath
       )
-      println("IT COMPILED")
-      println(cp)
       val cpFlag = s"-cp ${cp.mkString(":")}"
       val cmd = s"${Scala2.scala} $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
       StringProcessLogger.run(Process(cmd)).value
