@@ -13,7 +13,11 @@ object ATourOfScala {
   val course = Course(
     CourseId(id),
     "A tour of Scala",
-    "Scala is an expressive, statically typed programming language that is both functional and object oriented.",
+    """
+    |Scala is a modern, expressive, statically typed programming language that is both functional and object oriented.
+    |This course is aimed at people who already have some experience of programming and would like to learn the basics
+    |of functional programming in Scala.
+    |""".stripMargin.trim,
     Nil,
     List(
       SimplePage(
