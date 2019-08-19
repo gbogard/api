@@ -25,10 +25,15 @@ object ATourOfScala {
         "What is Scala ?",
         lambda.courseTemplateEngine.parse(unsafeTextFromResource("a-tour-of-scala/1-intro/content.md"), s"$id-intro").right.get
       ),
-      SimplePage(
+      /*SimplePage(
         pageId(2),
+        "Installing Scala locally",
+        lambda.courseTemplateEngine.parse(unsafeTextFromResource("a-tour-of-scala/2-writing-scala-locally/content.md"), s"$id-local-dev").right.get
+      ),*/
+      SimplePage(
+        pageId(3),
         "Expressions",
-        lambda.courseTemplateEngine.parse(unsafeTextFromResource("a-tour-of-scala/2-expressions/content.md"), s"$id-expressions").right.get
+        lambda.courseTemplateEngine.parse(unsafeTextFromResource("a-tour-of-scala/3-expressions/content.md"), s"$id-expressions").right.get
       )
     )
   )

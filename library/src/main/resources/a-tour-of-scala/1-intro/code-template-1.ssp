@@ -20,6 +20,6 @@ object Main extends App {
     println(s"$robot $heavyCheckMark Great! You did your very first pattern matching right there!")
     println("Pattern matching allows you to extract values of compound types such as this User class, and return an expression based on these values, in a concise way. We will use that a lot in this course.")
   } else {
-    println("$robot I see you've done something different here. It's nice to experiment. Don't hesitate to reset the code when you've done something wrong.")
+    println(s"$robot I see you've done something different here. It's nice to experiment. Don't hesitate to reset the code when you've done something wrong.")
   }
 }
