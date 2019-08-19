@@ -93,6 +93,42 @@ to understand.
 
 ### Scala is object oriented
 
+In Scala, every value is also an object. The language supports complex type hierarchies through classes and traits.
+Traits support multiple-inheritance with the ability to mix interface declarations with behavior implementation.
+Scala traits can act as *interfaces* and *mixins*, and they are the foundation for some of the most widely used patterns
+in Scala.
+
+Imagine you have role-playing game where characters can combine abilities from different classes. Here's how
+you can use traits to combine the abilities of Thief with those of a Wizard to create a new class of character.
+
+----
+scala:
+  defaultValue: |
+    abstract class Character {
+      val name: String
+    }
+
+    trait Magic {
+      def castSpell() = println("Woosh!")
+    }
+
+    trait Stealth {
+      def sneakBehind(target: Character) = println(s"You've stolen ${target.name}'s purse!")
+    }
+
+    class Wizard(val name: String) extends Character with Magic
+
+    // Wizard AND Thief, because why not ?
+    class WizardThief(val name: String) extends Character with Stealth with Magic
+
+    val player = new WizardThief("Olugorim The Great")
+    val npc = new Wizard("Ezor The Fierce")
+
+    player.castSpell()
+    player.sneakBehind(npc)
+----
+
+
 ### Scala interoperates
 
 Scala runs on the Java Virtual Machine, or *JVM* for short. It can also execute Java code, like your own Java classes or your favorite
@@ -100,3 +136,5 @@ Java library. Calling Java from Scala requires no syntax change, it just works. 
 has, meaning if something exists in Java's standard library, you can just use it.
 
 ### Scala is fun
+
+Scala is fun to learn and play around with.
