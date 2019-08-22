@@ -16,5 +16,6 @@ dist
 .merlin
 lib/
 *.bs.js
+.bsb.lock
 
 deps

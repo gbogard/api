@@ -28,6 +28,7 @@ module Ace = {
     [@bs.meth] "setValue": (string, int) => unit,
     [@bs.meth] "getValue": unit => string,
     [@bs.meth] "on": (string, unit => unit) => unit,
+    [@bs.meth] "resize": unit => unit,
   };
 
   [@bs.deriving abstract]
