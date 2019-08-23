@@ -1,5 +1,6 @@
 open Types;
 open WidgetInput;
+open Css;
 
 let countLines = str => Array.length(Js.String.split("\n", str));
 
@@ -87,10 +88,8 @@ let make =
     );
   };
 
-  let editorStyle =
-    ReactDOMRe.Style.make(
-      ~height=Js.Int.toString(editorHeight(edtitorContent)) ++ "rem",
-    );
+  let editorClass =
+    style([height(rem(editorHeight(edtitorContent) |> float_of_int))]);
 
   <div className="code-widget">
     <div className="topbar">
@@ -104,9 +103,8 @@ let make =
       </Button>
     </div>
     <div
-      className="editor"
+      className={"editor " ++ editorClass}
       ref={ReactDOMRe.Ref.domRef(editorRef)}
-      style={editorStyle()}
     />
     {
       isOutputOpen ?

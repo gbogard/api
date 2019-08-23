@@ -11,8 +11,8 @@ object TamingCats {
     CourseId(id),
     "Taming Cats",
     "",
-    Nil,
-    Nil 
+    tags = Nil,
+    pages = Nil 
   )
 
 }

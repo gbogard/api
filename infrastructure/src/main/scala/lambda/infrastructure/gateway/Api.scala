@@ -6,26 +6,26 @@ import lambda.domain.courses.CourseRepository
 import lambda.application.InteractiveWidgetHandler.WidgetHandlerContext
 import org.http4s.implicits._
 import org.http4s.server.blaze._
-import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
-import lambda.infrastructure.gateway.services.CourseService
+import lambda.infrastructure.gateway.services._
+import lambda.infrastructure.ExecutionContexts._
 import org.http4s.server.middleware._
+import lambda.domain.MediaHandler
 
 object Api {
 
   case class Context(
       courseRepository: CourseRepository[IO],
-      widgetHandlerContext: WidgetHandlerContext[IO]
+      widgetHandlerContext: WidgetHandlerContext[IO],
+      mediaHandler: MediaHandler
   )
-
-  implicit private val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
-  implicit private val timer: Timer[IO] = IO.timer(ExecutionContext.global)
 
   def apply()(implicit ctx: Context) = {
     implicit val courseRepository = ctx.courseRepository
     implicit val handlerContext = ctx.widgetHandlerContext
+    implicit val mediaHandler = ctx.mediaHandler
 
-    val courseService = CourseService()
+    val services = CourseService() <+> MediaService()(blockingEc, globalContextShift)
 
     val corsConfig = CORSConfig(
       anyOrigin = false,
@@ -39,7 +39,7 @@ object Api {
       maxAge = 1.day.toSeconds
     )
 
-    val app = CORS(courseService, corsConfig).orNotFound
+    val app = CORS(services, corsConfig).orNotFound
 
     BlazeServerBuilder[IO]
       .bindHttp(8080, "0.0.0.0")

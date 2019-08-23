@@ -15,6 +15,8 @@ import lambda.domain.courses.widgets.WidgetOutput._
 import lambda.domain.courses.widgets.WidgetError._
 import lambda.domain.code.Language._
 import lambda.domain.code.Language
+import lambda.domain.Media
+import lambda.domain.MediaHandler
 
 object Serialization {
   object Encoders {
@@ -54,8 +56,13 @@ object Serialization {
       case p: CodePage   => withType("codePage", p)
     }
 
-    implicit val courseEncoder: Encoder[Course] = deriveEncoder[Course]
-    implicit val courseManifestEncoder: Encoder[CourseManifest] = deriveEncoder[CourseManifest]
+    implicit def mediaUrlEncoder(implicit mediaHandler: MediaHandler): Encoder[Media] = media => mediaHandler.toUrl(media).asJson 
+    implicit def courseEncoder(implicit mediaHandler: MediaHandler): Encoder[Course] = course => {
+      course.asJsonObject.add("image", course.image.fold(Json.Null)(mediaUrlEncoder.apply)).asJson
+    }
+    implicit def courseManifestEncoder(implicit mediaHandler: MediaHandler): Encoder[CourseManifest] = courseManifest => {
+      courseManifest.asJsonObject.add("image", courseManifest.image.fold(Json.Null)(mediaUrlEncoder.apply)).asJson
+    } 
   }
 
   object Decoders {

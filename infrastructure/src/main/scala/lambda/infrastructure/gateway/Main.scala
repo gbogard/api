@@ -8,6 +8,7 @@ import lambda.application.InteractiveWidgetHandler.WidgetHandlerContext
 import lambda.infrastructure.code.ScalaCodeRunnerImpl
 import lambda.infrastructure.courses.LibraryCourseRepository
 import lambda.infrastructure.Configuration
+import lambda.infrastructure.MediaHandlerInterpreter
 
 object Main extends IOApp {
 
@@ -24,9 +25,11 @@ object Main extends IOApp {
         templateEngine = templateEngine,
         sourceFileHandler = lambda.infrastructure.code.sourceFileHandler
       )
+      mediaHandler = new MediaHandlerInterpreter(config)
       apiContext = Api.Context(
         courseRepository,
-        widgetHandlerContext
+        widgetHandlerContext,
+        mediaHandler
       )
       exitCode <- Api()(apiContext)
     } yield exitCode

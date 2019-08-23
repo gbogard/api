@@ -13,11 +13,13 @@ import lambda.application.InteractiveWidgetHandler.WidgetHandlerContext
 import lambda.domain.courses.widgets._
 import scala.concurrent.ExecutionContext
 import lambda.domain.courses.Course.CourseId
+import lambda.domain.MediaHandler
 
 object CourseService {
   def apply()(
       implicit courseRepository: CourseRepository[IO],
-      widgetHandlerContext: WidgetHandlerContext[IO]
+      widgetHandlerContext: WidgetHandlerContext[IO],
+      mediaHandler: MediaHandler
   ) = HttpRoutes.of[IO] {
     case GET -> Root / "courses" =>
       courseRepository.getCourses().flatMap(Ok(_))

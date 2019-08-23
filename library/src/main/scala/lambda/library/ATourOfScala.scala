@@ -5,6 +5,7 @@ import lambda.domain.courses.Page.PageId
 import lambda.domain.courses.Course
 import lambda.domain.courses.Course.CourseId
 import Utils._
+import lambda.domain.Media
 
 object ATourOfScala {
 
@@ -19,7 +20,8 @@ object ATourOfScala {
     |of functional programming in Scala.
     |""".stripMargin.trim,
     Nil,
-    List(
+    image = Some(Media.ClasspathResource("/public/a-tour-of-scala.png")),
+    pages = List(
       SimplePage(
         pageId(1),
         "What is Scala ?",

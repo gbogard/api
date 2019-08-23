@@ -3,7 +3,11 @@ package lambda.infrastructure
 import pureconfig.generic.auto._
 import cats.effect.Sync
 
-case class Configuration(env: String, scalaUtilsClassPath: String) {
+case class Configuration(
+  env: String, 
+  scalaUtilsClassPath: String,
+  apiUrl: String,
+ ) {
   val isDev = env == "development"
 }
 
