@@ -1,8 +1,6 @@
 package lambda.domain.courses
 
 import lambda.domain.courses.Course._
-import lambda.domain.courses.widgets.`package`.WidgetId
-import lambda.domain.courses.widgets.`package`.Widget
 import cats.data.OptionT
 
 trait CourseRepository[F[_]] {

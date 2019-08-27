@@ -9,7 +9,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "lambdacademy"
   )
-  .aggregate(domain, infrastructure, application, library, courseTemplateEngine, scalaUtils)
+  .aggregate(domain, infrastructure, application, library, scalaUtils)
 
 /**
  * A project for domain models and interfaces
@@ -63,20 +63,6 @@ lazy val infrastructure = (project in file("infrastructure"))
   .dependsOn(domain, application, library, scalaUtils)
 
 /**
- * A small template engine that turns markdown + yaml files into
- * a list of Widget from the `domain` project for easier writing of courses
- */
-lazy val courseTemplateEngine = (project in file("courseTemplateEngine"))
-  .settings(
-    name := "courseTemplateEngine",
-    libraryDependencies ++= Circe.all ++ Seq(
-      commonsIO,
-      scalaTest % Test
-    )
-  )
-  .dependsOn(domain)
-
-/**
  * A library of utilities that will be added a a dependency for
  * all scala courses
  */
@@ -99,7 +85,7 @@ lazy val library = (project in file("library"))
       scalaTest % Test
     )
   )
-  .dependsOn(domain, courseTemplateEngine)
+  .dependsOn(domain)
 
 ThisBuild / scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.

@@ -1,34 +1,40 @@
 package lambda.infrastructure.gateway
 
 import cats.effect._
-import lambda.infrastructure.code.SSPTemplateEngine
+import lambda.infrastructure.code.TemplateEngineInterpreter
 import lambda.domain.code.TemplateEngine
 import lambda.domain.courses.CourseRepository
 import lambda.application.InteractiveWidgetHandler.WidgetHandlerContext
-import lambda.infrastructure.code.ScalaCodeRunnerImpl
+import lambda.infrastructure.code.ScalaCodeRunnerInterpreter
 import lambda.infrastructure.courses.LibraryCourseRepository
 import lambda.infrastructure.Configuration
 import lambda.infrastructure.MediaHandlerInterpreter
+import lambda.infrastructure.courseTemplateEngine.CourseTemplateEngineInterpreter
+import lambda.application.CoursesRequestHandler
+import lambda.domain.courses.CourseTemplateEngine
 
 object Main extends IOApp {
 
-  val templateEngine: TemplateEngine[IO] = new SSPTemplateEngine[IO]
-
-  val courseRepository: CourseRepository[IO] = LibraryCourseRepository
+  val templateEngine: TemplateEngine[IO] = new TemplateEngineInterpreter[IO]
+  implicit val courseTemplateEngine: CourseTemplateEngine[IO] = CourseTemplateEngineInterpreter
+  implicit val courseRepository: CourseRepository[IO] = new LibraryCourseRepository
 
   def run(args: List[String]): IO[ExitCode] =
     for {
       config <- Configuration.load[IO]
-      scala2CodeRunner = new ScalaCodeRunnerImpl()(config)
+      scala2CodeRunner = new ScalaCodeRunnerInterpreter()(config)
       widgetHandlerContext = WidgetHandlerContext(
         scala2CodeRunner = scala2CodeRunner,
         templateEngine = templateEngine,
         sourceFileHandler = lambda.infrastructure.code.sourceFileHandler
       )
       mediaHandler = new MediaHandlerInterpreter(config)
+      coursesRequestHandler = {
+        implicit val whc = widgetHandlerContext
+        new CoursesRequestHandler[IO, IO.Par]
+      }
       apiContext = Api.Context(
-        courseRepository,
-        widgetHandlerContext,
+        coursesRequestHandler,
         mediaHandler
       )
       exitCode <- Api()(apiContext)

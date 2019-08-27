@@ -5,11 +5,11 @@ import cats.implicits._
 import cats.data.EitherT
 import lambda.domain.code._
 import lambda.domain.code.Language.Scala2
-import lambda.domain.courses.widgets._
-import lambda.domain.courses.widgets.InteractiveCodeWidget._
-import lambda.domain.courses.widgets.WidgetInput._
-import lambda.domain.courses.widgets.WidgetOutput._
-import lambda.domain.courses.widgets.WidgetError._
+import lambda.domain.courses._
+import lambda.domain.courses.InteractiveCodeWidget._
+import lambda.application.WidgetInput._
+import lambda.application.WidgetOutput._
+import lambda.application.WidgetError._
 import lambda.domain.code.SourceFileHandler
 import java.io.File
 
@@ -43,7 +43,7 @@ object InteractiveWidgetHandler {
       widget: MultipleChoices,
       input: AnswerId
   ): Either[WidgetError, WidgetOutput] =
-    if (input == widget.question.rightAnswer.id) Right(RightAnswer) else Left(WrongAnswer)
+    if (input.answerId == widget.question.rightAnswer.id) Right(RightAnswer) else Left(WrongAnswer)
 
   private def renderFiles[F[_]: Sync, Par[_]](
       files: List[SourceFile],

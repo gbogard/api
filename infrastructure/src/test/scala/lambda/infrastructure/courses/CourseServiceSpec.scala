@@ -3,8 +3,7 @@ package lambda.infrastructure.courses
 import cats.effect.IO
 import io.circe._
 import io.circe.syntax._
-import lambda.domain.courses.widgets._
-import lambda.domain.courses.widgets.WidgetInput._
+import lambda.domain.courses._
 import lambda.infrastructure.gateway.Serialization.Encoders._
 import lambda.application.InteractiveWidgetHandler.WidgetHandlerContext
 import lambda.infrastructure.code._
@@ -13,18 +12,23 @@ import lambda.infrastructure.gateway.services.CourseService
 import org.http4s.circe._
 import org.http4s._
 import org.scalatest._
+import lambda.infrastructure.courseTemplateEngine.CourseTemplateEngineInterpreter
+import lambda.application.CoursesRequestHandler
 
 class CourseServiceSpec extends AsyncFunSpec with Matchers {
+
+  implicit private val courseTemplateEngine = CourseTemplateEngineInterpreter
 
   describe("Course service") {
     describe("GET /courses") {
       it("Should return a list of course manifests when the repository has courses") {
-        val expectedCourses = lambda.library.courses.map(_.manifest)
+        val expectedCourses = lambda.library.courses[IO].unsafeRunSync().map(_.manifest)
 
         implicit val repo = mockCourseRepository(
           coursesResult = expectedCourses
         )
         implicit val ctx = mockWidgetHandlerContext()
+        implicit val coursesRequestHandler = new CoursesRequestHandler[IO, IO.Par]
         val service = CourseService()
 
         val request = Request[IO](uri = Uri.unsafeFromString("/courses"))
@@ -41,6 +45,7 @@ class CourseServiceSpec extends AsyncFunSpec with Matchers {
       it("Should return an empty list when the repository has no course") {
         implicit val repo = mockCourseRepository()
         implicit val ctx = mockWidgetHandlerContext()
+        implicit val coursesRequestHandler = new CoursesRequestHandler[IO, IO.Par]
         val service = CourseService()
 
         val request = Request[IO](uri = Uri.unsafeFromString("/courses"))
@@ -64,6 +69,7 @@ class CourseServiceSpec extends AsyncFunSpec with Matchers {
       })
 
       implicit val ctx = mockWidgetHandlerContext()
+      implicit val coursesRequestHandler = new CoursesRequestHandler[IO, IO.Par]
       val service = CourseService()
 
       it("Should return the matching course if any") {
@@ -93,6 +99,7 @@ class CourseServiceSpec extends AsyncFunSpec with Matchers {
       it("Should return a 400 if the input is not a valid widget input") {
         implicit val repo = mockCourseRepository()
         implicit val ctx = mockWidgetHandlerContext()
+        implicit val coursesRequestHandler = new CoursesRequestHandler[IO, IO.Par]
         val service = CourseService()
         val request = Request[IO](method = Method.POST, uri = Uri.unsafeFromString("/checkWidget/toto"))
 
@@ -106,6 +113,7 @@ class CourseServiceSpec extends AsyncFunSpec with Matchers {
       it("Should return a 404 when the widget does not exist") {
         implicit val repo = mockCourseRepository()
         implicit val ctx = mockWidgetHandlerContext()
+        implicit val coursesRequestHandler = new CoursesRequestHandler[IO, IO.Par]
         val service = CourseService()
         val request = Request[IO](method = Method.POST, uri = Uri.unsafeFromString("/checkWidget/toto"))
           .withEntity(Json.obj("answerId" -> Json.fromInt(2)))
@@ -130,6 +138,7 @@ class CourseServiceSpec extends AsyncFunSpec with Matchers {
         })
 
         implicit val ctx = mockWidgetHandlerContext()
+        implicit val coursesRequestHandler = new CoursesRequestHandler[IO, IO.Par]
         val service = CourseService()
 
         it("Return an error when the given input isn't a CodeInput") {
@@ -145,7 +154,7 @@ class CourseServiceSpec extends AsyncFunSpec with Matchers {
             .map(res => {
               res.status.code shouldBe 400
               res.as[Json].unsafeRunSync() shouldBe
-                Json.obj("error" -> Json.fromString("Wrong input for widget"))
+                Json.obj("error" -> "Wrong input for widget".asJson, "code" -> "BAD_REQUEST".asJson)
             })
             .unsafeToFuture()
 
@@ -159,7 +168,7 @@ class CourseServiceSpec extends AsyncFunSpec with Matchers {
           MultipleChoices.Question(
             "What is love ?",
             MultipleChoices.Answer(
-              AnswerId(2),
+              2,
               "Baby don't hurt me"
             ),
             Nil
@@ -172,13 +181,14 @@ class CourseServiceSpec extends AsyncFunSpec with Matchers {
         })
 
         implicit val ctx = mockWidgetHandlerContext()
+        implicit val coursesRequestHandler = new CoursesRequestHandler[IO, IO.Par]
         val service = CourseService()
 
         it("Should return a 200 when the answer is correct") {
           val request = Request[IO](
             Method.POST,
             Uri.unsafeFromString("/checkWidget/id")
-          ).withEntity(Json.obj("answerId" -> Json.fromInt(widget.question.rightAnswer.id.answerId)))
+          ).withEntity(Json.obj("answerId" -> Json.fromInt(widget.question.rightAnswer.id)))
 
           service
             .run(request)
@@ -203,7 +213,7 @@ class CourseServiceSpec extends AsyncFunSpec with Matchers {
             .map(_.get)
             .map(res => {
               res.status.code shouldBe 400
-              res.as[Json].unsafeRunSync() shouldBe Json.obj("error" -> Json.fromString("Wrong answer"))
+              res.as[Json].unsafeRunSync() shouldBe Json.obj("error" -> "Wrong answer".asJson, "code" -> "WRONG_ANSWER".asJson)
             })
             .unsafeToFuture()
         }

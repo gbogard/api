@@ -19,7 +19,7 @@ import scala.concurrent.duration._
 import scala.tools.nsc.reporters.StoreReporter
 import lambda.infrastructure.Configuration
 
-class ScalaCodeRunnerImpl()(implicit config: Configuration) extends ScalaCodeRunner[IO] with StrictLogging {
+class ScalaCodeRunnerInterpreter()(implicit config: Configuration) extends ScalaCodeRunner[IO] with StrictLogging {
 
   def run(
       files: List[File],

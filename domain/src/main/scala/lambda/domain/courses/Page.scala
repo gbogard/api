@@ -1,7 +1,6 @@
 package lambda.domain.courses
 
 import Page._
-import lambda.domain.courses.widgets._
 
 sealed trait Page {
   def id: PageId

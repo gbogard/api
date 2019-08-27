@@ -1,10 +1,9 @@
-package lambda.courseTemplateEngine
+package lambda.infrastructure.courseTemplateEngine
 
 import cats.syntax.functor._
 import io.circe._
 import io.circe.generic.auto._
-import lambda.domain.courses.widgets._
-import lambda.domain.courses.widgets.WidgetInput.AnswerId
+import lambda.domain.courses._
 import lambda.domain.code.SourceFile
 
 object Decoders {
@@ -26,13 +25,13 @@ object Decoders {
           question = MultipleChoices.Question(
             q.title,
             rightAnswer = MultipleChoices.Answer(
-              AnswerId(0),
+              0,
               q.answer
             ),
             otherPropositions = q.propositions.zipWithIndex.map(
               item =>
                 MultipleChoices.Answer(
-                  AnswerId(item._2 + 1),
+                  item._2 + 1,
                   item._1
                 )
             )

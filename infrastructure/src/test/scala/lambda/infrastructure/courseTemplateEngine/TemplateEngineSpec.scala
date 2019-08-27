@@ -1,9 +1,7 @@
-package lambda.courseTemplateEngine
+package lambda.infrastructure.courseTemplateEngine
 
 import org.scalatest._
-import lambda.domain.courses.widgets._
-import lambda.domain.courses.widgets.WidgetInput.AnswerId
-import io.circe.DecodingFailure
+import lambda.domain.courses._
 import lambda.domain.code.SourceFile
 import lambda.domain.code.ScalaCodeRunner.ScalaDependency
 import scala.io.Source
@@ -11,7 +9,7 @@ import scala.io.Source
 class TemplateEngineSpec extends FunSpec with Matchers {
   describe("Course template engine") {
     it("Should render a template with a multiple choices question") {
-      template("template-1.md") shouldBe Right(
+      template("template-1.md") shouldBe
         List(
           MarkdownText(
             WidgetId("page-id--widget-0"),
@@ -22,25 +20,24 @@ class TemplateEngineSpec extends FunSpec with Matchers {
             required = false,
             MultipleChoices.Question(
               "What is love ?",
-              MultipleChoices.Answer(AnswerId(0), "Baby don't hurt me"),
+              MultipleChoices.Answer(0, "Baby don't hurt me"),
               List(
-                MultipleChoices.Answer(AnswerId(1), "Don't hurt me"),
-                MultipleChoices.Answer(AnswerId(2), "No more")
+                MultipleChoices.Answer(1, "Don't hurt me"),
+                MultipleChoices.Answer(2, "No more")
               )
             )
           )
         )
-      )
     }
 
     it("Should fail when there's YAML that doesn't match any known widget type") {
-      template("template-2.md") shouldBe Left(
-        DecodingFailure("Invalid widget type", Nil)
-      )
+      a[Throwable] should be thrownBy {
+        template("template-2.md")
+      }
     }
 
     it("Should render a template with a scala code widget") {
-      template("template-3.md") shouldBe Right(
+      template("template-3.md") shouldBe
         List(
           MarkdownText(
             WidgetId("page-id--widget-0"),
@@ -58,13 +55,17 @@ class TemplateEngineSpec extends FunSpec with Matchers {
             List(ScalaDependency("cats", "cats", "version", "2.12"))
           )
         )
-      )
     }
 
     it("Should render this complex template properly") {
-      assert(template("template-4.md").isRight)
+      noException should be thrownBy {
+        template("template-4.md")
+      }
     }
   }
 
-  private def template(name: String) = parse(Source.fromResource(name).getLines().mkString("\r\n"), "page-id")
+  private def template(name: String) =
+    CourseTemplateEngineInterpreter
+      .parse(Source.fromResource("course-template-engine/" + name).getLines().mkString("\r\n"), "page-id")
+      .unsafeRunSync()
 }

@@ -1,4 +1,4 @@
-package lambda.domain.courses.widgets
+package lambda.application
 
 import lambda.domain.code.Language
 

@@ -6,10 +6,10 @@ import org.apache.commons.io.FileUtils
 import cats.effect._
 import java.nio.charset.StandardCharsets
 
-class SSPTemplateEngineSpec extends Approbation {
-  val engine = new SSPTemplateEngine[IO]
+class TemplateEngineInterpreterSpec extends Approbation {
+  val engine = new TemplateEngineInterpreter[IO]
 
-  describe("SSPTemplateEngine") {
+  describe("TemplateEngineInterpreter") {
     it("Should render the single page template") { approver =>
       (
         for {

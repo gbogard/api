@@ -201,7 +201,7 @@ class ScalaCodeRunnerSpec extends Approbation {
         implicit config =>
           (resources
             .traverse(Utils.readResource[IO](_)) use { files =>
-            (new ScalaCodeRunnerImpl)
+            (new ScalaCodeRunnerInterpreter)
               .run(files, mainClass, dependencies, timeout)
               .leftMap((normalizeEndings _) andThen (limitLines(_)) andThen (removeFileRandomIds _))
               .value

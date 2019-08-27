@@ -7,7 +7,7 @@ import lambda.domain.code._
 import org.apache.commons.io.FileUtils
 import java.nio.charset.StandardCharsets
 
-class SSPTemplateEngine[F[_]: Sync] extends TemplateEngine[F] {
+class TemplateEngineInterpreter[F[_]: Sync] extends TemplateEngine[F] {
 
   private val engine = new org.fusesource.scalate.TemplateEngine
 

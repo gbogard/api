@@ -2,8 +2,6 @@ package lambda.infrastructure.gateway
 
 import cats.effect._
 import cats.implicits._
-import lambda.domain.courses.CourseRepository
-import lambda.application.InteractiveWidgetHandler.WidgetHandlerContext
 import org.http4s.implicits._
 import org.http4s.server.blaze._
 import scala.concurrent.duration._
@@ -11,18 +9,17 @@ import lambda.infrastructure.gateway.services._
 import lambda.infrastructure.ExecutionContexts._
 import org.http4s.server.middleware._
 import lambda.domain.MediaHandler
+import lambda.application._
 
 object Api {
 
   case class Context(
-      courseRepository: CourseRepository[IO],
-      widgetHandlerContext: WidgetHandlerContext[IO],
+      coursesRequestHandler: CoursesRequestHandler[IO, IO.Par], 
       mediaHandler: MediaHandler
   )
 
   def apply()(implicit ctx: Context) = {
-    implicit val courseRepository = ctx.courseRepository
-    implicit val handlerContext = ctx.widgetHandlerContext
+    implicit val coursesRequestHandler = ctx.coursesRequestHandler
     implicit val mediaHandler = ctx.mediaHandler
 
     val services = CourseService() <+> MediaService()(blockingEc, globalContextShift)

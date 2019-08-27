@@ -3,12 +3,14 @@ package lambda.infrastructure
 import cats.data.OptionT
 import cats.effect.IO
 import lambda.domain.courses.Course
-import lambda.domain.courses.widgets._
+import lambda.domain.courses._
 import lambda.domain.courses.Course._
 import lambda.domain.courses.CourseRepository
 import lambda.domain.code.ScalaCodeRunner
 import lambda.domain.code.TemplateEngine
 import cats.effect.Resource
+import lambda.domain.MediaHandler
+import lambda.domain.Media
 
 object Mocks {
   def mockCourseRepository(
@@ -23,8 +25,8 @@ object Mocks {
     def getCourses(): cats.effect.IO[List[lambda.domain.courses.Course.CourseManifest]] =
       IO.pure(coursesResult)
     def getWidget(
-        id: lambda.domain.courses.widgets.WidgetId
-    ): cats.data.OptionT[cats.effect.IO, lambda.domain.courses.widgets.Widget] =
+        id: WidgetId
+    ): cats.data.OptionT[cats.effect.IO, Widget] =
       OptionT.fromOption(singleWidgetResult(id))
   }
 
@@ -33,7 +35,8 @@ object Mocks {
     "Mocked Course",
     "Lorem Ipsum dolor sit amet",
     "scala" :: "fp" :: Nil,
-    Nil
+    image = None,
+    pages = Nil,
   )
 
   def mockScalaCodeRunner(): ScalaCodeRunner[IO] = new ScalaCodeRunner[IO] {
@@ -55,4 +58,7 @@ object Mocks {
       Resource.pure(files)
   }
 
+  implicit def mockMediaHandler: MediaHandler = new MediaHandler {
+    def toUrl(media: Media): String = ""
+  }
 }

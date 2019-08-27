@@ -8,15 +8,15 @@ import io.circe.generic.extras.defaults._
 import io.circe.syntax._
 import lambda.domain.courses._
 import lambda.domain.courses.Page._
-import lambda.domain.courses.widgets._
+import lambda.domain.courses._
 import lambda.domain.courses.Course._
-import lambda.domain.courses.widgets.WidgetInput._
-import lambda.domain.courses.widgets.WidgetOutput._
-import lambda.domain.courses.widgets.WidgetError._
 import lambda.domain.code.Language._
 import lambda.domain.code.Language
 import lambda.domain.Media
 import lambda.domain.MediaHandler
+import lambda.application._
+import lambda.application.WidgetInput._
+import lambda.application.WidgetOutput._
 
 object Serialization {
   object Encoders {
@@ -45,11 +45,6 @@ object Serialization {
       case RightAnswer   => success("Right answer")
     }
 
-    implicit val widgetErrorEncoder: Encoder[WidgetError] = Encoder.instance {
-      case e: CodeError        => e.asJson
-      case WrongInputForWidget => error("Wrong input for widget")
-      case WrongAnswer         => error("Wrong answer")
-    }
 
     implicit val PageEncoder: Encoder[Page] = Encoder.instance {
       case p: SimplePage => withType("simplePage", p)
@@ -85,7 +80,6 @@ object Serialization {
     ).reduce(_ or _)
   }
 
-  private def error(msg: String): Json = Json.obj("error" -> Json.fromString(msg))
   private def success(msg: String): Json = Json.obj("success" -> Json.fromString(msg))
   private def withType[A: ObjectEncoder](`type`: String, a: A): Json =
     a.asJsonObject.add("type", Json.fromString(`type`)).asJson
