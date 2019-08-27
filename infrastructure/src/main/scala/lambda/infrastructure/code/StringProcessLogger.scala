@@ -15,22 +15,27 @@ class StringProcessLogger extends ProcessLogger() {
 }
 
 object StringProcessLogger extends StrictLogging {
-  def run(process: ProcessBuilder): EitherT[IO, String, String] = EitherT {
-    IO {
+  def run(processBuilder: ProcessBuilder): EitherT[IO, String, String] = EitherT {
+    IO.cancelable { cb =>
       val processLogger = new StringProcessLogger
       logger.debug(
         "Running external process through StringProcessLogger : {}",
-        process
+        processBuilder
       )
-      val exitCode = process.!(processLogger)
-      logger.debug(
-        "{} StdOut: {} StdErr: {}",
-        process,
-        processLogger.stdOut,
-        processLogger.stdErr
-      )
-      if (exitCode > 0) Left(processLogger.stdErr)
-      else Right(processLogger.stdOut)
+      val process = processBuilder.run(processLogger)
+      IO {
+        val exitCode = process.exitValue()
+        logger.debug(
+          "{} StdOut: {} StdErr: {}",
+          process,
+          processLogger.stdOut,
+          processLogger.stdErr
+        )
+        if (exitCode > 0) Left(processLogger.stdErr)
+        else Right(processLogger.stdOut)
+      }.unsafeRunAsync(cb)
+      IO { process.destroy() }
+
     }
   }
 }
