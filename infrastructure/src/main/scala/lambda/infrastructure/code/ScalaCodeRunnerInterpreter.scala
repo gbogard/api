@@ -27,7 +27,7 @@ class ScalaCodeRunnerInterpreter()(implicit config: Configuration)
       files: List[File],
       mainClass: String,
       dependencies: List[ScalaDependency] = Nil,
-      timeout: FiniteDuration = 30 seconds
+      timeout: FiniteDuration = 10 seconds
   ): ProcessResult[IO] =
     wrapEitherInResource(
       createTemporaryFolder[IO](),
@@ -119,7 +119,8 @@ class ScalaCodeRunnerInterpreter()(implicit config: Configuration)
         volumesFlag = Docker.volumeNamesToFlags(cpVolumes) + securityPolicyVolume
         cpFlag = "-cp " + cpVolumes.values.mkString(":")
         cpusFlag = s"--cpus ${config.defaultCpusLimit}"
-        scalaCmd = s"${Docker.scalaPath} $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
+        maxHeapSizeFlag = "-J-Xmx100m"
+        scalaCmd = s"${Docker.scalaPath} $maxHeapSizeFlag $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
         cmd = s"docker run $cpusFlag $volumesFlag ${Docker.scalaImage} $scalaCmd"
         result <- StringProcessLogger.run(Process(cmd)).value
       } yield result
