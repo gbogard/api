@@ -7,6 +7,8 @@ case class Configuration(
   env: String, 
   scalaUtilsClassPath: String,
   apiUrl: String,
+  temporaryFoldersBase: String,
+  defaultCpusLimit: Float
  ) {
   val isDev = env == "development"
 }

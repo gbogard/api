@@ -12,14 +12,16 @@ import lambda.domain.code._
 import lambda.domain.code.ScalaCodeRunner
 import lambda.domain.code.ScalaCodeRunner._
 import lambda.infrastructure.Utils._
-import lambda.infrastructure.ExternalDependencies.Scala2
 import scala.tools.nsc._
 import scala.sys.process._
 import scala.concurrent.duration._
 import scala.tools.nsc.reporters.StoreReporter
 import lambda.infrastructure.Configuration
+import lambda.infrastructure.Docker
 
-class ScalaCodeRunnerInterpreter()(implicit config: Configuration) extends ScalaCodeRunner[IO] with StrictLogging {
+class ScalaCodeRunnerInterpreter()(implicit config: Configuration)
+    extends ScalaCodeRunner[IO]
+    with StrictLogging {
 
   def run(
       files: List[File],
@@ -104,14 +106,23 @@ class ScalaCodeRunnerInterpreter()(implicit config: Configuration) extends Scala
       mainClass: String
   ): EitherT[IO, String, String] = EitherT {
     Security.securityPolicyFile[IO] use { securityPolicyFile =>
-      val securityPolicyFlag = s"-Djava.security.policy==${securityPolicyFile.getAbsolutePath()}"
-      val cp = List(
+      val classPath = List(
         compiledClassesFolder.getAbsolutePath(),
         config.scalaUtilsClassPath
       )
-      val cpFlag = s"-cp ${cp.mkString(":")}"
-      val cmd = s"${Scala2.scala} $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
-      StringProcessLogger.run(Process(cmd)).value
+      val securityPolicyFileContainerLocation = Docker.scalaHomeDirectory + "/security.policy"
+      val securityPolicyFlag = s"-Djava.security.policy==${securityPolicyFileContainerLocation}"
+
+      for {
+        cpVolumes <- Docker.createVolumeNames[IO](classPath, Docker.scalaHomeDirectory)
+        securityPolicyVolume = s" -v ${securityPolicyFile.getAbsolutePath()}:$securityPolicyFileContainerLocation"
+        volumesFlag = Docker.volumeNamesToFlags(cpVolumes) + securityPolicyVolume
+        cpFlag = "-cp " + cpVolumes.values.mkString(":")
+        cpusFlag = s"--cpus ${config.defaultCpusLimit}"
+        scalaCmd = s"${Docker.scalaPath} $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
+        cmd = s"docker run $cpusFlag $volumesFlag ${Docker.scalaImage} $scalaCmd"
+        result <- StringProcessLogger.run(Process(cmd)).value
+      } yield result
     }
   }
 

@@ -10,6 +10,7 @@ import scala.concurrent.duration.FiniteDuration
 import org.apache.commons.io.FileUtils
 import com.typesafe.scalalogging.StrictLogging
 import lambda.domain.code._
+import java.nio.file._
 
 object Utils extends StrictLogging {
 
@@ -31,10 +32,12 @@ object Utils extends StrictLogging {
     Resource.make(acquire)(release)
   }
 
-  def createTemporaryFolder[F[_]: Sync](): Resource[F, File] = {
+  def createTemporaryFolder[F[_]: Sync]()(implicit config: Configuration): Resource[F, File] = {
     val create = Sync[F].delay {
       val randomName = UUID.randomUUID().toString()
-      val f = Files.createTempDirectory(randomName).toFile
+      val basePath: Path = Paths.get(config.temporaryFoldersBase)
+      Files.createDirectories(basePath)
+      val f = Files.createTempDirectory(basePath, randomName).toFile
       logger.debug("Creating temporary directory {}", f.getAbsolutePath())
       f
     }
