@@ -1,6 +1,7 @@
 package lambda.infrastructure.code
 
 import java.io.File
+import java.util.UUID
 
 import cats.data.EitherT
 import cats.effect._
@@ -12,12 +13,12 @@ import lambda.domain.code._
 import lambda.domain.code.ScalaCodeRunner
 import lambda.domain.code.ScalaCodeRunner._
 import lambda.infrastructure.Utils._
+
 import scala.tools.nsc._
 import scala.sys.process._
 import scala.concurrent.duration._
 import scala.tools.nsc.reporters.StoreReporter
-import lambda.infrastructure.Configuration
-import lambda.infrastructure.Docker
+import lambda.infrastructure.{Configuration, Docker, ExecutionContexts}
 
 class ScalaCodeRunnerInterpreter()(implicit config: Configuration)
     extends ScalaCodeRunner[IO]
@@ -27,7 +28,7 @@ class ScalaCodeRunnerInterpreter()(implicit config: Configuration)
       files: List[File],
       mainClass: String,
       dependencies: List[ScalaDependency] = Nil,
-      timeout: FiniteDuration = 10 seconds
+      timeout: FiniteDuration = 15 seconds
   ): ProcessResult[IO] =
     wrapEitherInResource(
       createTemporaryFolder[IO](),
@@ -114,15 +115,21 @@ class ScalaCodeRunnerInterpreter()(implicit config: Configuration)
       val securityPolicyFlag = s"-Djava.security.policy==${securityPolicyFileContainerLocation}"
 
       for {
+        containerName <- IO { "scala-" + UUID.randomUUID().toString }
         cpVolumes <- Docker.createVolumeNames[IO](classPath, Docker.scalaHomeDirectory)
         securityPolicyVolume = s" -v ${securityPolicyFile.getAbsolutePath()}:$securityPolicyFileContainerLocation"
         volumesFlag = Docker.volumeNamesToFlags(cpVolumes) + securityPolicyVolume
         cpFlag = "-cp " + cpVolumes.values.mkString(":")
         cpusFlag = s"--cpus ${config.defaultCpusLimit}"
         maxHeapSizeFlag = "-J-Xmx100m"
+        containerNameFlag = s"--name $containerName"
         scalaCmd = s"${Docker.scalaPath} $maxHeapSizeFlag $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
-        cmd = s"docker run $cpusFlag $volumesFlag ${Docker.scalaImage} $scalaCmd"
-        result <- StringProcessLogger.run(Process(cmd)).value
+        cmd = s"docker run $cpusFlag $volumesFlag $containerNameFlag --rm ${Docker.scalaImage} $scalaCmd"
+        killContainer = IO {
+          s"docker kill $containerName".!!
+          ()
+        }
+        result <- StringProcessLogger.run(Process(cmd), killContainer)(ExecutionContexts.codeRunnerEc).value
       } yield result
     }
   }

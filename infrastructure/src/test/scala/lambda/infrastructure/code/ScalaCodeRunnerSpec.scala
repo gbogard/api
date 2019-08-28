@@ -193,7 +193,7 @@ class ScalaCodeRunnerSpec extends Approbation {
       dependencies: List[ScalaDependency],
       resources: List[String],
       assertion: Either[String, String] => IO[Assertion],
-      timeout: FiniteDuration = 10 seconds
+      timeout: FiniteDuration = 15 seconds
   ): Future[Assertion] = {
     Configuration
       .load[IO]
