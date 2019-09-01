@@ -19,6 +19,8 @@ module Ace = {
     theme: string,
     [@bs.optional]
     fontSize: string,
+    [@bs.optional]
+    maxLines: int,
   };
 
   [@bs.deriving abstract]
