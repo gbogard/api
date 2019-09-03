@@ -13,7 +13,6 @@ blocks:
         commands:
           - checkout
           - sem-version scala 2.12
-          - bash install-deps.sh
           # - https://docs.semaphoreci.com/article/54-toolbox-reference#cache
           - cache restore sbt-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt),sbt-$SEMAPHORE_GIT_BRANCH,sbt-master
           - cache restore ivy2-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt),ivy2-$SEMAPHORE_GIT_BRANCH,ivy2-master

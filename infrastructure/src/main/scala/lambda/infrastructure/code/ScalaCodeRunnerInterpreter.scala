@@ -106,19 +106,20 @@ class ScalaCodeRunnerInterpreter()(implicit config: Configuration)
       compiledClassesFolder: File,
       mainClass: String
   ): EitherT[IO, String, String] = EitherT {
-    Security.securityPolicyFile[IO] use { securityPolicyFile =>
+
       val classPath = List(
-        compiledClassesFolder.getAbsolutePath(),
-        config.scalaUtilsClassPath
+        compiledClassesFolder
+          .getAbsolutePath
+          .replace(config.temporaryFoldersBase.containerPath, config.temporaryFoldersBase.hostPath),
+        config.scalaUtilsClassPath.hostPath
       )
-      val securityPolicyFileContainerLocation = Docker.scalaHomeDirectory + "/security.policy"
-      val securityPolicyFlag = s"-Djava.security.policy==${securityPolicyFileContainerLocation}"
+      val securityPolicyFlag = s"-Djava.security.policy==${config.sharedFiles.containerPath}/${Security.securityPolicyFileName}"
 
       for {
         containerName <- IO { "scala-" + UUID.randomUUID().toString }
         cpVolumes <- Docker.createVolumeNames[IO](classPath, Docker.scalaHomeDirectory)
-        securityPolicyVolume = s" -v ${securityPolicyFile.getAbsolutePath()}:$securityPolicyFileContainerLocation"
-        volumesFlag = Docker.volumeNamesToFlags(cpVolumes) + securityPolicyVolume
+        sharedFoldersVolume = s" -v ${config.sharedFiles.hostPath}:${config.sharedFiles.containerPath}"
+        volumesFlag = Docker.volumeNamesToFlags(cpVolumes) + sharedFoldersVolume
         cpFlag = "-cp " + cpVolumes.values.mkString(":")
         cpusFlag = s"--cpus ${config.defaultCpusLimit}"
         maxHeapSizeFlag = "-J-Xmx100m"
@@ -131,7 +132,6 @@ class ScalaCodeRunnerInterpreter()(implicit config: Configuration)
         }
         result <- StringProcessLogger.run(Process(cmd), killContainer)(ExecutionContexts.codeRunnerEc).value
       } yield result
-    }
   }
 
   implicit private val cs: ContextShift[IO] =
@@ -145,11 +145,10 @@ class ScalaCodeRunnerInterpreter()(implicit config: Configuration)
     Module(Organization(dep.org), ModuleName(s"${dep.name}_${dep.scalaVersion}")),
     dep.version
   )
+    }
 
   private object Security {
     val securityMangerFlag = "-Djava.security.manager"
-    def securityPolicyFile[F[_]: Sync] =
-      readResource[F]("/security/jvm-security.policy")
-  }
+    def securityPolicyFileName = "jvm-security.policy"
 
 }

@@ -32,10 +32,14 @@ object Utils extends StrictLogging {
     Resource.make(acquire)(release)
   }
 
+  /**
+   * Creates a temporary folder. The folder is deleted when the resource is freed. 
+   * The base path for the temporary folder will be temporary-folders-path.container-path from the config
+   */
   def createTemporaryFolder[F[_]: Sync]()(implicit config: Configuration): Resource[F, File] = {
     val create = Sync[F].delay {
       val randomName = UUID.randomUUID().toString()
-      val basePath: Path = Paths.get(config.temporaryFoldersBase)
+      val basePath: Path = Paths.get(config.temporaryFoldersBase.containerPath)
       Files.createDirectories(basePath)
       val f = Files.createTempDirectory(basePath, randomName).toFile
       logger.debug("Creating temporary directory {}", f.getAbsolutePath())
