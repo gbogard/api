@@ -22,10 +22,11 @@ scala:
 ----
 
 Some languages make a distinction between *expressions* and *statements*. Statements are combinations of terms terms that
-*do things* (write to a file, print to the console) but can't be reduced to a value. Scala doest not make such distinction.
-In Scala, every combination of term can be evaluated to a value, and every value has a type.
+*do things* (write to a file, print to the console) but can't be reduced to a value. Expressions are
+combinations of terms that can *evaluated*, i.e. reduced to a *value*. Scala doest not make such distinction.
+In Scala, every combination of terms can be evaluated and as we will see later, every value has a type.
 
-### Named Values
+### Naming things
 
 It is possible to bind a value to a name using the `val` keyword. 
 Referencing such named value does not re-compute it.
@@ -51,8 +52,12 @@ cannot be re-assigned.
 
 #### Typing
 
-Recall that every value in Scala has a type. When declaring a value, you can specify its type explicitly using
-a colon after the name of the function.
+Recall that every value in Scala has a type. A type is a particular attribute of the value that tells
+how tells the Scala compiler how this value it is intended to be used. In a strongly-typed language like Scala,
+not all values are created equal. For instance, it does not make sense to multiply a number with a piece of text.
+
+When declaring a value, you can specify its type explicitly using
+a colon after the name of the value.
 
 ```scala
 val name: String = "Alex"
@@ -72,7 +77,8 @@ So far we've encountered two basic types in Scala :
 - `Int`: a 32-bit integer, ranging from -2^15 to 2^15-1 (inclusive)
 - `String`: a sequence of Unicode character (`Char`)
 
-There are several other data types in Scala. We will discover some of them along the way.
+There are several other data types in Scala. We will discover some of them along the way, as well as how you
+can create your own types.
 
 ### Variables
 
@@ -117,7 +123,7 @@ val multiply = (a: Int, b: Int): Int => a * b
 Notice how you can explicitly set the return type of the function after the parameter list if you wish, using
 the colon `:` syntax we've seen before.
 
-Functions may also take no parameter at all. This is usefl to delay the execution of some side-effect, like
+Functions may also take no parameter at all. This is useful to delay the execution of some side-effect, like
 printing to the console. We'll get into the details of what side-effects are.
 
 ----

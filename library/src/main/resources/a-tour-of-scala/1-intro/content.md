@@ -1,14 +1,13 @@
-Scala is a modern multi-paradigm programming language designed to express common programming patterns in a concise, elegant, and type-safe way. It smoothly integrates features of object-oriented and functional languages.
+Scala is a modern, multi-paradigm programming language designed to express common programming patterns in a concise, elegant, and type-safe way. It smoothly integrates features of object-oriented and functional languages.
 
 Scala was created by Martin Odersky at the [EPFL](https://www.epfl.ch/en/), in Switzerland. The first release of Scala is from 2003.
 The language has since then successfully been used by major tech companies such as Twitter, and as the primary language of
-widely-used open-source projects such as [Apache Spark](https://spark.apache.org/). Scala can be used of heavy 
+widely-used open-source projects such as [Apache Spark](https://spark.apache.org/). Scala can be used for heavy 
 data processing, machine learning, web services and more. It has been steadily gaining popularity in the IT industry, 
 and is probably the most popular functional programming language today.
-It's also worth noticing that while Scala jobs can still be arguably hard to find, depending on where you live, Scala jobs are among the five
+It's also worth noticing that while Scala jobs can still be arguably hard to find, Scala jobs are among the five
 best paying programming languages worldwide, along with three other functional programming: F#, Clojure and Elixir.
-[Source: Stackoverflow Survey 2019](https://insights.stackoverflow.com/survey/2019). It's clear that functional programming skills
-are sought for and valued.
+[Source: Stackoverflow Survey 2019](https://insights.stackoverflow.com/survey/2019). It's clear that functional programming skills are sought for and valued.
 
 ### Why should I learn Scala ?
 
@@ -134,7 +133,3 @@ scala:
 Scala runs on the Java Virtual Machine, or *JVM* for short. It can also execute Java code, like your own Java classes or your favorite
 Java library. Calling Java from Scala requires no syntax change, it just works. The goal of Scala is not to recreate what Java already
 has, meaning if something exists in Java's standard library, you can just use it.
-
-### Scala is fun
-
-Scala is fun to learn and play around with.
