@@ -6,6 +6,7 @@ object Dependencies {
   lazy val commonsIO = "commons-io" % "commons-io" % "2.6"
   lazy val scalate = "org.scalatra.scalate" %% "scalate-core" % "1.9.4"
   lazy val pprint = "com.lihaoyi" %% "pprint" % "0.5.5"
+  lazy val tracing = "com.colisweb" %% "scala-opentracing" % "0.0.7" 
 
   object PureConfig {
     private val version = "0.10.1"

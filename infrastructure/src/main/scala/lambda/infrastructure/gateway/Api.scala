@@ -10,6 +10,7 @@ import lambda.infrastructure.ExecutionContexts._
 import org.http4s.server.middleware._
 import lambda.domain.MediaHandler
 import lambda.application._
+import com.colisweb.tracing.TracingContext.TracingContextBuilder
 
 object Api {
 
@@ -18,7 +19,7 @@ object Api {
       mediaHandler: MediaHandler
   )
 
-  def apply()(implicit ctx: Context) = {
+  def apply()(implicit ctx: Context, tracingContextBuilder: TracingContextBuilder[IO]) = {
     implicit val coursesRequestHandler = ctx.coursesRequestHandler
     implicit val mediaHandler = ctx.mediaHandler
 

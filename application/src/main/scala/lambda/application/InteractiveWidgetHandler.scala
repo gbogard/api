@@ -12,6 +12,7 @@ import lambda.application.WidgetOutput._
 import lambda.application.WidgetError._
 import lambda.domain.code.SourceFileHandler
 import java.io.File
+import com.colisweb.tracing.TracingContext
 
 object InteractiveWidgetHandler {
 
@@ -32,7 +33,8 @@ object InteractiveWidgetHandler {
       widget: InteractiveWidget,
       input: WidgetInput
   )(
-      implicit ctx: WidgetHandlerContext[F]
+      implicit ctx: WidgetHandlerContext[F],
+      tracingContext: TracingContext[F]
   ): Result[F] = (widget, input) match {
     case (w: MultipleChoices, i: AnswerId)        => EitherT.fromEither(checkMultipleChoices(w, i))
     case (w: InteractiveCodeWidget, i: CodeInput) => executeInteractiveCode(w, i)
@@ -59,7 +61,7 @@ object InteractiveWidgetHandler {
   private def executeInteractiveCode[F[_]: Sync, Par[_]](
       widget: InteractiveCodeWidget,
       input: CodeInput
-  )(implicit ctx: WidgetHandlerContext[F]): Result[F] =
+  )(implicit ctx: WidgetHandlerContext[F], tracingContext: TracingContext[F]): Result[F] =
     widget match {
       case s: Scala2CodeWidget if input.language == Scala2 =>
         EitherT(renderFiles(s.baseFiles, input.code) use { renderedFiles =>

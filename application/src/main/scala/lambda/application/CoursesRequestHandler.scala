@@ -9,6 +9,7 @@ import lambda.domain.courses.Course
 import lambda.domain.courses._
 import cats.data.OptionT
 import cats.data.EitherT
+import com.colisweb.tracing.TracingContext
 
 class CoursesRequestHandler[F[_]: Sync, Par[_]]()(
     implicit courseRepository: CourseRepository[F],
@@ -19,7 +20,9 @@ class CoursesRequestHandler[F[_]: Sync, Par[_]]()(
 
   def getCourseById(id: CourseId): OptionT[F, Course] = courseRepository.getCourse(id)
 
-  def checkWidget(id: WidgetId, input: WidgetInput): EitherT[F, WidgetError, WidgetOutput] = {
+  def checkWidget(id: WidgetId, input: WidgetInput)(
+      implicit tracingContext: TracingContext[F]
+  ): EitherT[F, WidgetError, WidgetOutput] = {
     for {
       widget <- EitherT.fromOptionF(
         courseRepository.getWidget(id).value,
