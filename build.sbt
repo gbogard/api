@@ -4,6 +4,7 @@ ThisBuild / scalaVersion := "2.12.8"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "lambda"
 ThisBuild / organizationName := "lambdacademy"
+ThisBuild / resolvers += Resolver.bintrayRepo("colisweb", "maven")
 
 lazy val root = (project in file("."))
   .settings(
@@ -18,6 +19,7 @@ lazy val domain = (project in file("domain"))
   .settings(
     name := "domain",
     libraryDependencies ++= Cats.all ++ Seq(
+      tracing,
       approvals % Test,
       scalaTest % Test
     )
@@ -30,6 +32,7 @@ lazy val application = (project in file("application"))
   .settings(
     name := "application",
     libraryDependencies ++= Cats.all ++ Seq(
+      tracing,
       approvals % Test,
       scalaTest % Test
     )
@@ -56,6 +59,7 @@ lazy val infrastructure = (project in file("infrastructure"))
       ++ Seq(
         scalate,
         commonsIO,
+        tracing,
         approvals % Test,
         scalaTest % Test
       )

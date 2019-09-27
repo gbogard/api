@@ -3,6 +3,7 @@ package lambda.domain.code
 import java.io.File
 import scala.concurrent.duration._
 import ScalaCodeRunner._
+import com.colisweb.tracing.TracingContext
 
 trait ScalaCodeRunner[F[_]] {
   def run(
@@ -10,7 +11,7 @@ trait ScalaCodeRunner[F[_]] {
       mainClass: String,
       dependencies: List[ScalaDependency] = Nil,
       timeout: FiniteDuration = 30 seconds
-  ): ProcessResult[F]
+  )(implicit tracingContext: TracingContext[F]): ProcessResult[F]
 }
 
 object ScalaCodeRunner {

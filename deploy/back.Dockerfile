@@ -51,4 +51,8 @@ COPY --from=build-deps /usr/app/src/scala-utils/target/scala-2.12/classes ./scal
 COPY --from=build-deps /usr/app/src/shared-files ./shared-files
 
 EXPOSE 8080
-CMD ["/usr/openjdk/jdk-11.0.4+11-jre/bin/java", "-jar", "-Dconfig.resource=application-prod.conf", "/usr/app/build/lambdacademy.jar"]
+CMD ["/usr/openjdk/jdk-11.0.4+11-jre/bin/java", "-jar",
+ "-Dconfig.resource=application-prod.conf",
+ "-Dlogback.configurationFile=logback-prod.xml"
+ "/usr/app/build/lambdacademy.jar"
+ ]

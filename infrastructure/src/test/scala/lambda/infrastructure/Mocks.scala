@@ -11,6 +11,7 @@ import lambda.domain.code.TemplateEngine
 import cats.effect.Resource
 import lambda.domain.MediaHandler
 import lambda.domain.Media
+import com.colisweb.tracing.TracingContext
 
 object Mocks {
   def mockCourseRepository(
@@ -46,7 +47,7 @@ object Mocks {
         mainClass: String,
         dependencies: List[lambda.domain.code.ScalaCodeRunner.ScalaDependency],
         timeout: scala.concurrent.duration.FiniteDuration
-    ) = ???
+    )(implicit tracingContext: TracingContext[IO]) = ???
   }
 
   def mockTemplateEngine(): TemplateEngine[IO] = new TemplateEngine[IO] {

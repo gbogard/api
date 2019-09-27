@@ -12,6 +12,8 @@ import lambda.infrastructure.MediaHandlerInterpreter
 import lambda.infrastructure.courseTemplateEngine.CourseTemplateEngineInterpreter
 import lambda.application.CoursesRequestHandler
 import lambda.domain.courses.CourseTemplateEngine
+import com.colisweb.tracing.LoggingTracingContext
+import com.colisweb.tracing.TracingContextBuilder
 
 object Main extends IOApp {
 
@@ -21,6 +23,7 @@ object Main extends IOApp {
 
   def run(args: List[String]): IO[ExitCode] =
     for {
+      tracingContextBuilder <- createTracingContext
       config <- Configuration.load[IO]
       scala2CodeRunner = new ScalaCodeRunnerInterpreter()(config)
       widgetHandlerContext = WidgetHandlerContext(
@@ -37,6 +40,9 @@ object Main extends IOApp {
         coursesRequestHandler,
         mediaHandler
       )
-      exitCode <- Api()(apiContext)
+      exitCode <- Api()(apiContext, tracingContextBuilder)
     } yield exitCode
+
+  private val createTracingContext: IO[TracingContextBuilder[IO]] = 
+    IO.pure(LoggingTracingContext())
 }

@@ -19,6 +19,8 @@ import scala.sys.process._
 import scala.concurrent.duration._
 import scala.tools.nsc.reporters.StoreReporter
 import lambda.infrastructure.{Configuration, Docker, ExecutionContexts}
+import com.colisweb.tracing._
+import com.colisweb.tracing.implicits._
 
 class ScalaCodeRunnerInterpreter()(implicit config: Configuration)
     extends ScalaCodeRunner[IO]
@@ -28,15 +30,21 @@ class ScalaCodeRunnerInterpreter()(implicit config: Configuration)
       files: List[File],
       mainClass: String,
       dependencies: List[ScalaDependency] = Nil,
-      timeout: FiniteDuration = 15 seconds
-  ): ProcessResult[IO] =
+      timeout: FiniteDuration = 15 seconds,
+  )(implicit tracingContext: TracingContext[IO]): ProcessResult[IO] =
     wrapEitherInResource(
       createTemporaryFolder[IO](),
       (folder: File) => {
         for {
-          dependencies <- fetchDependencies(dependencies)
-          _ <- compileFiles(files, dependencies, folder)
-          output <- withTimeout(run(folder, mainClass), timeout)
+          dependencies <- tracingContext.childSpan("Fetching dependencies") either { _ =>
+            fetchDependencies(dependencies)
+          }
+          _ <- tracingContext.childSpan("Compiling Scala sources") either { _ =>
+            compileFiles(files, dependencies, folder)
+          }
+          output <- tracingContext.childSpan("Running Scala program in container") either { childCtx =>
+            withTimeout(run(folder, mainClass, childCtx), timeout)
+          }
         } yield output
       }
     )
@@ -104,34 +112,37 @@ class ScalaCodeRunnerInterpreter()(implicit config: Configuration)
 
   private def run(
       compiledClassesFolder: File,
-      mainClass: String
+      mainClass: String,
+      tracingContext: TracingContext[IO]
   ): EitherT[IO, String, String] = EitherT {
 
-      val classPath = List(
-        compiledClassesFolder
-          .getAbsolutePath
-          .replace(config.temporaryFoldersBase.containerPath, config.temporaryFoldersBase.hostPath),
-        config.scalaUtilsClassPath.hostPath
-      )
-      val securityPolicyFlag = s"-Djava.security.policy==${config.sharedFiles.containerPath}/${Security.securityPolicyFileName}"
+    val classPath = List(
+      compiledClassesFolder.getAbsolutePath
+        .replace(config.temporaryFoldersBase.containerPath, config.temporaryFoldersBase.hostPath),
+      config.scalaUtilsClassPath.hostPath
+    )
+    val securityPolicyFlag =
+      s"-Djava.security.policy==${config.sharedFiles.containerPath}/${Security.securityPolicyFileName}"
 
-      for {
-        containerName <- IO { "scala-" + UUID.randomUUID().toString }
-        cpVolumes <- Docker.createVolumeNames[IO](classPath, Docker.scalaHomeDirectory)
-        sharedFoldersVolume = s" -v ${config.sharedFiles.hostPath}:${config.sharedFiles.containerPath}"
-        volumesFlag = Docker.volumeNamesToFlags(cpVolumes) + sharedFoldersVolume
-        cpFlag = "-cp " + cpVolumes.values.mkString(":")
-        cpusFlag = s"--cpus ${config.defaultCpusLimit}"
-        maxHeapSizeFlag = "-J-Xmx100m"
-        containerNameFlag = s"--name $containerName"
-        scalaCmd = s"${Docker.scalaPath} $maxHeapSizeFlag $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
-        cmd = s"docker run $cpusFlag $volumesFlag $containerNameFlag --rm ${Docker.scalaImage} $scalaCmd"
-        killContainer = IO {
-          s"docker kill $containerName".!!
-          ()
-        }
-        result <- StringProcessLogger.run(Process(cmd), killContainer)(ExecutionContexts.codeRunnerEc).value
-      } yield result
+    for {
+      containerName <- IO { "scala-" + UUID.randomUUID().toString }
+      cpVolumes <- Docker.createVolumeNames[IO](classPath, Docker.scalaHomeDirectory)
+      sharedFoldersVolume = s" -v ${config.sharedFiles.hostPath}:${config.sharedFiles.containerPath}"
+      volumesFlag = Docker.volumeNamesToFlags(cpVolumes) + sharedFoldersVolume
+      cpFlag = "-cp " + cpVolumes.values.mkString(":")
+      cpusFlag = s"--cpus ${config.defaultCpusLimit}"
+      maxHeapSizeFlag = "-J-Xmx100m"
+      containerNameFlag = s"--name $containerName"
+      scalaCmd = s"${Docker.scalaPath} $maxHeapSizeFlag $cpFlag ${Security.securityMangerFlag} $securityPolicyFlag $mainClass"
+      cmd = s"docker run $cpusFlag $volumesFlag $containerNameFlag --rm ${Docker.scalaImage} $scalaCmd"
+      killContainer = tracingContext.childSpan("Killing container") wrap IO {
+        s"docker kill $containerName".!!
+        ()
+      }
+      result <- tracingContext.childSpan("Docker run") wrap {
+        StringProcessLogger.run(Process(cmd), killContainer)(ExecutionContexts.codeRunnerEc).value
+      }
+    } yield result
   }
 
   implicit private val cs: ContextShift[IO] =
@@ -145,10 +156,10 @@ class ScalaCodeRunnerInterpreter()(implicit config: Configuration)
     Module(Organization(dep.org), ModuleName(s"${dep.name}_${dep.scalaVersion}")),
     dep.version
   )
-    }
+}
 
-  private object Security {
-    val securityMangerFlag = "-Djava.security.manager"
-    def securityPolicyFileName = "jvm-security.policy"
+private object Security {
+  val securityMangerFlag = "-Djava.security.manager"
+  def securityPolicyFileName = "jvm-security.policy"
 
 }
