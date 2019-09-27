@@ -18,6 +18,7 @@ import cats.effect.concurrent.Deferred
 import lambda.domain.code.TemplateEngine
 import lambda.domain.courses.InteractiveCodeWidget.Scala2CodeWidget
 import lambda.domain.code.ScalaCodeRunner.ScalaDependency
+import com.colisweb.tracing._
 
 class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
 
@@ -84,7 +85,7 @@ class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
                       mainClass: String,
                       dependencies: List[ScalaDependency],
                       timeout: scala.concurrent.duration.FiniteDuration
-                  ) =
+                  )(implicit tracingContext: TracingContext[IO]) =
                     EitherT.liftF(receivedFilesDeferred.complete(files)).map(_ => "")
                 },
                 sourceFileHandler = (_: SourceFile) => ???
@@ -173,6 +174,7 @@ class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
     )
   }
 
+
   private def mockTemplateEngine(output: List[File]) = new TemplateEngine[IO] {
     def canRender(file: File) = true
     def render(
@@ -190,7 +192,7 @@ class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
           mainClass: String,
           dependencies: List[ScalaCodeRunner.ScalaDependency],
           timeout: FiniteDuration
-      ): lambda.domain.code.ProcessResult[IO] = scala2CodeRunnerResult
+      )(implicit tracingContext: TracingContext[IO]): lambda.domain.code.ProcessResult[IO] = scala2CodeRunnerResult
     },
     templateEngine = mockTemplateEngine(Nil),
     sourceFileHandler = (_: SourceFile) => ???
@@ -201,6 +203,7 @@ class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
     */
   implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
   implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
+  implicit private def tracingContext: TracingContext[IO] = NoOpTracingContext[IO]()
 
   private def createTempFiles(): Resource[IO, List[File]] = {
     def acquire = IO {

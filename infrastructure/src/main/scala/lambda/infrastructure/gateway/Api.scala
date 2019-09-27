@@ -10,7 +10,7 @@ import lambda.infrastructure.ExecutionContexts._
 import org.http4s.server.middleware._
 import lambda.domain.MediaHandler
 import lambda.application._
-import com.colisweb.tracing.TracingContext.TracingContextBuilder
+import com.colisweb.tracing.TracingContextBuilder
 
 object Api {
 

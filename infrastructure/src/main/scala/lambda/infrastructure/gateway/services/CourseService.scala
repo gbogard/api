@@ -12,7 +12,7 @@ import lambda.domain.courses._
 import lambda.domain.courses.Course.CourseId
 import lambda.domain.MediaHandler
 import com.colisweb.tracing.http4s.TracedHttpRoutes
-import com.colisweb.tracing.TracingContext.TracingContextBuilder
+import com.colisweb.tracing.TracingContextBuilder
 import com.colisweb.tracing.http4s.TracedHttpRoutes._
 
 object CourseService {

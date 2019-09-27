@@ -14,6 +14,8 @@ import org.http4s._
 import org.scalatest._
 import lambda.infrastructure.courseTemplateEngine.CourseTemplateEngineInterpreter
 import lambda.application.CoursesRequestHandler
+import com.colisweb.tracing.TracingContextBuilder
+import com.colisweb.tracing.NoOpTracingContext
 
 class CourseServiceSpec extends AsyncFunSpec with Matchers {
 
@@ -213,7 +215,8 @@ class CourseServiceSpec extends AsyncFunSpec with Matchers {
             .map(_.get)
             .map(res => {
               res.status.code shouldBe 400
-              res.as[Json].unsafeRunSync() shouldBe Json.obj("error" -> "Wrong answer".asJson, "code" -> "WRONG_ANSWER".asJson)
+              res.as[Json].unsafeRunSync() shouldBe Json
+                .obj("error" -> "Wrong answer".asJson, "code" -> "WRONG_ANSWER".asJson)
             })
             .unsafeToFuture()
         }
@@ -226,5 +229,8 @@ class CourseServiceSpec extends AsyncFunSpec with Matchers {
     mockTemplateEngine(),
     sourceFileHandler
   )
+
+  implicit private def tcb: TracingContextBuilder[IO] =
+    NoOpTracingContext.getNoOpTracingContextBuilder[IO].unsafeRunSync()
 
 }

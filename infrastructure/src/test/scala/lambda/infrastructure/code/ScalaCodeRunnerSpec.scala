@@ -10,6 +10,7 @@ import cats.effect._
 import lambda.domain.code.ScalaCodeRunner.ScalaDependency
 import lambda.infrastructure.Utils
 import lambda.infrastructure.Configuration
+import com.colisweb.tracing._
 
 class ScalaCodeRunnerSpec extends Approbation {
 
@@ -188,6 +189,7 @@ class ScalaCodeRunnerSpec extends Approbation {
   }
 
   implicit private val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
+  implicit private def tracingContext: TracingContext[IO] = NoOpTracingContext[IO]()
   private def testCodeRunner(
       mainClass: String,
       dependencies: List[ScalaDependency],

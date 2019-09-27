@@ -13,7 +13,7 @@ import lambda.infrastructure.courseTemplateEngine.CourseTemplateEngineInterprete
 import lambda.application.CoursesRequestHandler
 import lambda.domain.courses.CourseTemplateEngine
 import com.colisweb.tracing.LoggingTracingContext
-import com.colisweb.tracing.TracingContext.TracingContextBuilder
+import com.colisweb.tracing.TracingContextBuilder
 
 object Main extends IOApp {
 
