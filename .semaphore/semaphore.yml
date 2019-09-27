@@ -9,6 +9,8 @@ agent:
 blocks:
   - name: Test
     task:
+      secrets:
+        - name: COVERAGE
       prologue:
         commands:
           - checkout
@@ -18,19 +20,19 @@ blocks:
           - cache restore ivy2-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt),ivy2-$SEMAPHORE_GIT_BRANCH,ivy2-master
           - cache restore gradle-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt),gradle-$SEMAPHORE_GIT_BRANCH,gradle-master
       jobs:
-      - name: Test Scala 
-        commands:
-
-          - sbt test
-          # Fails if coverage is below threshold
-          - sbt coverageAggregate
+        - name: Test Scala
+          commands:
+            - sbt clean coverage test
+            # Fails if coverage is below threshold
+            - sbt coverageAggregate
       epilogue:
         commands:
-        - cd $HOME
-        - ls -lah
-        - cache store sbt-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt) .sbt
-        - cache store ivy2-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt) .ivy2/cache
-        - cache store gradle-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt) .gradle/caches
+          - bash <(curl -s https://codecov.io/bash)
+          - cd $HOME
+          - ls -lah
+          - cache store sbt-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt) .sbt
+          - cache store ivy2-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt) .ivy2/cache
+          - cache store gradle-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt) .gradle/caches
 promotions:
   - name: Deploy
     pipeline_file: build-and-deploy.yml
