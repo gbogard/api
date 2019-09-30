@@ -27,7 +27,7 @@ blocks:
             - sbt coverageAggregate
       epilogue:
         commands:
-          - bash <(curl -s https://codecov.io/bash)
+          - sbt coveralls
           - cd $HOME
           - ls -lah
           - cache store sbt-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt) .sbt
