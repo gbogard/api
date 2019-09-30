@@ -22,7 +22,7 @@ blocks:
       jobs:
         - name: Test Scala
           commands:
-            - sbt clean coverage test
+            - sbt clean test
             # Fails if coverage is below threshold
             - sbt coverageAggregate
       epilogue:

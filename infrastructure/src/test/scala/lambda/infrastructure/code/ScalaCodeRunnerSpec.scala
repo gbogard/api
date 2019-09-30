@@ -151,7 +151,6 @@ class ScalaCodeRunnerSpec extends Approbation {
           ),
           result =>
             IO {
-              println(result)
               approver.verify(result.right.get)
               succeed
             }

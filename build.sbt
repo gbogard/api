@@ -140,8 +140,7 @@ ThisBuild / scalacOptions ++= Seq(
   "-Ywarn-value-discard" // Warn when non-Unit expression results are unused.
 )
 
-coverageEnabled in (Test, compile) := true
-coverageEnabled in (Compile, compile) := false
+coverageEnabled in (ThisBuild, Test, test) := true
 ThisBuild / coverageMinimum := 90
 ThisBuild / coverageFailOnMinimum := true
 ThisBuild / coverageExcludedPackages := Seq(
