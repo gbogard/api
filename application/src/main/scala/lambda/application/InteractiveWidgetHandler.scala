@@ -5,13 +5,14 @@ import cats.implicits._
 import cats.data.EitherT
 import lambda.domain.code._
 import lambda.domain.code.Language.Scala2
-import lambda.domain.courses.widgets._
-import lambda.domain.courses.widgets.InteractiveCodeWidget._
-import lambda.domain.courses.widgets.WidgetInput._
-import lambda.domain.courses.widgets.WidgetOutput._
-import lambda.domain.courses.widgets.WidgetError._
+import lambda.domain.courses._
+import lambda.domain.courses.InteractiveCodeWidget._
+import lambda.application.WidgetInput._
+import lambda.application.WidgetOutput._
+import lambda.application.WidgetError._
 import lambda.domain.code.SourceFileHandler
 import java.io.File
+import com.colisweb.tracing.TracingContext
 
 object InteractiveWidgetHandler {
 
@@ -32,7 +33,8 @@ object InteractiveWidgetHandler {
       widget: InteractiveWidget,
       input: WidgetInput
   )(
-      implicit ctx: WidgetHandlerContext[F]
+      implicit ctx: WidgetHandlerContext[F],
+      tracingContext: TracingContext[F]
   ): Result[F] = (widget, input) match {
     case (w: MultipleChoices, i: AnswerId)        => EitherT.fromEither(checkMultipleChoices(w, i))
     case (w: InteractiveCodeWidget, i: CodeInput) => executeInteractiveCode(w, i)
@@ -43,7 +45,7 @@ object InteractiveWidgetHandler {
       widget: MultipleChoices,
       input: AnswerId
   ): Either[WidgetError, WidgetOutput] =
-    if (input == widget.question.rightAnswer.id) Right(RightAnswer) else Left(WrongAnswer)
+    if (input.answerId == widget.question.rightAnswer.id) Right(RightAnswer) else Left(WrongAnswer)
 
   private def renderFiles[F[_]: Sync, Par[_]](
       files: List[SourceFile],
@@ -59,7 +61,7 @@ object InteractiveWidgetHandler {
   private def executeInteractiveCode[F[_]: Sync, Par[_]](
       widget: InteractiveCodeWidget,
       input: CodeInput
-  )(implicit ctx: WidgetHandlerContext[F]): Result[F] =
+  )(implicit ctx: WidgetHandlerContext[F], tracingContext: TracingContext[F]): Result[F] =
     widget match {
       case s: Scala2CodeWidget if input.language == Scala2 =>
         EitherT(renderFiles(s.baseFiles, input.code) use { renderedFiles =>

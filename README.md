@@ -1,35 +1,30 @@
 # Lambdacademy
 
-## Local development
+A friendly, interactive platform for learning functional programming online.
 
-Install :
+[![CodeFactor](https://www.codefactor.io/repository/github/gbogard/lambdacademy/badge)](https://www.codefactor.io/repository/github/gbogard/lambdacademy)
+[![Coverage Status](https://coveralls.io/repos/github/gbogard/lambdacademy/badge.svg?branch=master)](https://coveralls.io/github/gbogard/lambdacademy?branch=master)
 
-```
-sh ./install-deps.sh
-```
+[![Known Vulnerabilities](https://snyk.io/test/github/gbogard/lambdacademy/badge.svg)](https://snyk.io/test/github/{username}/{repo})
 
-```
-yarn
-```
+![GitHub last commit](https://img.shields.io/github/last-commit/gbogard/lambdacademy)
 
-Run :
+## Project goals
 
-```
-sbt infrastructure/run
-```
+- Enable people to learn functional programming by following interactive courses where they
+can read tutorials, do exercises, code in their browser, and complete real projects.
+- Be fun : the long-term goal of the platform is to have gamification features that make learning more motivating and more sociable. The courses themselves should be playful.
+- Be inclusive : the goal here is to share the love of functional programming and empower developers of all backgrounds to write beautiful code
 
-```
-yarn dev
-```
+... and of course
 
-## Scala Code Runner and templating
+- be functional : besides the courses' content, the platform itself is developed with functional
+programming in mind, by using a combination of Scala and ReasonML.
 
-By default, user input will be put in the "userInput" variable. You need to print somewhere in a template
-and set the template as "baseFile".
+## Project documentation
 
-### Base templates
+The documentation for the project lives in the [Wiki](https://github.com/gbogard/lambdacademy/wiki).
 
-Base templates are located in `infratructure`
+## Participation
 
-- `templates/scala/UserInput.ssp` : writes the user input to a file, nothing more
-- `templates/scala/WrapInMain.ssp` : wraps the user input in an called Main that serves as entry point
+This project follows the [Scala Code of Conduct](https://www.scala-lang.org/conduct/). All participants are expected to be kind and courteous. 

@@ -24,6 +24,7 @@ module Decode = {
       id: json |> field("id", string),
       title: json |> field("title", string),
       description: json |> field("description", string),
+      image: json |> optional(field("image", string)),
       tags: json |> field("tags", list(string)),
     };
 

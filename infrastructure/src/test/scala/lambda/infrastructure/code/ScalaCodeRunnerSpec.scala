@@ -10,6 +10,7 @@ import cats.effect._
 import lambda.domain.code.ScalaCodeRunner.ScalaDependency
 import lambda.infrastructure.Utils
 import lambda.infrastructure.Configuration
+import com.colisweb.tracing._
 
 class ScalaCodeRunnerSpec extends Approbation {
 
@@ -150,7 +151,6 @@ class ScalaCodeRunnerSpec extends Approbation {
           ),
           result =>
             IO {
-              println(result)
               approver.verify(result.right.get)
               succeed
             }
@@ -188,12 +188,13 @@ class ScalaCodeRunnerSpec extends Approbation {
   }
 
   implicit private val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
+  implicit private def tracingContext: TracingContext[IO] = NoOpTracingContext[IO]()
   private def testCodeRunner(
       mainClass: String,
       dependencies: List[ScalaDependency],
       resources: List[String],
       assertion: Either[String, String] => IO[Assertion],
-      timeout: FiniteDuration = 30 seconds
+      timeout: FiniteDuration = 15 seconds
   ): Future[Assertion] = {
     Configuration
       .load[IO]
@@ -201,7 +202,7 @@ class ScalaCodeRunnerSpec extends Approbation {
         implicit config =>
           (resources
             .traverse(Utils.readResource[IO](_)) use { files =>
-            (new ScalaCodeRunnerImpl)
+            (new ScalaCodeRunnerInterpreter)
               .run(files, mainClass, dependencies, timeout)
               .leftMap((normalizeEndings _) andThen (limitLines(_)) andThen (removeFileRandomIds _))
               .value

@@ -1,9 +1,6 @@
 .code-widget {
   @extend .box;
   padding: 0;
-  min-height: 470px;
-  display: flex;
-  flex-direction: column;
 
   .topbar {
     padding: $spacer/2;
@@ -11,11 +8,11 @@
   }
 
   .editor {
-    flex-grow: 1;
+    min-height: 4rem;
   }
 
   .output {
-    height: 190px;
+    max-height: 190px;
     border-top: 1px solid $light;
     position: relative;
     overflow: hidden;
@@ -30,7 +27,7 @@
 
     >.content {
       height: 100%;
-      padding: $spacer;
+      padding: $spacer $spacer*2 $spacer $spacer;
       font-family: monospace;
       font-size: .9rem;
       background: $very-light;

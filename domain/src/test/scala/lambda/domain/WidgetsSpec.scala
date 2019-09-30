@@ -1,9 +1,7 @@
 package lambda.domain.courses
 
 import org.scalatest._
-import lambda.domain.courses.widgets._
-import lambda.domain.courses.widgets.WidgetInput.AnswerId
-import lambda.domain.courses.widgets.InteractiveCodeWidget._
+import lambda.domain.courses.InteractiveCodeWidget._
 
 class WidgetsSpec extends FunSpec with Matchers {
 
@@ -29,7 +27,7 @@ class WidgetsSpec extends FunSpec with Matchers {
         required = false,
         question = MultipleChoices.Question(
           "What is love ?",
-          MultipleChoices.Answer(AnswerId(0), "Baby don't hurt me"),
+          MultipleChoices.Answer(0, "Baby don't hurt me"),
           Nil
         )
       ).widgetType shouldBe "multipleChoices"

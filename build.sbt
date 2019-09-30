@@ -4,12 +4,13 @@ ThisBuild / scalaVersion := "2.12.8"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "lambda"
 ThisBuild / organizationName := "lambdacademy"
+ThisBuild / resolvers += Resolver.bintrayRepo("colisweb", "maven")
 
 lazy val root = (project in file("."))
   .settings(
     name := "lambdacademy"
   )
-  .aggregate(domain, infrastructure, application, library, courseTemplateEngine, scalaUtils)
+  .aggregate(domain, infrastructure, application, library, scalaUtils)
 
 /**
  * A project for domain models and interfaces
@@ -18,6 +19,7 @@ lazy val domain = (project in file("domain"))
   .settings(
     name := "domain",
     libraryDependencies ++= Cats.all ++ Seq(
+      tracing,
       approvals % Test,
       scalaTest % Test
     )
@@ -30,6 +32,7 @@ lazy val application = (project in file("application"))
   .settings(
     name := "application",
     libraryDependencies ++= Cats.all ++ Seq(
+      tracing,
       approvals % Test,
       scalaTest % Test
     )
@@ -56,25 +59,12 @@ lazy val infrastructure = (project in file("infrastructure"))
       ++ Seq(
         scalate,
         commonsIO,
+        tracing,
         approvals % Test,
         scalaTest % Test
       )
   )
   .dependsOn(domain, application, library, scalaUtils)
-
-/**
- * A small template engine that turns markdown + yaml files into
- * a list of Widget from the `domain` project for easier writing of courses
- */
-lazy val courseTemplateEngine = (project in file("courseTemplateEngine"))
-  .settings(
-    name := "courseTemplateEngine",
-    libraryDependencies ++= Circe.all ++ Seq(
-      commonsIO,
-      scalaTest % Test
-    )
-  )
-  .dependsOn(domain)
 
 /**
  * A library of utilities that will be added a a dependency for
@@ -99,7 +89,7 @@ lazy val library = (project in file("library"))
       scalaTest % Test
     )
   )
-  .dependsOn(domain, courseTemplateEngine)
+  .dependsOn(domain)
 
 ThisBuild / scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -150,8 +140,7 @@ ThisBuild / scalacOptions ++= Seq(
   "-Ywarn-value-discard" // Warn when non-Unit expression results are unused.
 )
 
-coverageEnabled in (Test, compile) := true
-coverageEnabled in (Compile, compile) := false
+coverageEnabled in (ThisBuild, Test, test) := true
 ThisBuild / coverageMinimum := 90
 ThisBuild / coverageFailOnMinimum := true
 ThisBuild / coverageExcludedPackages := Seq(

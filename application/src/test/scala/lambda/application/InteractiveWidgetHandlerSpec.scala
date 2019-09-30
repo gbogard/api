@@ -7,18 +7,18 @@ import java.io.File
 import scala.concurrent.duration.FiniteDuration
 import lambda.domain.code._
 import lambda.application.InteractiveWidgetHandler.WidgetHandlerContext
-import lambda.domain.courses.widgets.`package`.WidgetId
+import lambda.domain.courses._
 import lambda.domain.code.Language._
-import lambda.domain.courses.widgets._
-import lambda.domain.courses.widgets.WidgetInput._
-import lambda.domain.courses.widgets.WidgetOutput._
-import lambda.domain.courses.widgets.WidgetError._
+import lambda.application.WidgetInput._
+import lambda.application.WidgetOutput._
+import lambda.application.WidgetError._
 
 import scala.concurrent.ExecutionContext
 import cats.effect.concurrent.Deferred
 import lambda.domain.code.TemplateEngine
-import lambda.domain.courses.widgets.InteractiveCodeWidget.Scala2CodeWidget
+import lambda.domain.courses.InteractiveCodeWidget.Scala2CodeWidget
 import lambda.domain.code.ScalaCodeRunner.ScalaDependency
+import com.colisweb.tracing._
 
 class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
 
@@ -85,7 +85,7 @@ class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
                       mainClass: String,
                       dependencies: List[ScalaDependency],
                       timeout: scala.concurrent.duration.FiniteDuration
-                  ) =
+                  )(implicit tracingContext: TracingContext[IO]) =
                     EitherT.liftF(receivedFilesDeferred.complete(files)).map(_ => "")
                 },
                 sourceFileHandler = (_: SourceFile) => ???
@@ -157,12 +157,12 @@ class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
       rightAnswerId: AnswerId,
       question: String = "What is love ?",
       answers: List[MultipleChoices.Answer] = List(
-        MultipleChoices.Answer(AnswerId(1), "Baby don't hurt me"),
-        MultipleChoices.Answer(AnswerId(2), "Don't hurt me"),
-        MultipleChoices.Answer(AnswerId(3), "No more")
+        MultipleChoices.Answer(1, "Baby don't hurt me"),
+        MultipleChoices.Answer(2, "Don't hurt me"),
+        MultipleChoices.Answer(3, "No more")
       )
   ) = {
-    val (rightAnswer, otherPropositions) = answers.partition(_.id == rightAnswerId)
+    val (rightAnswer, otherPropositions) = answers.partition(_.id == rightAnswerId.answerId)
     MultipleChoices(
       WidgetId("id"),
       required = false,
@@ -173,6 +173,7 @@ class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
       )
     )
   }
+
 
   private def mockTemplateEngine(output: List[File]) = new TemplateEngine[IO] {
     def canRender(file: File) = true
@@ -191,7 +192,7 @@ class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
           mainClass: String,
           dependencies: List[ScalaCodeRunner.ScalaDependency],
           timeout: FiniteDuration
-      ): lambda.domain.code.ProcessResult[IO] = scala2CodeRunnerResult
+      )(implicit tracingContext: TracingContext[IO]): lambda.domain.code.ProcessResult[IO] = scala2CodeRunnerResult
     },
     templateEngine = mockTemplateEngine(Nil),
     sourceFileHandler = (_: SourceFile) => ???
@@ -202,6 +203,7 @@ class InteractiveWidgetHandlerSpec extends AsyncFunSpec with Matchers {
     */
   implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
   implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
+  implicit private def tracingContext: TracingContext[IO] = NoOpTracingContext[IO]()
 
   private def createTempFiles(): Resource[IO, List[File]] = {
     def acquire = IO {

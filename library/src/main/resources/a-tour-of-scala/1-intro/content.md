@@ -1,4 +1,28 @@
-Scala is a modern multi-paradigm programming language designed to express common programming patterns in a concise, elegant, and type-safe way. It smoothly integrates features of object-oriented and functional languages.
+Scala is a modern, multi-paradigm programming language designed to express common programming patterns in a concise, elegant, and type-safe way. It smoothly integrates features of object-oriented and functional languages.
+
+Scala was created by Martin Odersky at the [EPFL](https://www.epfl.ch/en/), in Switzerland. The first release of Scala is from 2003.
+The language has since then successfully been used by major tech companies such as Twitter, and as the primary language of
+widely-used open-source projects such as [Apache Spark](https://spark.apache.org/). Scala can be used for heavy 
+data processing, machine learning, web services and more. It has been steadily gaining popularity in the IT industry, 
+and is probably the most popular functional programming language today.
+It's also worth noticing that while Scala jobs can still be arguably hard to find, Scala jobs are among the five
+best paying programming languages worldwide, along with three other functional programming: F#, Clojure and Elixir.
+[Source: Stackoverflow Survey 2019](https://insights.stackoverflow.com/survey/2019). It's clear that functional programming skills are sought for and valued.
+
+### Why should I learn Scala ?
+
+Here are a few reasons to consider taking on this Scala journey:
+
+- **You want to gain functional programming skills and be a better developer**. While you might not use Scala as part of your daily
+job, you will be able to reuse some of the skills you will learn here. Functional programming is a way of thinking that can help you
+as a developer, regardless of the technologies you use. It makes software easier to predict, test, and reason about.
+- **You already work on the JVM** and you are frustrated with Java. Well, Scala might be what you are looking for. It's a well designed
+language, often more expressive the Java, that also happens to interoperate very easily with all the Java libraries you already know.
+Scala solves some of the most frustrating things about Java : null-pointer exceptions, verbose syntax, error handling, side-effects, not being able
+to group values without creating classes ... And because it is fully compatible with Java, it can be gradually adopted without too much risk.
+- **You want to build highly scalable, concurrent applications** : functional programming, combined with some of the best libraries the
+rich Scala ecosystem provides, makes working with multiple threads easy. Scala enables you to process big amount of data in streams, build web
+servers that can serve tens of thousands of requests per second, and parallelize computations in a safe manner.
 
 Scala was created by Martin Odersky at the [EPFL](https://www.epfl.ch/en/), in Switzerland. The first release of Scala is from 2003.
 The language has since then successfully been used by major tech companies such as Twitter, and as the primary language of
@@ -134,7 +158,3 @@ scala:
 Scala runs on the Java Virtual Machine, or *JVM* for short. It can also execute Java code, like your own Java classes or your favorite
 Java library. Calling Java from Scala requires no syntax change, it just works. The goal of Scala is not to recreate what Java already
 has, meaning if something exists in Java's standard library, you can just use it.
-
-### Scala is fun
-
-Scala is fun to learn and play around with.
