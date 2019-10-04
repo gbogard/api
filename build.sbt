@@ -139,12 +139,3 @@ ThisBuild / scalacOptions ++= Seq(
   "-Ywarn-unused:privates", // Warn if a private member is unused.
   "-Ywarn-value-discard" // Warn when non-Unit expression results are unused.
 )
-
-coverageEnabled in (ThisBuild, Test, test) := true
-ThisBuild / coverageMinimum := 90
-ThisBuild / coverageFailOnMinimum := true
-ThisBuild / coverageExcludedPackages := Seq(
-  "<empty>",
-  ".*lambda\\.infrastructure\\.gateway\\.Main.*",
-  ".*lambda\\.infrastructure\\.gateway\\.Api.*"
-).mkString(";")

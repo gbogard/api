@@ -9,8 +9,6 @@ agent:
 blocks:
   - name: Test
     task:
-      secrets:
-        - name: COVERAGE
       prologue:
         commands:
           - checkout
@@ -22,12 +20,11 @@ blocks:
       jobs:
         - name: Test Scala
           commands:
-            - sbt clean coverage test
+            - sbt clean test
             # Fails if coverage is below threshold
             - sbt coverageAggregate
       epilogue:
         commands:
-          - sbt coveralls
           - cd $HOME
           - ls -lah
           - cache store sbt-$SEMAPHORE_GIT_BRANCH-$(checksum $SEMAPHORE_PROJECT_NAME/build.sbt) .sbt
