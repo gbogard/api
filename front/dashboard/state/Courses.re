@@ -6,7 +6,6 @@ open Belt;
 type action =
   | SetCourses(result(list(courseManifest), nothing))
   | SetCurrentCourse(result(course, nothing))
-  | SetCurrentPageId(option(string))
   | FetchCourses
   | FetchCourse(string)
   | CheckWidget(string, WidgetInput.t)
@@ -30,7 +29,6 @@ module Effects = {
            ->Option.flatMap(List.head)
            ->Option.map(Utils.Page.extractId);
          send(SetCurrentCourse(res));
-         send(SetCurrentPageId(pageId));
          resolve();
        })
     |> ignore;
@@ -54,14 +52,12 @@ module State = {
   type t = {
     list: result(list(courseManifest), nothing),
     currentCourse: result(course, nothing),
-    currentPageId: option(string),
     widgetsState: Map.t(widgetState),
   };
 
   let initial = {
     list: NotAsked,
     currentCourse: NotAsked,
-    currentPageId: None,
     widgetsState: Map.empty,
   };
 
@@ -79,7 +75,6 @@ module State = {
         {...state, currentCourse: Loading},
         Effects.fetchCourse(id),
       )
-    | SetCurrentPageId(id) => Update({...state, currentPageId: id})
     | SetCourses(courses) => Update({...state, list: courses})
     | SetCurrentCourse(course) => Update({...state, currentCourse: course})
     | SetWidgetState(id, widgetState) =>
