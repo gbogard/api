@@ -22,7 +22,8 @@
     "bs-css",
     "rationale",
     "@glennsl/bs-json",
-    "reason-react-update"
+    "reason-react-update",
+    "@moox/bs-react-helmet"
   ],
   "ppx-flags": [],
   "refmt": 3

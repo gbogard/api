@@ -74,7 +74,7 @@ class ScalaCodeRunnerInterpreter()(implicit config: Configuration)
       IO {
         val reporter = new StoreReporter
         val settings = new Settings
-        settings.embeddedDefaults(getClass.getClassLoader())
+        settings.embeddedDefaults[ScalaCodeRunnerInterpreter]
 
         /*
         When the app is packaged in a JAR by assembly, this flag is needed

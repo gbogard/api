@@ -3,8 +3,6 @@
 A friendly, interactive platform for learning functional programming online.
 
 [![CodeFactor](https://www.codefactor.io/repository/github/gbogard/lambdacademy/badge)](https://www.codefactor.io/repository/github/gbogard/lambdacademy)
-[![Coverage Status](https://coveralls.io/repos/github/gbogard/lambdacademy/badge.svg?branch=master)](https://coveralls.io/github/gbogard/lambdacademy?branch=master)
-
 [![Known Vulnerabilities](https://snyk.io/test/github/gbogard/lambdacademy/badge.svg)](https://snyk.io/test/github/{username}/{repo})
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/gbogard/lambdacademy)
