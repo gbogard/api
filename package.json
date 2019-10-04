@@ -28,6 +28,8 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "babel-plugin-prismjs": "^1.1.1",
     "bs-platform": "^5.0.6",
     "bsb-js": "^1.1.7",
     "concurrently": "4.1.1",
@@ -46,6 +48,8 @@
     "bs-fetch": "^0.5.0",
     "dompurify": "^1.0.11",
     "marked": "^0.7.0",
+    "prism": "^4.1.2",
+    "prismjs": "^1.17.1",
     "rationale": "^0.1.10",
     "react-motion-drawer": "^3.1.0",
     "reason-react": "^0.7.0",

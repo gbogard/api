@@ -20,19 +20,28 @@ object ATourOfScala {
         unsafeTextFromResource("a-tour-of-scala/1-intro/content.md"),
         s"$id-intro"
       )
+      installingScalaLocallyContent <- templateEngine.parse(
+        unsafeTextFromResource("a-tour-of-scala/2-installing-scala-locally/content.md"),
+        s"$id-installing-scala-locally"
+      )
       expressionsContent <- templateEngine.parse(
         unsafeTextFromResource("a-tour-of-scala/3-expressions/content.md"),
         s"$id-expressions"
+      )
+      moreOnEpxressionsContent <- templateEngine.parse(
+        unsafeTextFromResource("a-tour-of-scala/4-more-on-expressions/content.md"),
+        s"$id-more-on-expressions"
       )
     } yield
       Course(
         CourseId(id),
         "A tour of Scala",
         """
-    |Scala is a modern, expressive, statically typed programming language that is both functional and object oriented.
-    |This course is aimed at people who already have some experience of programming and would like to learn the basics
-    |of functional programming in Scala.
-    |""".stripMargin.trim,
+        |Scala is a modern, expressive, statically typed programming language that is both functional and object oriented.
+        |This course is aimed at people who already have some experience of programming and would like to learn the basics
+        |of functional programming in Scala.
+        |
+        """.stripMargin.trim,
         Nil,
         image = Some(Media.ClasspathResource("/public/a-tour-of-scala.png")),
         pages = List(
@@ -41,15 +50,20 @@ object ATourOfScala {
             "What is Scala ?",
             introContent
           ),
-          /*SimplePage(
-        pageId(2),
-        "Installing Scala locally",
-        templateEngine.parse(unsafeTextFromResource("a-tour-of-scala/2-writing-scala-locally/content.md"), s"$id-local-dev").right.get
-      ),*/
+          SimplePage(
+            pageId(2),
+            "Installing Scala locally",
+            installingScalaLocallyContent
+          ),
           SimplePage(
             pageId(3),
             "Expressions",
             expressionsContent
+          ),
+          SimplePage(
+            pageId(4),
+            "More on expressions",
+            moreOnEpxressionsContent
           )
         )
       )

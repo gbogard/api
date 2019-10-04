@@ -53,3 +53,7 @@ module Drawer = {
     React.element =
     "default";
 };
+
+module Prism = {
+  [@bs.module "prismjs"] external highlightAll: unit => unit = "";
+};

@@ -36,28 +36,24 @@ let renderNavigationButtons = (course, currentPageId, setCurrentPage) => {
 
   <div className="spaced-container with-padding-y">
     <div>
-      {
-        previousPage
-        |> Option.map(page =>
-             <Button onClick={navigate(page)}>
-               <i className="ion ion-ios-arrow-back" />
-               {React.string(Utils.Page.extractTitle(page))}
-             </Button>
-           )
-        |> Option.default(React.null)
-      }
+      {previousPage
+       |> Option.map(page =>
+            <Button onClick={navigate(page)}>
+              <i className="ion ion-ios-arrow-back" />
+              {React.string(Utils.Page.extractTitle(page))}
+            </Button>
+          )
+       |> Option.default(React.null)}
     </div>
     <div>
-      {
-        nextPage
-        |> Option.map(page =>
-             <Button onClick={navigate(page)}>
-               {React.string(Utils.Page.extractTitle(page))}
-               <i className="ion ion-ios-arrow-forward" />
-             </Button>
-           )
-        |> Option.default(React.null)
-      }
+      {nextPage
+       |> Option.map(page =>
+            <Button onClick={navigate(page)}>
+              {React.string(Utils.Page.extractTitle(page))}
+              <i className="ion ion-ios-arrow-forward" />
+            </Button>
+          )
+       |> Option.default(React.null)}
     </div>
   </div>;
 };
@@ -95,20 +91,23 @@ module SimplePage = {
         <Navbar onDrawerOpen={() => setDrawerOpen(_ => true)} />
         navigation
         <div className="content container-fluid">
-          {
-            if (isFirstPage) {
-              <Box title="About this course">
-                {React.string(course.description)}
-              </Box>;
-            } else {
-              React.null;
-            }
-          }
-          <h2> {React.string(page.title)} </h2>
-          {
-            renderWidgets(page.widgets, checkWidget, widgetsState, resetWidget)
-          }
-          {renderNavigationButtons(course, page.id, setCurrentPage)}
+          <div>
+            {if (isFirstPage) {
+               <Box title="About this course">
+                 {React.string(course.description)}
+               </Box>;
+             } else {
+               React.null;
+             }}
+            <h2> {React.string(page.title)} </h2>
+            {renderWidgets(
+               page.widgets,
+               checkWidget,
+               widgetsState,
+               resetWidget,
+             )}
+            {renderNavigationButtons(course, page.id, setCurrentPage)}
+          </div>
         </div>
       </div>
     </>;
