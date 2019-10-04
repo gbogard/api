@@ -23,6 +23,5 @@ body {
 }
 
 pre {
-  @extend .box;
-  padding: $spacer;
+  margin: $spacer 0 !important;
 }

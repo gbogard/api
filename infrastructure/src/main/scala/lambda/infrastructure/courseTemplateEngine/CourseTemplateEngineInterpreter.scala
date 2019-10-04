@@ -23,7 +23,7 @@ object CourseTemplateEngineInterpreter extends CourseTemplateEngine[IO] {
             parser.parse(substring) match {
               case Right(json) if json.isObject => json.as[Widget](Decoders.widgetDecoder(id)).right.get
               case Right(json) if json.isString => MarkdownText(id, substring)
-              case Left(_)                      => MarkdownText(id, substring)
+              case _                      => MarkdownText(id, substring)
             }
           }
       })
