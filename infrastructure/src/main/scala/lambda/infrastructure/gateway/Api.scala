@@ -11,11 +11,12 @@ import org.http4s.server.middleware._
 import lambda.domain.MediaHandler
 import lambda.application._
 import com.colisweb.tracing.TracingContextBuilder
+import com.typesafe.scalalogging.LazyLogging
 
-object Api {
+object Api extends LazyLogging {
 
   case class Context(
-      coursesRequestHandler: CoursesRequestHandler[IO, IO.Par], 
+      coursesRequestHandler: CoursesRequestHandler[IO, IO.Par],
       mediaHandler: MediaHandler
   )
 
@@ -38,9 +39,13 @@ object Api {
     )
 
     val app = CORS(services, corsConfig).orNotFound
+    val host = "0.0.0.0"
+    val port = 8080
 
-    BlazeServerBuilder[IO]
-      .bindHttp(8080, "0.0.0.0")
+    IO {
+      logger.info("Starting Lambdacademy server on {}:{}", host, port)      
+    } *> BlazeServerBuilder[IO]
+      .bindHttp(port, host)
       .withHttpApp(app)
       .resource
       .use(_ => IO.never)

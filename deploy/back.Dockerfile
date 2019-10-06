@@ -42,8 +42,8 @@ RUN apk --update add --no-cache ca-certificates curl openssl binutils xz \
     && apk del binutils \
     && rm -rf /tmp/${GLIBC_VER}.apk /tmp/gcc /tmp/gcc-libs.tar.xz /tmp/libz /tmp/libz.tar.xz /var/cache/apk/*
 
-RUN wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.4%2B11/OpenJDK11U-jre_x64_linux_hotspot_11.0.4_11.tar.gz
-RUN tar --extract -f OpenJDK11U-jre_x64_linux_hotspot_11.0.4_11.tar.gz 
+RUN wget https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jdk_x64_linux_hotspot_8u222b10.tar.gz
+RUN tar --extract -f OpenJDK8U-jdk_x64_linux_hotspot_8u222b10.tar.gz 
 
 WORKDIR /usr/app/build
 COPY --from=build-deps /usr/app/src/infrastructure/target/scala-2.12 .
@@ -51,7 +51,7 @@ COPY --from=build-deps /usr/app/src/scala-utils/target/scala-2.12/classes ./scal
 COPY --from=build-deps /usr/app/src/shared-files ./shared-files
 
 EXPOSE 8080
-CMD ["/usr/openjdk/jdk-11.0.4+11-jre/bin/java", "-jar", \
+CMD ["/usr/openjdk/jdk8u222-b10/bin/java", "-jar", \
  "-Dconfig.resource=application-prod.conf", \
  "-Dlogback.configurationFile=logback-prod.xml", \
  "/usr/app/build/lambdacademy.jar" \

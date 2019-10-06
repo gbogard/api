@@ -26,7 +26,11 @@ let make =
 
   <>
     <BsReactHelmet>
-      <title>{React.string(page.title ++ " - " ++ course.title ++ " - Lambdacademy")}</title>
+      <title>
+        {React.string(
+           page.title ++ " - " ++ course.title ++ " - Lambdacademy",
+         )}
+      </title>
     </BsReactHelmet>
     <Interop.Drawer
       _open=isDrawerOpen onChange={state => setDrawerOpen(_ => state)}>
@@ -43,9 +47,20 @@ let make =
          } else {
            React.null;
          }}
-        <h2> {React.string(page.title)} </h2>
-        {Widgets.renderWidgets(page.widgets, checkWidget, widgetsState, resetWidget)}
-        <CourseNavigationButtons course currentPageId={page.id} setCurrentPage />
+        <div>
+          <h2> {React.string(page.title)} </h2>
+          {Widgets.renderWidgets(
+             page.widgets,
+             checkWidget,
+             widgetsState,
+             resetWidget,
+           )}
+          <CourseNavigationButtons
+            course
+            currentPageId={page.id}
+            setCurrentPage
+          />
+        </div>
       </div>
     </div>
   </>;
