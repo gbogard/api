@@ -21,8 +21,6 @@ blocks:
         - name: Test Scala
           commands:
             - sbt clean test
-            # Fails if coverage is below threshold
-            - sbt coverageAggregate
       epilogue:
         commands:
           - cd $HOME
