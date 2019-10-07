@@ -12,6 +12,19 @@ let make =
       ~resetWidget,
     ) => {
   let (isDrawerOpen, setDrawerOpen) = React.useState(() => false);
+  let contentRef = React.useRef(Js.Nullable.null);
+  let url = ReasonReactRouter.useUrl();
+  React.useEffect1(
+    () => {
+      contentRef
+      |> React.Ref.current
+      |> Js.Nullable.toOption
+      |> Belt.Option.getExn
+      |> Interop.Dom.scrollTo(_, 0, 0);
+      None;
+    },
+    [|url|],
+  );
 
   let firstPageId =
     course.pages |> RList.head |> Option.map(Utils.Page.extractId);
@@ -39,7 +52,9 @@ let make =
     <div className="simple-page-layout">
       <Navbar onDrawerOpen={() => setDrawerOpen(_ => true)} />
       navigation
-      <div className="content container-fluid">
+      <div
+        className="content container-fluid"
+        ref={ReactDOMRe.Ref.domRef(contentRef)}>
         {if (isFirstPage) {
            <Box title="About this course">
              {React.string(course.description)}

@@ -55,5 +55,10 @@ module Drawer = {
 };
 
 module Prism = {
-  [@bs.module "prismjs"] external highlightAll: unit => unit = "";
+  [@bs.module "prismjs"] external highlightAll: unit => unit = "highlightAll";
+};
+
+module Dom = {
+  [@bs.val] external window: Dom.element = "window";
+  [@bs.send] external scrollTo: (Dom.element, int, int) => unit = "scrollTo";
 };
