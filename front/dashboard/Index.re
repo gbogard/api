@@ -1,6 +1,10 @@
-let app =
-  <Store.Provider>
-    <> <BsReactHelmet defaultTitle="Lambdacademy Dashboard" /> <Router /> </>
-  </Store.Provider>;
+module App = {
+  [@react.component]
+  let make = () => {
+    <Store.Provider>
+      <> <BsReactHelmet defaultTitle="Lambdacademy Dashboard" /> <Router /> </>
+    </Store.Provider>;
+  };
+};
 
-ReactDOMRe.renderToElementWithId(app, "app");
+ReactDOMRe.renderToElementWithId(<App />, "app");
