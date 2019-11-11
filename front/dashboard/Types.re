@@ -7,6 +7,7 @@ type result('a, 'b) =
   | Failed
   | ClientError('b)
   | Success('a);
+
 type user = {
   id: string,
   username: string,

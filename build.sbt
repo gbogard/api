@@ -15,7 +15,7 @@ lazy val root = (project in file("."))
 /**
  * A project for domain models and interfaces
  */
-lazy val domain = (project in file("domain"))
+lazy val domain = (project in file("back/domain"))
   .settings(
     name := "domain",
     libraryDependencies ++= Cats.all ++ Seq(
@@ -28,7 +28,7 @@ lazy val domain = (project in file("domain"))
 /**
  * A project for business logic
  */
-lazy val application = (project in file("application"))
+lazy val application = (project in file("back/application"))
   .settings(
     name := "application",
     libraryDependencies ++= Cats.all ++ Seq(
@@ -43,7 +43,7 @@ lazy val application = (project in file("application"))
  * A project for implementations of persistence layer, gateway endpoints,
  * code runners etc.
  */
-lazy val infrastructure = (project in file("infrastructure"))
+lazy val infrastructure = (project in file("back/infrastructure"))
   .settings(
     name := "infrastructure",
     mainClass in assembly := Some("lambda.infrastructure.gateway.Main"),
@@ -70,7 +70,7 @@ lazy val infrastructure = (project in file("infrastructure"))
  * A library of utilities that will be added a a dependency for
  * all scala courses
  */
-lazy val scalaUtils = (project in file("scala-utils"))
+lazy val scalaUtils = (project in file("back/scala-utils"))
   .settings(
     name := "scalaUtils",
     libraryDependencies ++= Seq(
@@ -82,7 +82,7 @@ lazy val scalaUtils = (project in file("scala-utils"))
 /**
  * A project for the actual course curriculum
  */
-lazy val library = (project in file("library"))
+lazy val library = (project in file("back/library"))
   .settings(
     name := "library",
     libraryDependencies ++= Seq(

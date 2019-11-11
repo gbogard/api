@@ -1,7 +1,0 @@
-object Main extends App {
-  def foo(): Unit = {
-  println("Hello world")
-} 
-
-  foo()
-}
