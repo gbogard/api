@@ -31,14 +31,14 @@ module Decode = {
   let courseManifests = Json.Decode.list(courseManifest);
 
   module Widget = {
-    let decodeMultipleChoices = json: Widget.MultipleChoices.t => {
-      let proposition = json: Widget.MultipleChoices.proposition =>
+    let decodeMultipleChoices = (json): Widget.MultipleChoices.t => {
+      let proposition = (json): Widget.MultipleChoices.proposition =>
         Json.Decode.{
           id: json |> field("id", int),
           value: json |> field("value", string),
         };
 
-      let question = json: Widget.MultipleChoices.question =>
+      let question = (json): Widget.MultipleChoices.question =>
         Json.Decode.{
           value: json |> field("value", string),
           rightAnswer: json |> field("rightAnswer", proposition),
@@ -53,13 +53,13 @@ module Decode = {
       };
     };
 
-    let decodeMarkdownText = json: Widget.markdownText =>
+    let decodeMarkdownText = (json): Widget.markdownText =>
       Json.Decode.{
         id: json |> field("id", string),
         content: json |> field("content", string),
       };
 
-    let decodeInteractiveCode = json: Widget.interactiveCode =>
+    let decodeInteractiveCode = (json): Widget.interactiveCode =>
       Json.Decode.{
         id: json |> field("id", string),
         defaultValue: json |> field("defaultValue", string),
@@ -67,7 +67,7 @@ module Decode = {
         required: json |> field("required", bool),
       };
 
-    let decode = json: Widget.t =>
+    let decode = (json): Widget.t =>
       json
       |> Json.Decode.field("type", Json.Decode.string)
       |> (
@@ -111,14 +111,14 @@ module Decode = {
   };
 
   module Page = {
-    let simplePage = json: Page.simplePage =>
+    let simplePage = (json): Page.simplePage =>
       Json.Decode.{
         id: json |> field("id", string),
         title: json |> field("title", string),
         widgets: json |> field("widgets", list(Widget.decode)),
       };
 
-    let codePage = json: Page.codePage =>
+    let codePage = (json): Page.codePage =>
       Json.Decode.{
         id: json |> field("id", string),
         title: json |> field("title", string),
@@ -126,7 +126,7 @@ module Decode = {
         code: json |> field("code", Widget.decodeInteractiveCode),
       };
 
-    let decode = json: Page.t =>
+    let decode = (json): Page.t =>
       json
       |> Json.Decode.field("type", Json.Decode.string)
       |> (
@@ -150,7 +150,7 @@ module Decode = {
 };
 
 module Encode = {
-  let language: encoder() =
+  let language =
     fun
     | Scala2 => Json.Encode.string("scala2");
   module WidgetInput = {

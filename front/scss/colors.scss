@@ -16,7 +16,7 @@ $main-colors: (
 }
 
 @each $name, $color in $main-colors {
-  .bg-#{$name} {
+  .bg-#{"" + $name} {
     background: $color;
   }
 }
