@@ -28,7 +28,7 @@
     ]
   },
   "devDependencies": {
-    "bs-platform": "^5.0.6",
+    "bs-platform": "^5.2.1",
     "bsb-js": "^1.1.7",
     "concurrently": "4.1.1",
     "husky": "^3.0.2",

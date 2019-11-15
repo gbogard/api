@@ -1,11 +1,10 @@
 package lambda.infrastructure.gateway
 
 import cats.effect._
-import lambda.infrastructure.code.TemplateEngineInterpreter
+import lambda.infrastructure.code.{ScalaCodeRunnerInterpreter, Security, TemplateEngineInterpreter}
 import lambda.domain.code.TemplateEngine
 import lambda.domain.courses.CourseRepository
 import lambda.application.InteractiveWidgetHandler.WidgetHandlerContext
-import lambda.infrastructure.code.ScalaCodeRunnerInterpreter
 import lambda.infrastructure.courses.LibraryCourseRepository
 import lambda.infrastructure.Configuration
 import lambda.infrastructure.MediaHandlerInterpreter
@@ -25,7 +24,8 @@ object Main extends IOApp {
     for {
       tracingContextBuilder <- createTracingContext
       config <- Configuration.load[IO]
-      scala2CodeRunner = new ScalaCodeRunnerInterpreter()(config)
+      dockerPermits <- Security.Docker.permits[IO](config)
+      scala2CodeRunner = new ScalaCodeRunnerInterpreter(dockerPermits)(config)
       widgetHandlerContext = WidgetHandlerContext(
         scala2CodeRunner = scala2CodeRunner,
         templateEngine = templateEngine,

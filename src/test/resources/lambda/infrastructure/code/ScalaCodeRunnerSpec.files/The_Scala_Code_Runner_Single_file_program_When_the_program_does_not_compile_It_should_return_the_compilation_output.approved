@@ -1,0 +1,7 @@
+ERROR in sourceFile.scala,line-3,offset=66 : type mismatch;
+ found   : String("toto")
+ required: Int
+
+ERROR in sourceFile.scala,line-3,offset=74 : type mismatch;
+ found   : String("tata")
+ required: Int

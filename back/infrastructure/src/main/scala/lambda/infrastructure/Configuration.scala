@@ -9,6 +9,7 @@ case class Configuration(
   apiUrl: String,
   temporaryFoldersBase: Configuration.DockerVolume,
   defaultCpusLimit: Float,
+  maxNumberOfDockerContainers: Int = 5,
   sharedFiles: Configuration.DockerVolume
  ) {
   val isDev = env == "development"

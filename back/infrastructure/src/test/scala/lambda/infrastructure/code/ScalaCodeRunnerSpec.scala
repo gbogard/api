@@ -3,10 +3,12 @@ package lambda.infrastructure.code
 import org.scalatest.Assertion
 import lambda.infrastructure.TestUtils._
 import cats.effect.IO
+
 import scala.concurrent.duration._
 import scala.concurrent._
 import cats.implicits._
 import cats.effect._
+import cats.effect.concurrent.Semaphore
 import lambda.domain.code.ScalaCodeRunner.ScalaDependency
 import lambda.infrastructure.Utils
 import lambda.infrastructure.Configuration
@@ -151,7 +153,6 @@ class ScalaCodeRunnerSpec extends Approbation {
           ),
           result =>
             IO {
-              println(result)
               approver.verify(result.right.get)
               succeed
             }
@@ -190,6 +191,7 @@ class ScalaCodeRunnerSpec extends Approbation {
 
   implicit private val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
   implicit private def tracingContext: TracingContext[IO] = NoOpTracingContext[IO]()
+  private val permits = Semaphore[IO](8L).unsafeRunSync()
   private def testCodeRunner(
       mainClass: String,
       dependencies: List[ScalaDependency],
@@ -201,13 +203,16 @@ class ScalaCodeRunnerSpec extends Approbation {
       .load[IO]
       .flatMap(
         implicit config =>
-          (resources
+          {
+            resources
             .traverse(Utils.readResource[IO](_)) use { files =>
-            (new ScalaCodeRunnerInterpreter)
+            new ScalaCodeRunnerInterpreter(permits)
               .run(files, mainClass, dependencies, timeout)
-              .leftMap((normalizeEndings _) andThen (limitLines(_)) andThen (removeFileRandomIds _))
+              .leftMap(normalizeEndings _ andThen (limitLines(_)) andThen removeFileRandomIds _)
               .value
-          })
+
+          }
+          }
       )
       .flatMap(assertion)
       .unsafeToFuture()

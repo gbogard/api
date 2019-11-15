@@ -150,7 +150,7 @@ module Decode = {
 };
 
 module Encode = {
-  let language =
+  let language: encoder() =
     fun
     | Scala2 => Json.Encode.string("scala2");
   module WidgetInput = {
