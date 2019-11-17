@@ -8,6 +8,8 @@ module State = {
     users: Users.State.t,
   };
 
+  type selector('a) = t => 'a;
+
   let initial = {courses: Courses.State.initial, users: Users.State.initial};
 };
 
@@ -38,3 +40,7 @@ module Provider = {
 };
 
 let useStore = () => React.useContext(Provider.ctx);
+let useSelector = (selector: State.selector('a)) => {
+  let (state, _) = useStore();
+  selector(state);
+};

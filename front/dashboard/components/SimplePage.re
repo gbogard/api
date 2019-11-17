@@ -40,9 +40,11 @@ let make =
   <>
     <BsReactHelmet>
       <title>
-        {React.string(
-           page.title ++ " - " ++ course.title ++ " - Lambdacademy",
-         )}
+        {
+          React.string(
+            page.title ++ " - " ++ course.title ++ " - Lambdacademy",
+          )
+        }
       </title>
     </BsReactHelmet>
     <Interop.Drawer
@@ -50,26 +52,30 @@ let make =
       navigation
     </Interop.Drawer>
     <div className="simple-page-layout">
-      <Navbar onDrawerOpen={() => setDrawerOpen(_ => true)} />
+      <Navbar onDrawerOpen={() => setDrawerOpen(_ => true)} course />
       navigation
       <div
         className="content container-fluid"
         ref={ReactDOMRe.Ref.domRef(contentRef)}>
-        {if (isFirstPage) {
-           <Box title="About this course">
-             {React.string(course.description)}
-           </Box>;
-         } else {
-           React.null;
-         }}
+        {
+          if (isFirstPage) {
+            <Box title="About this course">
+              {React.string(course.description)}
+            </Box>;
+          } else {
+            React.null;
+          }
+        }
         <div>
           <h2> {React.string(page.title)} </h2>
-          {Widgets.renderWidgets(
-             page.widgets,
-             checkWidget,
-             widgetsState,
-             resetWidget,
-           )}
+          {
+            Widgets.renderWidgets(
+              page.widgets,
+              checkWidget,
+              widgetsState,
+              resetWidget,
+            )
+          }
           <CourseNavigationButtons
             course
             currentPageId={page.id}

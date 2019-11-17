@@ -2,12 +2,10 @@ open Types;
 open Store.State;
 open Courses;
 open Rationale;
+open Links;
 
 let findPage = (course, id) =>
   RList.find(p => Utils.Page.extractId(p) == id, course.pages);
-
-let coursePageUrl = (course, pageId) =>
-  "/courses/" ++ course.id ++ "/" ++ pageId;
 
 let renderCourse = (pageIdOpt, widgetsState, checkWidget, resetWidget, course) => {
   let pageOpt = pageIdOpt |> Option.flatMap(findPage(course));
