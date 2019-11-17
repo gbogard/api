@@ -22,12 +22,6 @@ module Effects = {
   let fetchCourse = (id, {send}) => {
     CoursesService.fetchCourse(id)
     |> then_(res => {
-         let pageId =
-           res
-           ->Utils.Result.toOption
-           ->Option.map(course => course.pages)
-           ->Option.flatMap(List.head)
-           ->Option.map(Utils.Page.extractId);
          send(SetCurrentCourse(res));
          resolve();
        })

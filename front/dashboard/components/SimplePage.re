@@ -26,26 +26,45 @@ let make =
 
   <>
     <BsReactHelmet>
-      <title>{React.string(page.title ++ " - " ++ course.title ++ " - Lambdacademy")}</title>
+      <title>
+        {
+          React.string(
+            page.title ++ " - " ++ course.title ++ " - Lambdacademy",
+          )
+        }
+      </title>
     </BsReactHelmet>
     <Interop.Drawer
       _open=isDrawerOpen onChange={state => setDrawerOpen(_ => state)}>
       navigation
     </Interop.Drawer>
     <div className="simple-page-layout">
-      <Navbar onDrawerOpen={() => setDrawerOpen(_ => true)} />
+      <Navbar onDrawerOpen={() => setDrawerOpen(_ => true)} course />
       navigation
       <div className="content container-fluid">
-        {if (isFirstPage) {
-           <Box title="About this course">
-             {React.string(course.description)}
-           </Box>;
-         } else {
-           React.null;
-         }}
+        {
+          if (isFirstPage) {
+            <Box title="About this course">
+              {React.string(course.description)}
+            </Box>;
+          } else {
+            React.null;
+          }
+        }
         <h2> {React.string(page.title)} </h2>
-        {Widgets.renderWidgets(page.widgets, checkWidget, widgetsState, resetWidget)}
-        <CourseNavigationButtons course currentPageId={page.id} setCurrentPage />
+        {
+          Widgets.renderWidgets(
+            page.widgets,
+            checkWidget,
+            widgetsState,
+            resetWidget,
+          )
+        }
+        <CourseNavigationButtons
+          course
+          currentPageId={page.id}
+          setCurrentPage
+        />
       </div>
     </div>
   </>;
