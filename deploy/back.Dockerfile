@@ -3,11 +3,11 @@ FROM hseeberger/scala-sbt:8u212_1.2.8_2.12.8 as build-deps
 WORKDIR /usr/app/src
 
 COPY build.sbt ./
-COPY application ./application
-COPY domain ./domain
-COPY infrastructure ./infrastructure
-COPY library ./library
-COPY scala-utils ./scala-utils
+COPY back/application ./application
+COPY back/domain ./domain
+COPY back/infrastructure ./infrastructure
+COPY back/library ./library
+COPY back/scala-utils ./scala-utils
 COPY shared-files ./shared-files
 COPY project ./project
 

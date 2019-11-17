@@ -6,11 +6,13 @@ open Rationale;
 let findPage = (course, id) =>
   RList.find(p => Utils.Page.extractId(p) == id, course.pages);
 
-let coursePageUrl = (course, pageId) => "/courses/" ++ course.id ++ "/" ++ pageId;
+let coursePageUrl = (course, pageId) =>
+  "/courses/" ++ course.id ++ "/" ++ pageId;
 
 let renderCourse = (pageIdOpt, widgetsState, checkWidget, resetWidget, course) => {
   let pageOpt = pageIdOpt |> Option.flatMap(findPage(course));
-  let setCurrentPage = pageId => ReasonReactRouter.push(coursePageUrl(course, pageId))
+  let setCurrentPage = pageId =>
+    ReasonReactRouter.push(coursePageUrl(course, pageId));
 
   switch (pageOpt) {
   | Some(Page.SimplePage(p)) =>
@@ -24,7 +26,11 @@ let renderCourse = (pageIdOpt, widgetsState, checkWidget, resetWidget, course) =
     />
   | Some(Page.CodePage(p)) => <CodePage page=p />
   | None =>
-    course.pages |> List.hd |> Utils.Page.extractId |> coursePageUrl(course) |> ReasonReactRouter.replace;
+    course.pages
+    |> List.hd
+    |> Utils.Page.extractId
+    |> coursePageUrl(course)
+    |> ReasonReactRouter.replace;
     React.null;
   };
 };
