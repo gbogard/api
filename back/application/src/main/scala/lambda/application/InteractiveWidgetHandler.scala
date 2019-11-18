@@ -6,13 +6,14 @@ import cats.data.EitherT
 import lambda.domain.code._
 import lambda.domain.code.Language.Scala2
 import lambda.domain.courses._
-import lambda.domain.courses.InteractiveCodeWidget._
 import lambda.application.WidgetInput._
 import lambda.application.WidgetOutput._
 import lambda.application.WidgetError._
 import lambda.domain.code.SourceFileHandler
 import java.io.File
+
 import com.colisweb.tracing.TracingContext
+import lambda.domain.code.SourceFile.RawText
 
 object InteractiveWidgetHandler {
 
@@ -36,9 +37,10 @@ object InteractiveWidgetHandler {
       implicit ctx: WidgetHandlerContext[F],
       tracingContext: TracingContext[F]
   ): Result[F] = (widget, input) match {
-    case (w: MultipleChoices, i: AnswerId)        => EitherT.fromEither(checkMultipleChoices(w, i))
-    case (w: InteractiveCodeWidget, i: CodeInput) => executeInteractiveCode(w, i)
-    case _                                        => EitherT.leftT(WrongInputForWidget)
+    case (w: MultipleChoices, i: AnswerId)              => EitherT.fromEither(checkMultipleChoices(w, i))
+    case (w: InteractiveCodeWidget, i: SimpleCodeInput) => executeSimpleCode(w, i)
+    case (w: InteractiveCodeWidget, i: TabbedCodeInput) => executeTabbedCode(w, i)
+    case _                                              => EitherT.leftT(WrongInputForWidget)
   }
 
   private def checkMultipleChoices(
@@ -47,25 +49,26 @@ object InteractiveWidgetHandler {
   ): Either[WidgetError, WidgetOutput] =
     if (input.answerId == widget.question.rightAnswer.id) Right(RightAnswer) else Left(WrongAnswer)
 
-  private def renderFiles[F[_]: Sync, Par[_]](
-      files: List[SourceFile],
-      userInput: String
-  )(implicit ctx: WidgetHandlerContext[F]): Resource[F, List[File]] =
-    for {
-      baseFiles <- files.traverse(ctx.sourceFileHandler(_))
-      (templateFiles, basicFiles) = baseFiles.partition(ctx.templateEngine.canRender)
-      params = Map("userInput" -> userInput)
-      output <- ctx.templateEngine.render(templateFiles, params)
-    } yield output
-
-  private def executeInteractiveCode[F[_]: Sync, Par[_]](
+  private def executeSimpleCode[F[_]: Sync, Par[_]](
       widget: InteractiveCodeWidget,
-      input: CodeInput
+      input: SimpleCodeInput
   )(implicit ctx: WidgetHandlerContext[F], tracingContext: TracingContext[F]): Result[F] =
     widget match {
-      case s: Scala2CodeWidget if input.language == Scala2 =>
-        EitherT(renderFiles(s.baseFiles, input.code) use { renderedFiles =>
+      case s: SimpleScala2CodeWidget if input.language == Scala2 =>
+        EitherT(renderTemplateFiles(s.baseFiles, input.code) use { renderedFiles =>
           processResultToWidgetResult(ctx.scala2CodeRunner.run(renderedFiles, s.mainClass, s.dependencies)).value
+        })
+    }
+
+  private def executeTabbedCode[F[_]: Sync, Par[_]](
+      widget: InteractiveCodeWidget,
+      input: TabbedCodeInput
+  )(implicit ctx: WidgetHandlerContext[F], tracingContext: TracingContext[F]): Result[F] =
+    widget match {
+      case s: TabbedScala2CodeWidget if input.language == Scala2 =>
+        val files = (s.baseFiles ++ input.code.map(RawText)).traverse(ctx.sourceFileHandler(_))
+        EitherT(files use { f =>
+          processResultToWidgetResult(ctx.scala2CodeRunner.run(f, s.mainClass, s.dependencies)).value
         })
     }
 
@@ -76,4 +79,15 @@ object InteractiveWidgetHandler {
         case Right(output) => Right(CodeOutput(output))
       }
     }
+
+  private def renderTemplateFiles[F[_]: Sync, Par[_]](
+      files: List[SourceFile],
+      userInput: String
+  )(implicit ctx: WidgetHandlerContext[F]): Resource[F, List[File]] =
+    for {
+      baseFiles <- files.traverse(ctx.sourceFileHandler(_))
+      (templateFiles, _) = baseFiles.partition(ctx.templateEngine.canRender)
+      params = Map("userInput" -> userInput)
+      output <- ctx.templateEngine.render(templateFiles, params)
+    } yield output
 }

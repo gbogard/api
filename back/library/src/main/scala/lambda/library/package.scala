@@ -5,7 +5,6 @@ import cats.implicits._
 import lambda.domain.courses.Course
 import lambda.domain.courses.Page._
 import lambda.domain.courses.Widget
-import lambda.domain.courses.CourseTemplateEngine
 
 package object library {
   import cats.effect.Async

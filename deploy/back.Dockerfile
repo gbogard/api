@@ -43,7 +43,7 @@ RUN apk --update add --no-cache ca-certificates curl openssl binutils xz \
     && rm -rf /tmp/${GLIBC_VER}.apk /tmp/gcc /tmp/gcc-libs.tar.xz /tmp/libz /tmp/libz.tar.xz /var/cache/apk/*
 
 RUN wget https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jdk_x64_linux_hotspot_8u222b10.tar.gz
-RUN tar --extract -f OpenJDK8U-jdk_x64_linux_hotspot_8u222b10.tar.gz 
+RUN tar --extract -f OpenJDK8U-jdk_x64_linux_hotspot_8u222b10.tar.gz
 
 WORKDIR /usr/app/build
 COPY --from=build-deps /usr/app/src/infrastructure/target/scala-2.12 .
