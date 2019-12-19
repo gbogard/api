@@ -1,3 +1,5 @@
+.DS_Store
+
 # Scala
 
 .hydra
@@ -11,14 +13,5 @@ target
 *.orig
 temp
 tmp
-
-# Front
-node_modules
-.cache
-dist
-.merlin
-lib/
-*.bs.js
-.bsb.lock
 
 deps
