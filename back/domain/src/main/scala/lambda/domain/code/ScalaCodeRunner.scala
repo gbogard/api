@@ -12,6 +12,13 @@ trait ScalaCodeRunner[F[_]] {
       dependencies: List[ScalaDependency] = Nil,
       timeout: FiniteDuration = 30 seconds
   )(implicit tracingContext: TracingContext[F]): ProcessResult[F]
+
+  def run(
+    code: String,
+    mainClass: String,
+    dependencies: List[ScalaDependency] = Nil,
+    timeout: FiniteDuration = 30 seconds
+  )(implicit tracingContext: TracingContext[F]): ProcessResult[F]
 }
 
 object ScalaCodeRunner {

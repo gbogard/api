@@ -7,12 +7,11 @@ COPY back/application ./application
 COPY back/domain ./domain
 COPY back/infrastructure ./infrastructure
 COPY back/library ./library
-COPY back/scala-utils ./scala-utils
-COPY shared-files ./shared-files
 COPY project ./project
 
 RUN sbt infrastructure/assembly
 
+<<<<<<< Updated upstream
 FROM docker
 
 WORKDIR /usr/openjdk
@@ -44,11 +43,12 @@ RUN apk --update add --no-cache ca-certificates curl openssl binutils xz \
 
 RUN wget https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jdk_x64_linux_hotspot_8u222b10.tar.gz
 RUN tar --extract -f OpenJDK8U-jdk_x64_linux_hotspot_8u222b10.tar.gz 
+=======
+FROM gbogard/java-docker:latest
+>>>>>>> Stashed changes
 
 WORKDIR /usr/app/build
 COPY --from=build-deps /usr/app/src/infrastructure/target/scala-2.12 .
-COPY --from=build-deps /usr/app/src/scala-utils/target/scala-2.12/classes ./scala-utils
-COPY --from=build-deps /usr/app/src/shared-files ./shared-files
 
 EXPOSE 8080
 CMD ["/usr/openjdk/jdk8u222-b10/bin/java", "-jar", \

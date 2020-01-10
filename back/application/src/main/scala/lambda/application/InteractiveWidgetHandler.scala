@@ -63,9 +63,16 @@ object InteractiveWidgetHandler {
       input: CodeInput
   )(implicit ctx: WidgetHandlerContext[F], tracingContext: TracingContext[F]): Result[F] =
     widget match {
+<<<<<<< Updated upstream
       case s: Scala2CodeWidget if input.language == Scala2 =>
         EitherT(renderFiles(s.baseFiles, input.code) use { renderedFiles =>
           processResultToWidgetResult(ctx.scala2CodeRunner.run(renderedFiles, s.mainClass, s.dependencies)).value
+=======
+      case s: TabbedScala2CodeWidget if input.language == Scala2 =>
+        val files = s.baseFiles.traverse(ctx.sourceFileHandler(_))
+        EitherT(files use { f =>
+          processResultToWidgetResult(ctx.scala2CodeRunner.run(f, s.mainClass, s.dependencies)).value
+>>>>>>> Stashed changes
         })
     }
 
@@ -76,4 +83,8 @@ object InteractiveWidgetHandler {
         case Right(output) => Right(CodeOutput(output))
       }
     }
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 }

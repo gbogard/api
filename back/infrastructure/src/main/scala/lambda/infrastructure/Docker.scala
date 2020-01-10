@@ -4,9 +4,6 @@ import cats.effect.Sync
 import java.util.UUID.randomUUID
 
 object Docker {
-  val scalaImage = "hseeberger/scala-sbt:8u212_1.2.8_2.12.8"
-  val scalaHomeDirectory = "/home/sbtuser"
-  val scalaPath = s"$scalaHomeDirectory/scala-2.12.9/bin/scala"
 
   /**
     * Given a list of paths, returns a Map of "host path" (the original path) to

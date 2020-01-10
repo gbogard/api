@@ -69,19 +69,6 @@ lazy val infrastructure = (project in file("back/infrastructure"))
   .dependsOn(domain, application, library, scalaUtils)
 
 /**
- * A library of utilities that will be added a a dependency for
- * all scala courses
- */
-lazy val scalaUtils = (project in file("back/scala-utils"))
-  .settings(
-    name := "scalaUtils",
-    libraryDependencies ++= Seq(
-      pprint,
-      scalaTest % Test
-    )
-  )
-
-/**
  * A project for the actual course curriculum
  */
 lazy val library = (project in file("back/library"))
