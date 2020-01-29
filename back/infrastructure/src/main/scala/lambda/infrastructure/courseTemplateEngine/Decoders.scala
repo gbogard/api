@@ -39,10 +39,10 @@ object Decoders {
         )
     )
 
-  def scalaCodeWidgetDecoder(id: WidgetId): Decoder[InteractiveCodeWidget.Scala2CodeWidget] =
+  def scalaCodeWidgetDecoder(id: WidgetId): Decoder[SimpleScala2CodeWidget] =
     decodeNestedField[widgets.ScalaCodeWidget]("scala").map(
       s =>
-        InteractiveCodeWidget.Scala2CodeWidget(
+        SimpleScala2CodeWidget(
           id,
           baseFiles = s.baseFiles
             .getOrElse(List("/templates/scala/WrapInMain.ssp"))

@@ -12,14 +12,11 @@ import lambda.infrastructure.gateway.services.CourseService
 import org.http4s.circe._
 import org.http4s._
 import org.scalatest._
-import lambda.infrastructure.courseTemplateEngine.CourseTemplateEngineInterpreter
 import lambda.application.CoursesRequestHandler
 import com.colisweb.tracing.TracingContextBuilder
 import com.colisweb.tracing.NoOpTracingContext
 
 class CourseServiceSpec extends AsyncFunSpec with Matchers {
-
-  implicit private val courseTemplateEngine = CourseTemplateEngineInterpreter
 
   describe("Course service") {
     describe("GET /courses") {

@@ -68,6 +68,11 @@ lazy val infrastructure = (project in file("back/infrastructure"))
   )
   .dependsOn(domain, application, library, scalaUtils)
 
+lazy val courseBuilderDsl = (project in file("back/course-builder-dsl"))
+  .settings(
+    name := "Coursse builder DSL"
+  ).dependsOn(domain)
+
 /**
  * A project for the actual course curriculum
  */
@@ -78,6 +83,6 @@ lazy val library = (project in file("back/library"))
       scalaTest % Test
     )
   )
-  .dependsOn(domain)
+  .dependsOn(domain, courseBuilderDsl)
 
 ThisBuild / scalacOptions ++= BuildConfiguration.scalacOptions

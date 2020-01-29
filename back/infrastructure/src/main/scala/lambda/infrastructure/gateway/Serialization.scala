@@ -28,8 +28,9 @@ object Serialization {
 
     implicit val interactiveCodeWidgetEncoder: ObjectEncoder[InteractiveCodeWidget] =
       ObjectEncoder.instance {
-        case w: InteractiveCodeWidget.Scala2CodeWidget =>
+        case w: SimpleScala2CodeWidget =>
           w.asJsonObject.remove("baseFiles").remove("mainClass")
+        case w: TabbedScala2CodeWidget => w.asJsonObject
       }
 
     implicit val widgetEncoder: Encoder[Widget] =
@@ -70,13 +71,13 @@ object Serialization {
 
     implicit val languageDecoder: Decoder[Language] = Decoder.decodeString.flatMap {
       case Scala2.id  => Decoder.const(Scala2)
-      case Clojure.id => Decoder.const(Clojure)
       case _          => Decoder.failedWithMessage("Invalid language type")
     }
 
     implicit val widgetInputDecoder: Decoder[WidgetInput] = List[Decoder[WidgetInput]](
       answerIdDecoder.widen,
-      Decoder[CodeInput].widen
+      Decoder[SimpleCodeInput].widen,
+      Decoder[TabbedCodeInput].widen
     ).reduce(_ or _)
   }
 

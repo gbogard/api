@@ -2,15 +2,10 @@ package lambda.library
 
 import org.scalatest._
 import lambda.domain.courses.MultipleChoices
-import lambda.domain.courses.CourseTemplateEngine
 import cats.effect.IO
 import lambda.domain.courses.Widget
 
 class LibrarySpec extends FunSpec with Matchers {
-
-  implicit private val courseTemplateEngine = new CourseTemplateEngine[IO] {
-    def parse(templateString: String, idPrefix: String): IO[List[Widget]] = IO.pure(Nil)
-  }
 
   describe("Courses library") {
     it("Should have unique courses ids") {

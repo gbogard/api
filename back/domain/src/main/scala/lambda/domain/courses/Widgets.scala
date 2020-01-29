@@ -11,52 +11,58 @@ case class MarkdownText(
 ) extends StaticWidget {
   val widgetType: String = "markdownText"
 }
+
 case class MultipleChoices(
     id: WidgetId,
     required: Boolean,
-    question: MultipleChoices.Question
+    question: Question
 ) extends InteractiveWidget {
   val widgetType: String = "multipleChoices"
 }
 
-object MultipleChoices {
-
-  case class Answer(id: Int, value: String)
-  case class Question(
-      value: String,
-      rightAnswer: Answer,
-      otherPropositions: List[Answer]
-  )
-}
+case class Answer(id: Int, value: String)
+case class Question(
+    value: String,
+    rightAnswer: Answer,
+    otherPropositions: List[Answer]
+)
 
 sealed trait InteractiveCodeWidget extends InteractiveWidget {
-  def defaultValue: String
   def language: Language
 }
 
-object InteractiveCodeWidget {
-  case class Scala2CodeWidget(
-      id: WidgetId,
-      baseFiles: List[SourceFile],
-      mainClass: String,
-      defaultValue: String = "",
-      dependencies: List[ScalaDependency] = Nil,
-      required: Boolean = false
-  ) extends InteractiveCodeWidget {
-    val language = Scala2
-    val widgetType: String = "scala2Code"
-  }
+case class SimpleScala2CodeWidget(
+    id: WidgetId,
+    mainClass: String,
+    baseFiles: List[SourceFile],
+    defaultValue: String,
+    dependencies: List[ScalaDependency] = Nil,
+    required: Boolean = false
+) extends InteractiveCodeWidget {
+  val language = Scala2
+  val widgetType: String = "simpleScala2"
+}
+
+case class TabbedScala2CodeWidget(
+    id: WidgetId,
+    tabs: List[SourceFile],
+    baseFiles: List[SourceFile],
+    mainClass: String,
+    dependencies: List[ScalaDependency] = Nil,
+    required: Boolean = false
+) extends InteractiveCodeWidget {
+  val language = Scala2
+  val widgetType: String = "tabbedScala2"
 }
 
 case class WidgetId(underlying: String) extends AnyVal
 
 sealed trait Widget {
   val widgetType: String
-  def id: WidgetId
+  val id: WidgetId
 }
 
 sealed trait StaticWidget extends Widget
-
 sealed trait InteractiveWidget extends Widget {
   def required: Boolean
 }

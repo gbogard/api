@@ -5,7 +5,6 @@ import lambda.library._
 import lambda.domain.courses.Course.CourseId
 import lambda.domain.courses._
 import lambda.domain.courses.Page.SimplePage
-import lambda.infrastructure.courseTemplateEngine.CourseTemplateEngineInterpreter
 import cats.effect.IO
 
 class LibraryCourseRepositorySpec extends FunSpec with Matchers {

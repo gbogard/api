@@ -1,16 +1,17 @@
 package lambda.infrastructure
 
-import cats.effect._
-import cats.data.EitherT
 import java.io.File
-import java.nio.file.Files
+import java.nio.charset.StandardCharsets
+import java.nio.file.{Files, _}
 import java.util.UUID
-import scala.concurrent.duration._
-import scala.concurrent.duration.FiniteDuration
-import org.apache.commons.io.FileUtils
+
+import cats.data.EitherT
+import cats.effect._
 import com.typesafe.scalalogging.StrictLogging
 import lambda.domain.code._
-import java.nio.file._
+import org.apache.commons.io.FileUtils
+
+import scala.concurrent.duration._
 
 object Utils extends StrictLogging {
 
@@ -30,6 +31,22 @@ object Utils extends StrictLogging {
       ()
     }
     Resource.make(acquire)(release)
+  }
+
+  def createTemporaryFile[F[_]: Sync](content: String)(implicit config: Configuration): Resource[F, File] = {
+    val create = Sync[F].delay {
+      val randomName = UUID.randomUUID().toString()
+      val basePath: Path = Paths.get(config.temporaryFoldersBase.containerPath)
+      val f = Files.createTempFile(basePath, randomName, "resource").toFile
+      FileUtils.writeStringToFile(f, content, StandardCharsets.UTF_8)
+      logger.debug("Creating temporary file {}", f.getAbsolutePath())
+      f
+    }
+    def delete(f: File): F[Unit] = Sync[F].delay {
+      logger.debug("Deleting temporary file {}", f.getAbsolutePath())
+      FileUtils.deleteDirectory(f)
+    }
+    Resource.make(create)(delete)
   }
 
   /**

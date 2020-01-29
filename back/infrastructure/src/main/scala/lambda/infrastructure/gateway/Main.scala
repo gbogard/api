@@ -8,9 +8,7 @@ import lambda.application.InteractiveWidgetHandler.WidgetHandlerContext
 import lambda.infrastructure.courses.LibraryCourseRepository
 import lambda.infrastructure.Configuration
 import lambda.infrastructure.MediaHandlerInterpreter
-import lambda.infrastructure.courseTemplateEngine.CourseTemplateEngineInterpreter
 import lambda.application.CoursesRequestHandler
-import lambda.domain.courses.CourseTemplateEngine
 import com.colisweb.tracing.LoggingTracingContext
 import com.colisweb.tracing.TracingContextBuilder
 
@@ -29,7 +27,7 @@ object Main extends IOApp {
       widgetHandlerContext = WidgetHandlerContext(
         scala2CodeRunner = scala2CodeRunner,
         templateEngine = templateEngine,
-        sourceFileHandler = lambda.infrastructure.code.sourceFileHandler
+        sourceFileHandler = lambda.infrastructure.code.sourceFileHandler(config)
       )
       mediaHandler = new MediaHandlerInterpreter(config)
       coursesRequestHandler = {
