@@ -1,10 +1,5 @@
-import sbt._
-import spray.revolver.RevolverKeys
 
-import scala.io.StdIn
-import scala.sys.process._
-
-object BuildConfiguration extends RevolverKeys {
+object BuildConfiguration {
   val scalacOptions = Seq(
     "-deprecation", // Emit warning and location for usages of deprecated APIs.
     "-encoding",
@@ -54,25 +49,4 @@ object BuildConfiguration extends RevolverKeys {
     "-Ywarn-value-discard" // Warn when non-Unit expression results are unused.
   )
 
-  private val frontDev: TaskKey[Unit] = taskKey[Unit]("Run the frontend servers")
-  private val dev = inputKey[Unit]("Run the backend and the frontend")
-
-  private def runFrontend(): Unit = {
-    println("Removing cached files")
-    "rm -rf lib/ .cache/ dist/" !
-    val p = List(Process("yarn dashboard:start").run(),
-    Process("yarn showcase:start").run(),
-    Process("yarn re:watch").run())
-    StdIn.readLine("Frontend server is running! Press Enter to exit")
-    p.foreach(_.destroy())
-    println("Goodbye!")
-  }
-
-  val devConfig = Seq(
-    frontDev := runFrontend,
-    dev := {
-      frontDev.value
-      reStart.evaluated
-    }
-  )
 }

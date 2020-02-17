@@ -1,7 +1,6 @@
 .DS_Store
 
 # Scala
-
 .hydra
 .metals
 .bloop
@@ -14,4 +13,3 @@ target
 temp
 tmp
 
-deps

@@ -3,21 +3,15 @@ import sbt._
 object Dependencies {
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.0.8"
   lazy val approvals = "com.github.writethemfirst" % "approvals-java" % "0.10.0"
-  lazy val commonsIO = "commons-io" % "commons-io" % "2.6"
-  lazy val scalate = "org.scalatra.scalate" %% "scalate-core" % "1.9.4"
   lazy val tracing = "com.colisweb" %% "scala-opentracing" % "0.1.0"
+  lazy val domain = "lambda" %% "domain" % "0.4.1"
+  lazy val library = "lambda" %% "course-library" % "0.1.1"
+  lazy val commonsIO = "commons-io" % "commons-io" % "2.6"
 
   object PureConfig {
     private val version = "0.10.1"
     val core = "com.github.pureconfig" %% "pureconfig" % version
     val all: Seq[ModuleID] = Seq(core)
-  }
-
-  object Scala {
-    lazy val version = "2.12.9"
-    lazy val scalac = "org.scala-lang" % "scala-compiler" % version
-    lazy val library = "org.scala-lang" % "scala-library" % version
-    lazy val all = Seq(scalac, library)
   }
 
   object Cats {
@@ -49,12 +43,6 @@ object Dependencies {
     val yaml = "io.circe" %% "circe-yaml" % "0.10.0"
 
     val all: Seq[ModuleID] = Seq(core, generic, genericExtras, parser, optics, yaml)
-  }
-
-  object Coursier {
-    lazy val core = "io.get-coursier" %% "coursier" % "2.0.0-RC2-6"
-    lazy val interop = "io.get-coursier" %% "coursier-cats-interop" % "2.0.0-RC2-6"
-    lazy val all = Seq(core, interop)
   }
 
   object Log {

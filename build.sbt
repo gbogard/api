@@ -1,51 +1,47 @@
+import sbtghpackages.TokenSource.Environment
 import Dependencies._
 
-ThisBuild / scalaVersion := "2.12.8"
+ThisBuild / scalaVersion := "2.12.10"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "lambda"
 ThisBuild / organizationName := "lambdacademy"
 ThisBuild / resolvers += Resolver.bintrayRepo("colisweb", "maven")
+
+ThisBuild / githubUser := sys.env.getOrElse("GITHUB_USER", "REPLACE_ME")
+ThisBuild / githubOwner := "lambdacademy-dev"
+ThisBuild / githubTokenSource := Some(Environment("GITHUB_TOKEN"))
+ThisBuild / githubRepository := "course-dsl"
+
+ThisBuild / resolvers ++= Seq("domain", "course-library").map(
+  Resolver.githubPackagesRepo("lambdacademy-dev", _)
+)
 
 lazy val root = (project in file("."))
   .settings(
     name := "lambdacademy",
     reStart := (reStart in infrastructure).evaluated
   )
-  .settings(BuildConfiguration.devConfig)
-  .aggregate(domain, infrastructure, application, library, scalaUtils)
+  .aggregate(infrastructure, application)
 
 /**
- * A project for domain models and interfaces
- */
-lazy val domain = (project in file("back/domain"))
-  .settings(
-    name := "domain",
-    libraryDependencies ++= Cats.all ++ Seq(
-      tracing,
-      approvals % Test,
-      scalaTest % Test
-    )
-  )
-
-/**
- * A project for business logic
- */
-lazy val application = (project in file("back/application"))
+  * A project for business logic
+  */
+lazy val application = (project in file("application"))
   .settings(
     name := "application",
     libraryDependencies ++= Cats.all ++ Seq(
+      domain,
       tracing,
       approvals % Test,
       scalaTest % Test
     )
-  )
-  .dependsOn(domain)
+  ).dependsOn(utils)
 
 /**
- * A project for implementations of persistence layer, gateway endpoints,
- * code runners etc.
- */
-lazy val infrastructure = (project in file("back/infrastructure"))
+  * A project for implementations of persistence layer, gateway endpoints,
+  * etc.
+  */
+lazy val infrastructure = (project in file("infrastructure"))
   .settings(
     name := "infrastructure",
     mainClass in assembly := Some("lambda.infrastructure.gateway.Main"),
@@ -55,34 +51,20 @@ lazy val infrastructure = (project in file("back/infrastructure"))
       ++ Log.all
       ++ Http4s.all
       ++ Circe.all
-      ++ Coursier.all
-      ++ Scala.all
       ++ PureConfig.all
       ++ Seq(
-        scalate,
-        commonsIO,
+        domain,
+        library,
         tracing,
+      commonsIO,
         approvals % Test,
-        scalaTest % Test
+        scalaTest % Test,
       )
   )
-  .dependsOn(domain, application, library, scalaUtils)
+  .dependsOn(application, utils)
 
-lazy val courseBuilderDsl = (project in file("back/course-builder-dsl"))
-  .settings(
-    name := "Coursse builder DSL"
-  ).dependsOn(domain)
-
-/**
- * A project for the actual course curriculum
- */
-lazy val library = (project in file("back/library"))
-  .settings(
-    name := "library",
-    libraryDependencies ++= Seq(
-      scalaTest % Test
-    )
-  )
-  .dependsOn(domain, courseBuilderDsl)
+lazy val utils = project.settings(
+  libraryDependencies ++= Cats.all
+)
 
 ThisBuild / scalacOptions ++= BuildConfiguration.scalacOptions
