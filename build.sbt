@@ -12,7 +12,7 @@ ThisBuild / githubOwner := "lambdacademy-dev"
 ThisBuild / githubTokenSource := Some(Environment("GITHUB_TOKEN"))
 ThisBuild / githubRepository := "course-dsl"
 
-ThisBuild / resolvers ++= Seq("domain", "course-library").map(
+ThisBuild / resolvers ++= Seq("domain", "course-library", "scala-runner").map(
   Resolver.githubPackagesRepo("lambdacademy-dev", _)
 )
 
@@ -35,7 +35,8 @@ lazy val application = (project in file("application"))
       approvals % Test,
       scalaTest % Test
     )
-  ).dependsOn(utils)
+  )
+  .dependsOn(utils)
 
 /**
   * A project for implementations of persistence layer, gateway endpoints,
@@ -56,9 +57,10 @@ lazy val infrastructure = (project in file("infrastructure"))
         domain,
         library,
         tracing,
-      commonsIO,
+        scalaCodeRunner,
+        commonsIO,
         approvals % Test,
-        scalaTest % Test,
+        scalaTest % Test
       )
   )
   .dependsOn(application, utils)

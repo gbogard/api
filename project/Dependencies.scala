@@ -6,6 +6,7 @@ object Dependencies {
   lazy val tracing = "com.colisweb" %% "scala-opentracing" % "0.1.0"
   lazy val domain = "lambda" %% "domain" % "0.4.1"
   lazy val library = "lambda" %% "course-library" % "0.1.1"
+  lazy val scalaCodeRunner = "lambda" %% "scala-runner" % "0.2.2"
   lazy val commonsIO = "commons-io" % "commons-io" % "2.6"
 
   object PureConfig {

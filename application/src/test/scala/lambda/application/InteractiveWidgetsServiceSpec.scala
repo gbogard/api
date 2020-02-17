@@ -6,7 +6,6 @@ import cats.data.EitherT
 import java.io.File
 import scala.concurrent.duration.FiniteDuration
 import lambda.domain.code._
-import lambda.application.InteractiveWidgetsService.WidgetHandlerContext
 import lambda.domain.courses._
 import lambda.domain.code.Language._
 import lambda.application.WidgetInput._
@@ -16,7 +15,6 @@ import lambda.application.WidgetError._
 import scala.concurrent.ExecutionContext
 import cats.effect.concurrent.Deferred
 import lambda.domain.code.TemplateEngine
-import lambda.domain.courses.InteractiveCodeWidget.Scala2CodeWidget
 import lambda.domain.code.ScalaCodeRunner.ScalaDependency
 import com.colisweb.tracing._
 
@@ -28,10 +26,10 @@ class InteractiveWidgetsServiceSpec extends AsyncFunSpec with Matchers {
 
       it("Should return a valid result when the execution succeeds") {
         val output = "Output from code runner"
-        implicit val context = mockContext(EitherT.rightT(output))
-        InteractiveWidgetHandler[IO, IO.Par](
+
+        (new InteractiveWidgetsService[IO]()).run(
           scalaCodeWidget,
-          CodeInput("", Scala2)
+          SimpleCodeInput("", Scala2)
         ).value.map(_.right.get shouldBe CodeOutput(output)).unsafeToFuture()
       }
 
@@ -175,6 +173,15 @@ class InteractiveWidgetsServiceSpec extends AsyncFunSpec with Matchers {
   }
 
 
+  private def mockScalaCodeRunner(result: ProcessResult[IO]) = new ScalaCodeRunner[IO] {
+    def run(
+      files: List[File],
+      mainClass: String,
+      dependencies: List[ScalaCodeRunner.ScalaDependency],
+      timeout: FiniteDuration
+    )(implicit tracingContext: TracingContext[IO]): ProcessResult[IO] = result
+  }
+
   private def mockTemplateEngine(output: List[File]) = new TemplateEngine[IO] {
     def canRender(file: File) = true
     def render(
@@ -183,20 +190,7 @@ class InteractiveWidgetsServiceSpec extends AsyncFunSpec with Matchers {
     ) = Resource.pure(output)
   }
 
-  private def mockContext(
-      scala2CodeRunnerResult: ProcessResult[IO] = EitherT.rightT("")
-  ) = WidgetHandlerContext[IO](
-    scala2CodeRunner = new ScalaCodeRunner[IO] {
-      def run(
-          files: List[File],
-          mainClass: String,
-          dependencies: List[ScalaCodeRunner.ScalaDependency],
-          timeout: FiniteDuration
-      )(implicit tracingContext: TracingContext[IO]): lambda.domain.code.ProcessResult[IO] = scala2CodeRunnerResult
-    },
-    templateEngine = mockTemplateEngine(Nil),
-    sourceFileHandler = (_: SourceFile) => ???
-  )
+  private def mockSourceFileHandler: SourceFileHandler[IO] = (_: SourceFile) => ???
 
   /**
     * Test utils

@@ -20,7 +20,7 @@ object Main extends IOApp {
       config <- Configuration.load[IO]
       mediaHandler = new MediaHandlerInterpreter(config)
       coursesRequestHandler = {
-        implicit val scala2CodeRunner = new ScalaCodeRunnerInterpreter
+        implicit val scala2CodeRunner = new ScalaCodeRunnerInterpreter(config)
         implicit val sourceFileHandler = lambda.infrastructure.code.sourceFileHandler(config)
         implicit val templateEngine = new lambda.infrastructure.code.TemplateEngineInterpreter[IO]
         implicit val interactiveWidgetsService = new InteractiveWidgetsService[IO]
