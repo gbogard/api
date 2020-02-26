@@ -44,6 +44,7 @@ class TemplateEngineInterpreter[F[_]: Sync] extends TemplateEngine[F] {
   ): Resource[F, File] = {
     val acquire = Sync[F] delay {
       val originalContent = FileUtils.readFileToString(file, StandardCharsets.UTF_8)
+      println(originalContent)
       val output = commentRegex.replaceAllIn(originalContent, m => data.getOrElse(m.group("name"), m.group("content")).toString)
       val tempFile = File.createTempFile(UUID.randomUUID().toString(), ".out")
       FileUtils.writeStringToFile(tempFile, output, StandardCharsets.UTF_8)

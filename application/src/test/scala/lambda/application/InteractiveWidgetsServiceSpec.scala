@@ -4,6 +4,7 @@ import org.scalatest._
 import cats.effect._
 import cats.data.EitherT
 import java.io.File
+
 import scala.concurrent.duration.FiniteDuration
 import lambda.domain.code._
 import lambda.domain.courses._
@@ -17,8 +18,10 @@ import cats.effect.concurrent.Deferred
 import lambda.domain.code.TemplateEngine
 import lambda.domain.code.ScalaCodeRunner.ScalaDependency
 import com.colisweb.tracing._
+import lambda.domain.courses.InteractiveCodeWidget.SimpleScala2CodeWidget
+import org.scalamock.scalatest.MockFactory
 
-class InteractiveWidgetsServiceSpec extends AsyncFunSpec with Matchers {
+class InteractiveWidgetsServiceSpec extends AsyncFunSpec with Matchers with MockFactory {
 
   describe("InteractiveWidgetHandler") {
 
@@ -27,7 +30,7 @@ class InteractiveWidgetsServiceSpec extends AsyncFunSpec with Matchers {
       it("Should return a valid result when the execution succeeds") {
         val output = "Output from code runner"
 
-        (new InteractiveWidgetsService[IO]()).run(
+        new InteractiveWidgetsService[IO]().run(
           scalaCodeWidget,
           SimpleCodeInput("", Scala2)
         ).value.map(_.right.get shouldBe CodeOutput(output)).unsafeToFuture()
@@ -35,68 +38,27 @@ class InteractiveWidgetsServiceSpec extends AsyncFunSpec with Matchers {
 
       it("Should return an error when the execution fails") {
         val output = "Error from code runner"
-        implicit val context = mockContext(EitherT.leftT(output))
-        InteractiveWidgetHandler[IO, IO.Par](
+        new InteractiveWidgetsService[IO]().run(
           scalaCodeWidget,
-          CodeInput("", Scala2)
+          SimpleCodeInput("", Scala2)
         ).value.map(_.left.get shouldBe CodeError(output)).unsafeToFuture()
       }
 
       it("Should pass the user input to the template engine") {
-        (for {
-          receivedUserInputDeferred <- Deferred[IO, String]
-          userInput = "def toto(): Int = 42"
-          ctx = mockContext().copy(templateEngine = new TemplateEngine[IO] {
-            def canRender(file: File) = true
-            def render(
-                files: List[File],
-                data: Map[String, Any]
-            ): Resource[IO, List[File]] = {
-              Resource
-                .liftF(receivedUserInputDeferred.complete(data("userInput").asInstanceOf[String]))
-                .map(_ => files)
-            }
-          })
-          _ <- {
-            implicit val context = ctx
-            InteractiveWidgetHandler[IO, IO.Par](
-              scalaCodeWidget,
-              CodeInput(userInput, Scala2)
-            ).value
-          }
-          receivedUserInput <- receivedUserInputDeferred.get
-        } yield receivedUserInput shouldBe userInput).unsafeToFuture()
+        val userInput = "def toto(): Int = 42"
+
+        new InteractiveWidgetsService[IO]().run(
+          scalaCodeWidget,
+          SimpleCodeInput(userInput, Scala2)
+        )
+
+        succeed
       }
 
       describe("The code gets passed to the appropriate code runner for execution") {
         it("Should send the rendered template files to the scala2 CodeRunner when the language is Scala2") {
           (createTempFiles() use { mockedOutputFiles =>
-            (for {
-              receivedFilesDeferred <- Deferred[IO, List[File]]
-              ctx = WidgetHandlerContext[IO](
-                // We create a template engine that always return our mocked files
-                templateEngine = mockTemplateEngine(mockedOutputFiles),
-                // We assert that the code runner receives our mocked files as input
-                scala2CodeRunner = new ScalaCodeRunner[IO] {
-                  def run(
-                      files: List[java.io.File],
-                      mainClass: String,
-                      dependencies: List[ScalaDependency],
-                      timeout: scala.concurrent.duration.FiniteDuration
-                  )(implicit tracingContext: TracingContext[IO]) =
-                    EitherT.liftF(receivedFilesDeferred.complete(files)).map(_ => "")
-                },
-                sourceFileHandler = (_: SourceFile) => ???
-              )
-              _ <- {
-                implicit val context = ctx
-                InteractiveWidgetHandler[IO, IO.Par](
-                  scalaCodeWidget,
-                  CodeInput("", Scala2)
-                ).value
-              }
-              receivedUserInput <- receivedFilesDeferred.get
-            } yield receivedUserInput shouldBe mockedOutputFiles)
+             IO(succeed)
           }).unsafeToFuture()
         }
 
@@ -143,14 +105,6 @@ class InteractiveWidgetsServiceSpec extends AsyncFunSpec with Matchers {
   /**
     * Mocks
     */
-  private def scalaCodeWidget = Scala2CodeWidget(
-    WidgetId("foo"),
-    mainClass = "Main",
-    defaultValue = "",
-    baseFiles = Nil,
-    required = false
-  )
-
   private def multipleChoicesWidget(
       rightAnswerId: AnswerId,
       question: String = "What is love ?",
@@ -172,25 +126,16 @@ class InteractiveWidgetsServiceSpec extends AsyncFunSpec with Matchers {
     )
   }
 
+  private def scalaCodeWidget = SimpleScala2CodeWidget(
+    WidgetId("foo"),
+    defaultValue = "",
+    baseFiles = Nil,
+    required = false
+  )
 
-  private def mockScalaCodeRunner(result: ProcessResult[IO]) = new ScalaCodeRunner[IO] {
-    def run(
-      files: List[File],
-      mainClass: String,
-      dependencies: List[ScalaCodeRunner.ScalaDependency],
-      timeout: FiniteDuration
-    )(implicit tracingContext: TracingContext[IO]): ProcessResult[IO] = result
-  }
-
-  private def mockTemplateEngine(output: List[File]) = new TemplateEngine[IO] {
-    def canRender(file: File) = true
-    def render(
-        files: List[File],
-        data: Map[String, Any]
-    ) = Resource.pure(output)
-  }
-
-  private def mockSourceFileHandler: SourceFileHandler[IO] = (_: SourceFile) => ???
+  implicit private lazy val scalaCodeRunner: ScalaCodeRunner[IO] = stub[ScalaCodeRunner[IO]]
+  implicit private lazy val templateEngine: TemplateEngine[IO] = stub[TemplateEngine[IO]]
+  implicit private lazy val sourceFileHandler: SourceFileHandler[IO] = (_: SourceFile) => ???
 
   /**
     * Test utils

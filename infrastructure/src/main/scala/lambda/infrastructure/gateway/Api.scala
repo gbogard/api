@@ -29,6 +29,7 @@ object Api extends LazyLogging {
       anyOrigin = false,
       anyMethod = true,
       allowedOrigins = Set(
+        "http://localhost:3000",
         "http://localhost:1111",
         "https://lambdacademy.dev",
         "https://dashboard.lambdacademy.dev"

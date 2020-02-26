@@ -1,5 +1,5 @@
 import sbtghpackages.TokenSource.Environment
-import Dependencies._
+import Dependencies.{scalaMock, _}
 
 ThisBuild / scalaVersion := "2.12.10"
 ThisBuild / version := "0.1.0-SNAPSHOT"
@@ -33,7 +33,8 @@ lazy val application = (project in file("application"))
       domain,
       tracing,
       approvals % Test,
-      scalaTest % Test
+      scalaTest % Test,
+      scalaMock % Test,
     )
   )
   .dependsOn(utils)
@@ -60,8 +61,9 @@ lazy val infrastructure = (project in file("infrastructure"))
         scalaCodeRunner,
         commonsIO,
         approvals % Test,
-        scalaTest % Test
-      )
+        scalaTest % Test,
+        scalaMock % Test,
+    )
   )
   .dependsOn(application, utils)
 
