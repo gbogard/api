@@ -10,7 +10,7 @@ ThisBuild / resolvers += Resolver.bintrayRepo("colisweb", "maven")
 ThisBuild / githubUser := sys.env.getOrElse("GITHUB_USER", "REPLACE_ME")
 ThisBuild / githubOwner := "lambdacademy-dev"
 ThisBuild / githubTokenSource := Some(Environment("GITHUB_TOKEN"))
-ThisBuild / githubRepository := "course-dsl"
+ThisBuild / githubRepository := "api"
 
 ThisBuild / resolvers ++= Seq("domain", "course-library", "scala-runner").map(
   Resolver.githubPackagesRepo("lambdacademy-dev", _)
@@ -34,10 +34,10 @@ lazy val application = (project in file("application"))
       tracing,
       approvals % Test,
       scalaTest % Test,
-      scalaMock % Test,
+      scalaMock % Test
     )
   )
-  .dependsOn(utils)
+  .dependsOn(commons)
 
 /**
   * A project for implementations of persistence layer, gateway endpoints,
@@ -49,6 +49,29 @@ lazy val infrastructure = (project in file("infrastructure"))
     mainClass in assembly := Some("lambda.infrastructure.gateway.Main"),
     assemblyJarName in assembly := "lambdacademy.jar",
     test in assembly := {},
+    assemblyMergeStrategy in assembly := {
+      case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
+      case "application.conf"                  => MergeStrategy.concat
+      case _                                   => MergeStrategy.last
+    },
+    dockerfile in docker := {
+      new Dockerfile {
+        from("azul/zulu-openjdk-alpine:13")
+        add(assembly.value, "/app/lambdacademy.jar")
+        expose(8080)
+        entryPoint(
+          "java",
+          "-Dconfig.resource=application-prod.conf",
+          "-Dlogger.resource=prod-logback-prod.xml",
+          "-jar",
+          "/app/lambdacademy.jar"
+        )
+      }
+    },
+    imageNames in docker := Seq(version.value, "LATEST").map(
+      version =>
+        ImageName(s"docker.pkg.github.com/${githubOwner.value}/${githubRepository.value}/lambda-api:$version")
+    ),
     libraryDependencies ++= Cats.all
       ++ Log.all
       ++ Http4s.all
@@ -62,12 +85,13 @@ lazy val infrastructure = (project in file("infrastructure"))
         commonsIO,
         approvals % Test,
         scalaTest % Test,
-        scalaMock % Test,
-    )
+        scalaMock % Test
+      )
   )
-  .dependsOn(application, utils)
+  .dependsOn(application, commons)
+  .enablePlugins(DockerPlugin)
 
-lazy val utils = project.settings(
+lazy val commons = project.settings(
   libraryDependencies ++= Cats.all
 )
 

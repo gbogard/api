@@ -12,7 +12,7 @@ import lambda.application.WidgetOutput._
 import lambda.domain.code.{SourceFileHandler, _}
 import lambda.domain.courses.InteractiveCodeWidget.{SimpleScala2CodeWidget, TabbedScala2CodeWidget}
 import lambda.domain.courses._
-import lambda.utils._
+import lambda.commons._
 
 class InteractiveWidgetsService[F[_]: Sync](
     implicit scala2CodeRunner: ScalaCodeRunner[F],

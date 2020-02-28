@@ -1,4 +1,4 @@
-package lambda.utils
+package lambda.commons
 
 import cats.data.EitherT
 import cats.effect.{Bracket, Resource}
