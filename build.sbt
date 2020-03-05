@@ -77,7 +77,9 @@ lazy val infrastructure = (project in file("infrastructure"))
       ++ Http4s.all
       ++ Circe.all
       ++ PureConfig.all
+      ++ Doobie.all
       ++ Seq(
+        postgresDriver,
         domain,
         library,
         tracing,
@@ -86,10 +88,13 @@ lazy val infrastructure = (project in file("infrastructure"))
         approvals % Test,
         scalaTest % Test,
         scalaMock % Test
-      )
+      ),
+    flywayUrl := "jdbc:postgresql://localhost:5480/lambdacademy",
+    flywayUser := "lambda",
+    flywayPassword := "lambda",
   )
   .dependsOn(application, commons)
-  .enablePlugins(DockerPlugin)
+  .enablePlugins(DockerPlugin, FlywayPlugin)
 
 lazy val commons = project.settings(
   libraryDependencies ++= Cats.all
