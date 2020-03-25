@@ -1,0 +1,7 @@
+- lambdacademy-dev/api
+- lambdacademy-dev/domain
+- lambdacademy-dev/course-dsl
+- lambdacademy-dev/course-library
+- lambdacademy-dev/deploy
+- lambdacademy-dev/program-executor
+- lambdacademy-dev/scala-runner
