@@ -4,7 +4,7 @@ import cats.data.OptionT
 import cats.effect.IO
 import lambda.domain.courses._
 
-class LibraryCourseRepository extends CourseRepository[IO] {
+class CourseRepositoryInterpreter extends CourseRepository[IO] {
 
   private val courses = lambda.library.courses[IO]
   private val widgets: IO[List[Widget]] = lambda.library.widgets[IO]

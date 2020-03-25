@@ -5,9 +5,10 @@ object Dependencies {
   lazy val scalaMock = "org.scalamock" %% "scalamock" % "4.4.0"
   lazy val approvals = "com.github.writethemfirst" % "approvals-java" % "0.10.0"
   lazy val tracing = "com.colisweb" %% "scala-opentracing" % "0.1.0"
-  lazy val domain = "lambda" %% "domain" % "0.4.1"
-  lazy val library = "lambda" %% "course-library" % "0.1.2"
-  lazy val scalaCodeRunner = "lambda" %% "scala-runner" % "0.2.2"
+  lazy val domain = "lambda" %% "domain" % "0.4.5"
+  lazy val library = "lambda" %% "course-library" % "0.1.6"
+  lazy val scalaCodeRunner = "lambda" %% "scala-runner-client" % "0.3.1"
+  lazy val programExecutor = "lambda" % "program-executor_2.12" % "0.3.2"
   lazy val commonsIO = "commons-io" % "commons-io" % "2.6"
 
   object PureConfig {

@@ -3,8 +3,8 @@ package lambda.infrastructure.serialization
 import cats.implicits._
 import io.circe.Decoder
 import io.circe.generic.auto._
-import io.circe.generic.extras.semiauto.{deriveDecoder, deriveUnwrappedDecoder}
-import io.circe.generic.extras.defaults._
+import io.circe.generic.semiauto._
+import io.circe.generic.extras.semiauto.deriveUnwrappedDecoder
 import lambda.application.WidgetInput
 import lambda.application.WidgetInput.{AnswerId, SimpleCodeInput, TabbedCodeInput}
 import lambda.domain.code.Language

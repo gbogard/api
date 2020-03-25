@@ -1,17 +1,14 @@
 package lambda.infrastructure
 
-import java.nio.file.Paths
-
 import pureconfig.generic.auto._
 import cats.effect.Sync
-import lambda.runners.scala.ScalaRunnerConfig
 
 case class Configuration(
   apiUrl: String,
-  tmpFolder: String
- ) {
-  implicit val scala2RunnerConfig = ScalaRunnerConfig(Paths.get(tmpFolder))
-}
+  tmpFolder: String,
+  scalaRunnerHost: String,
+  scalaRunnerPort: Int,
+ )
 
 object Configuration {
 

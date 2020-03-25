@@ -202,9 +202,8 @@ class ScalaCodeRunnerSpec extends Approbation {
     Configuration
       .load[IO]
       .flatMap(
-        implicit config =>
-          {
-            resources
+        implicit config => {
+          resources
             .traverse(Utils.readResource[IO](_)) use { files =>
             new ScalaCodeRunnerInterpreter(permits)
               .run(files, mainClass, dependencies, timeout)
@@ -212,7 +211,7 @@ class ScalaCodeRunnerSpec extends Approbation {
               .value
 
           }
-          }
+        }
       )
       .flatMap(assertion)
       .unsafeToFuture()

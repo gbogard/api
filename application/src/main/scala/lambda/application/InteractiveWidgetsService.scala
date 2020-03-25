@@ -16,7 +16,7 @@ import lambda.commons._
 
 class InteractiveWidgetsService[F[_]: Sync](
     implicit scala2CodeRunner: ScalaCodeRunner[F],
-    templateEngine: TemplateEngine[F],
+    templateEngine: CodeTemplateEngine[F],
     sourceFileHandler: SourceFileHandler[F]
 ) {
   import InteractiveWidgetsService._
@@ -66,9 +66,7 @@ class InteractiveWidgetsService[F[_]: Sync](
   ): Resource[F, List[File]] =
     for {
       baseFiles <- files.traverse(sourceFileHandler(_))
-      (templateFiles, _) = baseFiles.partition(templateEngine.canRender)
-      params = Map("userInput" -> userInput)
-      output <- templateEngine.render(templateFiles, params)
+      output <- templateEngine.render(baseFiles, Some(userInput))
     } yield output
 }
 

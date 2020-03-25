@@ -1,19 +1,18 @@
 package lambda.infrastructure.serialization
 
-import io.circe.{Encoder, Json, ObjectEncoder}
+import io.circe.generic.auto._
 import io.circe.generic.extras.semiauto.deriveUnwrappedEncoder
 import io.circe.syntax._
-import io.circe.generic.extras.semiauto._
-import io.circe.generic.extras.auto._
-import io.circe.generic.extras.defaults._
+import io.circe.{Encoder, Json, JsonObject}
+import lambda.application.WidgetError._
 import lambda.application.WidgetInput.AnswerId
-import lambda.application.WidgetOutput
 import lambda.application.WidgetOutput.{CodeOutput, RightAnswer}
-import lambda.domain.{Media, MediaHandler}
+import lambda.application.{WidgetError, WidgetOutput}
 import lambda.domain.courses.Course.{CourseId, CourseManifest}
 import lambda.domain.courses.InteractiveCodeWidget.{SimpleScala2CodeWidget, TabbedScala2CodeWidget}
 import lambda.domain.courses.Page.{CodePage, PageId, SimplePage}
-import lambda.domain.courses.{Course, InteractiveCodeWidget, MarkdownText, MultipleChoices, Page, Widget, WidgetId}
+import lambda.domain.courses._
+import lambda.domain.{Media, MediaHandler}
 
 trait Encoders {
 
@@ -22,8 +21,8 @@ trait Encoders {
   implicit val widgetIdEncoder: Encoder[WidgetId] = deriveUnwrappedEncoder
   implicit val unwrappedAnswerIdEncoder: Encoder[AnswerId] = deriveUnwrappedEncoder
 
-  implicit val interactiveCodeWidgetEncoder: ObjectEncoder[InteractiveCodeWidget] =
-    ObjectEncoder.instance {
+  implicit val interactiveCodeWidgetEncoder: Encoder.AsObject[InteractiveCodeWidget] =
+    Encoder.AsObject.instance {
       case w: SimpleScala2CodeWidget =>
         w.asJsonObject.remove("baseFiles").remove("mainClass")
       case w: TabbedScala2CodeWidget => w.asJsonObject
@@ -42,11 +41,30 @@ trait Encoders {
     case RightAnswer   => success("Right answer")
   }
 
-
   implicit val PageEncoder: Encoder[Page] = Encoder.instance {
     case p: SimplePage => withType("simplePage", p)
     case p: CodePage   => withType("codePage", p)
   }
+
+  private val NOT_FOUND = "NOT_FOUND"
+  private val BAD_REQUEST = "BAD_REQUEST"
+  private val WRONG_ANSWER = "WRONG_ANSWER"
+
+  implicit val widgetErrorEncoder: Encoder[WidgetError] = Encoder.instance {
+    case e: CodeError                 => mergeObjects(e.asJsonObject, error(WRONG_ANSWER))
+    case WrongInputForWidget          => error(BAD_REQUEST, "Wrong input for widget").asJson
+    case WrongAnswer                  => error(WRONG_ANSWER, "Wrong answer").asJson
+    case WidgetNotFound(WidgetId(id)) => error(NOT_FOUND, s"Widget with id $id does not exist").asJson
+    case WidgetNotInteractive(WidgetId(id)) =>
+      error(BAD_REQUEST, s"Widget with id $id is not interactive").asJson
+  }
+
+  private def error(
+      code: String,
+      msg: String = ""
+  ): JsonObject = JsonObject("error" -> msg.asJson, "code" -> code.asJson)
+
+  private def mergeObjects(a: JsonObject, b: JsonObject) = Json.fromFields(a.toIterable ++ b.toIterable)
 
   implicit def mediaUrlEncoder(implicit mediaHandler: MediaHandler): Encoder[Media] = media => mediaHandler.toUrl(media).asJson
   implicit def courseEncoder(implicit mediaHandler: MediaHandler): Encoder[Course] = course => {
@@ -57,6 +75,6 @@ trait Encoders {
   }
 
   private def success(msg: String): Json = Json.obj("success" -> Json.fromString(msg))
-  private def withType[A: ObjectEncoder](`type`: String, a: A): Json =
+  private def withType[A: Encoder.AsObject](`type`: String, a: A): Json =
     a.asJsonObject.add("type", Json.fromString(`type`)).asJson
 }

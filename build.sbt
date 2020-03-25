@@ -12,7 +12,7 @@ ThisBuild / githubOwner := "lambdacademy-dev"
 ThisBuild / githubTokenSource := Some(Environment("GITHUB_TOKEN"))
 ThisBuild / githubRepository := "api"
 
-ThisBuild / resolvers ++= Seq("domain", "course-library", "scala-runner").map(
+ThisBuild / resolvers ++= Seq("domain", "course-library", "scala-runner", "program-executor").map(
   Resolver.githubPackagesRepo("lambdacademy-dev", _)
 )
 
@@ -82,6 +82,7 @@ lazy val infrastructure = (project in file("infrastructure"))
         library,
         tracing,
         scalaCodeRunner,
+        programExecutor,
         commonsIO,
         approvals % Test,
         scalaTest % Test,

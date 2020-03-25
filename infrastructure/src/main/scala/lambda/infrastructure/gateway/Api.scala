@@ -14,14 +14,11 @@ import com.typesafe.scalalogging.LazyLogging
 
 object Api extends LazyLogging {
 
-  case class Context(
-    coursesRequestHandler: CoursesService[IO, IO.Par],
+  def apply()(
+    implicit tracingContextBuilder: TracingContextBuilder[IO],
+    coursesService: CoursesService[IO, IO.Par],
     mediaHandler: MediaHandler
-  )
-
-  def apply()(implicit ctx: Context, tracingContextBuilder: TracingContextBuilder[IO]) = {
-    implicit val coursesRequestHandler = ctx.coursesRequestHandler
-    implicit val mediaHandler = ctx.mediaHandler
+  ) = {
 
     val services = CoursesController() <+> MediaController()(blockingEc, globalContextShift)
 

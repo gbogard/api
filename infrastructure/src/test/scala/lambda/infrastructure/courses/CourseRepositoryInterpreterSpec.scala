@@ -6,9 +6,9 @@ import lambda.domain.courses.Course.CourseId
 import lambda.domain.courses._
 import lambda.domain.courses.Page.SimplePage
 import cats.effect.IO
-import lambda.infrastructure.LibraryCourseRepository
+import lambda.infrastructure.CourseRepositoryInterpreter
 
-class LibraryCourseRepositorySpec extends FunSpec with Matchers {
+class CourseRepositoryInterpreterSpec extends FunSpec with Matchers {
   describe("LibraryCourseRepository") {
     it("Should return course manifests from the library") {
       (for {
@@ -47,5 +47,5 @@ class LibraryCourseRepositorySpec extends FunSpec with Matchers {
   }
 
   implicit val courseTemplateEngine = CourseTemplateEngineInterpreter
-  private val repo = new LibraryCourseRepository
+  private val repo = new CourseRepositoryInterpreter
 }

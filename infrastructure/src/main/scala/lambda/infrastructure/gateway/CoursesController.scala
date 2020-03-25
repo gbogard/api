@@ -8,7 +8,6 @@ import lambda.application.{CoursesService, WidgetError, WidgetInput}
 import lambda.domain.MediaHandler
 import lambda.domain.courses.Course.CourseId
 import lambda.domain.courses.WidgetId
-import lambda.infrastructure.gateway.ErrorsEncoders.widgetErrorEncoder
 import org.http4s.dsl.io._
 import lambda.infrastructure.serialization._
 

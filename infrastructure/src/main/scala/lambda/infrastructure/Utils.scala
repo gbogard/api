@@ -40,7 +40,7 @@ object Utils extends StrictLogging {
     }
     def delete(f: File): F[Unit] = Sync[F].delay {
       logger.debug("Deleting temporary file {}", f.getAbsolutePath())
-      FileUtils.deleteDirectory(f)
+      FileUtils.forceDelete(f)
     }
     Resource.make(create)(delete)
   }
