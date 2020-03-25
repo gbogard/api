@@ -21,7 +21,7 @@ jobs:
           echo "echo '$GITHUB_TOKEN'" >> $STEWARD_DIR/pass.sh
       - name: Run Scala Steward
         run: |
-          docker run -v $STEWARD_DIR:/opt/scala-steward -it fthomas/scala-steward:latest \
+          docker run -v $STEWARD_DIR:/opt/scala-steward fthomas/scala-steward:latest \
           --workspace  "/opt/scala-steward/workspace" \
           --repos-file "/opt/scala-steward/repos.md" \
           --git-author-email $EMAIL \
