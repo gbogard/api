@@ -1,0 +1,31 @@
+name: Scala Steward
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '*/15 * * * *'
+env:
+  GITHUB_USER: CI
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  STEWARD_DIR: ./.github/scala-steward
+  EMAIL: hey@guillaumebogard.dev
+jobs:
+  steward:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Scala Steward
+        run: |
+          touch $STEWARD_DIR/pass.sh
+          echo "#!/bin/sh"            >> $STEWARD_DIR/pass.sh
+          echo "echo '$GITHUB_TOKEN'" >> $STEWARD_DIR/pass.sh
+      - name: Run Scala Steward
+        run: |
+          docker run -v $STEWARD_DIR:/opt/scala-steward -it fthomas/scala-steward:latest \
+          --workspace  "/opt/scala-steward/workspace" \
+          --repos-file "/opt/scala-steward/repos.md" \
+          --git-author-email $EMAIL \
+          --vcs-api-host "https://api.github.com" \
+          --vcs-login $GITHUB_USER \
+          --git-ask-pass "/opt/scala-steward/pass.sh" \
+          --sign-commits
