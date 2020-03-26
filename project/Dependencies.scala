@@ -43,7 +43,7 @@ object Dependencies {
     val genericExtras = "io.circe" %% "circe-generic-extras" % version
     val parser = "io.circe" %% "circe-parser" % version
     val optics = "io.circe" %% "circe-optics" % version
-    val yaml = "io.circe" %% "circe-yaml" % "0.10.0"
+    val yaml = "io.circe" %% "circe-yaml" % "0.10.1"
 
     val all: Seq[ModuleID] = Seq(core, generic, genericExtras, parser, optics, yaml)
   }
