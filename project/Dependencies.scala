@@ -8,7 +8,7 @@ object Dependencies {
   lazy val domain = "lambda" %% "domain" % "0.4.5"
   lazy val library = "lambda" %% "course-library" % "0.1.6"
   lazy val scalaCodeRunner = "lambda" %% "scala-runner-client" % "0.3.1"
-  lazy val programExecutor = "lambda" % "program-executor_2.12" % "0.3.2"
+  lazy val programExecutor = "lambda" %% "program-executor" % "0.3.3"
   lazy val commonsIO = "commons-io" % "commons-io" % "2.6"
 
   object PureConfig {

@@ -1,20 +1,16 @@
 import sbtghpackages.TokenSource.Environment
-import Dependencies.{scalaMock, _}
+import Dependencies._
 
 ThisBuild / scalaVersion := "2.12.10"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "lambda"
 ThisBuild / organizationName := "lambdacademy"
 ThisBuild / resolvers += Resolver.bintrayRepo("colisweb", "maven")
+ThisBuild / resolvers += Resolver.githubPackages("lambdacademy-dev")
 
-ThisBuild / githubUser := sys.env.getOrElse("GITHUB_USER", "REPLACE_ME")
 ThisBuild / githubOwner := "lambdacademy-dev"
-ThisBuild / githubTokenSource := Some(Environment("GITHUB_TOKEN"))
+ThisBuild / githubTokenSource := Environment("GITHUB_TOKEN")
 ThisBuild / githubRepository := "api"
-
-ThisBuild / resolvers ++= Seq("domain", "course-library", "scala-runner", "program-executor").map(
-  Resolver.githubPackagesRepo("lambdacademy-dev", _)
-)
 
 lazy val root = (project in file("."))
   .settings(
