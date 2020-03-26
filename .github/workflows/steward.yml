@@ -5,7 +5,7 @@ on:
     # * is a special character in YAML so you have to quote this string
     - cron:  '*/30 * * * *'
 env:
-  GITHUB_USER: gbogard
+  GITHUB_USER: scala-steward
   GITHUB_TOKEN: ${{ secrets.STEWARD_TOKEN }}
   STEWARD_DIR: ./.github/scala-steward
   EMAIL: hey@guillaumebogard.dev
