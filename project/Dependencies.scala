@@ -3,7 +3,7 @@ import sbt._
 object Dependencies {
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.0.8"
   lazy val scalaMock = "org.scalamock" %% "scalamock" % "4.4.0"
-  lazy val approvals = "com.github.writethemfirst" % "approvals-java" % "0.10.0"
+  lazy val approvals = "com.github.writethemfirst" % "approvals-java" % "0.12.0"
   lazy val tracing = "com.colisweb" %% "scala-opentracing" % "0.1.0"
   lazy val domain = "lambda" %% "domain" % "0.4.5"
   lazy val library = "lambda" %% "course-library" % "0.1.6"
