@@ -6,10 +6,11 @@ ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "lambda"
 ThisBuild / organizationName := "lambdacademy"
 ThisBuild / resolvers += Resolver.bintrayRepo("colisweb", "maven")
-ThisBuild / resolvers += Resolver.githubPackages("lambdacademy-dev")
 
+ThisBuild / githubUser := "_"
+ThisBuild / githubTokenSource := Some(Environment("GITHUB_TOKEN"))
+ThisBuild / resolvers += Resolver.githubPackagesRepo("lambdacademy-dev", "_")
 ThisBuild / githubOwner := "lambdacademy-dev"
-ThisBuild / githubTokenSource := Environment("GITHUB_TOKEN")
 ThisBuild / githubRepository := "api"
 
 lazy val root = (project in file("."))
