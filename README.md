@@ -19,7 +19,7 @@ programming in mind, by using a combination of Scala and ReasonML.
 ## Launching the API
 
 ```
-sbt infrastructure/run
+sbt run
 ```
 
 You will need an instance of the Scala Runner to execute Scala code.

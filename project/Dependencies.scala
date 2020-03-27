@@ -1,7 +1,7 @@
 import sbt._
 
 object Dependencies {
-  lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.0.8"
+  lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.1.1"
   lazy val scalaMock = "org.scalamock" %% "scalamock" % "4.4.0"
   lazy val approvals = "com.github.writethemfirst" % "approvals-java" % "0.10.0"
   lazy val tracing = "com.colisweb" %% "scala-opentracing" % "0.1.0"
@@ -12,20 +12,20 @@ object Dependencies {
   lazy val commonsIO = "commons-io" % "commons-io" % "2.6"
 
   object PureConfig {
-    private val version = "0.10.1"
+    private val version = "0.12.3"
     val core = "com.github.pureconfig" %% "pureconfig" % version
     val all: Seq[ModuleID] = Seq(core)
   }
 
   object Cats {
-    lazy val version = "2.0.0-M4"
+    lazy val version = "2.1.0"
     lazy val core = "org.typelevel" %% "cats-core" % version
     lazy val effect = "org.typelevel" %% "cats-effect" % version
     lazy val all = Seq(core, effect)
   }
 
   object Http4s {
-    private val version = "0.20.0"
+    private val version = "0.21.1"
 
     val dsl = "org.http4s" %% "http4s-dsl" % version
     val blazeServer = "org.http4s" %% "http4s-blaze-server" % version
@@ -36,16 +36,13 @@ object Dependencies {
   }
 
   object Circe {
-    private val version = "0.11.0"
+    private val version = "0.13.0"
 
     val core = "io.circe" %% "circe-core" % version
     val generic = "io.circe" %% "circe-generic" % version
     val genericExtras = "io.circe" %% "circe-generic-extras" % version
-    val parser = "io.circe" %% "circe-parser" % version
-    val optics = "io.circe" %% "circe-optics" % version
-    val yaml = "io.circe" %% "circe-yaml" % "0.10.0"
 
-    val all: Seq[ModuleID] = Seq(core, generic, genericExtras, parser, optics, yaml)
+    val all: Seq[ModuleID] = Seq(core, generic, genericExtras)
   }
 
   object Log {
