@@ -4,19 +4,18 @@ import cats.effect.IO
 import io.circe._
 import io.circe.syntax._
 import lambda.domain.courses._
-import .Encoders._
-import lambda.application.InteractiveWidgetsService.WidgetHandlerContext
 import lambda.infrastructure.code._
-import lambda.infrastructure.Mocks._
 import org.http4s.circe._
 import org.http4s._
 import org.scalatest._
-import lambda.application.CoursesService
+import lambda.application.{CoursesService, InteractiveWidgetsService}
 import com.colisweb.tracing.TracingContextBuilder
 import com.colisweb.tracing.NoOpTracingContext
+import lambda.domain.MediaHandler
 import lambda.infrastructure.gateway.CoursesController
+import org.scalamock.scalatest.MockFactory
 
-class CoursesControllerSpec extends AsyncFunSpec with Matchers {
+class CoursesControllerSpec extends AsyncFunSpec with Matchers with MockFactory {
 
   describe("Course service") {
     describe("GET /courses") {
@@ -125,7 +124,7 @@ class CoursesControllerSpec extends AsyncFunSpec with Matchers {
       }
 
       describe("ScalaCodeWidget") {
-        val widget = InteractiveCodeWidget.Scala2CodeWidget(
+        val widget = InteractiveCodeWidget.SimpleScala2CodeWidget(
           WidgetId("scala2"),
           Nil,
           "Main"
@@ -221,13 +220,10 @@ class CoursesControllerSpec extends AsyncFunSpec with Matchers {
     }
   }
 
-  private def mockWidgetHandlerContext(): WidgetHandlerContext[IO] = WidgetHandlerContext(
-    mockScalaCodeRunner(),
-    mockTemplateEngine(),
-    sourceFileHandler
-  )
-
   implicit private def tcb: TracingContextBuilder[IO] =
     NoOpTracingContext.getNoOpTracingContextBuilder[IO].unsafeRunSync()
+
+  implicit private lazy val mediaHandler = stub[MediaHandler]
+  implicit private lazy val coursesService = stub[CoursesService[IO, IO.Par]]
 
 }

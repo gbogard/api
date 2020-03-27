@@ -9,6 +9,9 @@ import cats.effect.IO
 import lambda.infrastructure.CourseRepositoryInterpreter
 
 class CourseRepositoryInterpreterSpec extends FunSpec with Matchers {
+
+  private val repo = new CourseRepositoryInterpreter
+
   describe("LibraryCourseRepository") {
     it("Should return course manifests from the library") {
       (for {
@@ -19,25 +22,18 @@ class CourseRepositoryInterpreterSpec extends FunSpec with Matchers {
     }
 
     it("Should return a course when it exists in the library") {
-      (for {
-        result <- repo.getCourse(CourseId("a-tour-of-scala")).value
-        course <- ATourOfScala.course[IO]
-      } yield result shouldBe Some(course))
-      .unsafeRunSync()
+      val course = atasteofscala.apply()
+      repo.getCourse(course.id).value.map(_ shouldBe Some(course)).unsafeRunSync()
     }
 
     it("Should return a None when the course does not exist") {
-      repo.getCourse(CourseId("toto")).value.unsafeRunSync() shouldBe
-        None
+      repo.getCourse(CourseId("toto")).value.unsafeRunSync() shouldBe None
     }
 
     it("Should return a widget when it exists in the library") {
-      (for {
-        result <- repo.getWidget(WidgetId("a-tour-of-scala-intro--widget-0")).value
-        course <- ATourOfScala.course[IO]
-        widget = course.pages.head.asInstanceOf[SimplePage].widgets.head
-      } yield result shouldBe Some(widget))
-      repo.getWidget(WidgetId("a-tour-of-scala-intro--widget-0")).value.unsafeRunSync()
+      val course = atasteofscala.apply()
+      val widget = course.pages.head.asInstanceOf[SimplePage].widgets.head
+      repo.getWidget(widget.id).value.map(_ shouldBe Some(widget)).unsafeRunSync()
     }
 
     it("Should return a None when the widget does not exist") {
@@ -46,6 +42,4 @@ class CourseRepositoryInterpreterSpec extends FunSpec with Matchers {
     }
   }
 
-  implicit val courseTemplateEngine = CourseTemplateEngineInterpreter
-  private val repo = new CourseRepositoryInterpreter
 }
