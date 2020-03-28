@@ -16,19 +16,19 @@ import lambda.domain.{Media, MediaHandler}
 
 trait Encoders {
 
-  implicit val courseIdEncoder: Encoder[CourseId] = deriveUnwrappedEncoder
-  implicit val pageIdEncoder: Encoder[PageId] = deriveUnwrappedEncoder
-  implicit val widgetIdEncoder: Encoder[WidgetId] = deriveUnwrappedEncoder
-  implicit val unwrappedAnswerIdEncoder: Encoder[AnswerId] = deriveUnwrappedEncoder
+ implicit lazy val courseIdEncoder: Encoder[CourseId] = deriveUnwrappedEncoder
+ implicit lazy val pageIdEncoder: Encoder[PageId] = deriveUnwrappedEncoder
+ implicit lazy val widgetIdEncoder: Encoder[WidgetId] = deriveUnwrappedEncoder
+ implicit lazy val unwrappedAnswerIdEncoder: Encoder[AnswerId] = deriveUnwrappedEncoder
 
-  implicit val interactiveCodeWidgetEncoder: Encoder.AsObject[InteractiveCodeWidget] =
+ implicit lazy val interactiveCodeWidgetEncoder: Encoder.AsObject[InteractiveCodeWidget] =
     Encoder.AsObject.instance {
       case w: SimpleScala2CodeWidget =>
         w.asJsonObject.remove("baseFiles").remove("mainClass")
       case w: TabbedScala2CodeWidget => w.asJsonObject
     }
 
-  implicit val widgetEncoder: Encoder[Widget] =
+ implicit lazy val widgetEncoder: Encoder[Widget] =
     Encoder.instance {
       case w: MultipleChoices => withType(w.widgetType, w)
       case w: InteractiveCodeWidget =>
@@ -36,12 +36,12 @@ trait Encoders {
       case w: MarkdownText => withType(w.widgetType, w)
     }
 
-  implicit val widgetOutputEncoder: Encoder[WidgetOutput] = Encoder.instance {
+ implicit lazy val widgetOutputEncoder: Encoder[WidgetOutput] = Encoder.instance {
     case o: CodeOutput => o.asJson
     case RightAnswer   => success("Right answer")
   }
 
-  implicit val PageEncoder: Encoder[Page] = Encoder.instance {
+ implicit lazy val PageEncoder: Encoder[Page] = Encoder.instance {
     case p: SimplePage => withType("simplePage", p)
     case p: CodePage   => withType("codePage", p)
   }
@@ -50,7 +50,7 @@ trait Encoders {
   private val BAD_REQUEST = "BAD_REQUEST"
   private val WRONG_ANSWER = "WRONG_ANSWER"
 
-  implicit val widgetErrorEncoder: Encoder[WidgetError] = Encoder.instance {
+ implicit lazy val widgetErrorEncoder: Encoder[WidgetError] = Encoder.instance {
     case e: CodeError                 => mergeObjects(e.asJsonObject, error(WRONG_ANSWER))
     case WrongInputForWidget          => error(BAD_REQUEST, "Wrong input for widget").asJson
     case WrongAnswer                  => error(WRONG_ANSWER, "Wrong answer").asJson

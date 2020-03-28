@@ -15,18 +15,18 @@ import lambda.domain.courses.WidgetId
 
 trait Decoders {
 
-  implicit val courseIdDecoder: Decoder[CourseId] = deriveUnwrappedDecoder
-  implicit val pageIdDecoder: Decoder[PageId] = deriveUnwrappedDecoder
-  implicit val widgetIdDecoder: Decoder[WidgetId] = deriveUnwrappedDecoder
-  implicit val unwrappedAnswerIdDecoder: Decoder[AnswerId] = deriveUnwrappedDecoder
-  val answerIdDecoder: Decoder[AnswerId] = deriveDecoder[AnswerId]
+  implicit lazy val courseIdDecoder: Decoder[CourseId] = deriveUnwrappedDecoder
+  implicit lazy val pageIdDecoder: Decoder[PageId] = deriveUnwrappedDecoder
+  implicit lazy val widgetIdDecoder: Decoder[WidgetId] = deriveUnwrappedDecoder
+  implicit lazy val unwrappedAnswerIdDecoder: Decoder[AnswerId] = deriveUnwrappedDecoder
+  lazy val answerIdDecoder: Decoder[AnswerId] = deriveDecoder[AnswerId]
 
-  implicit val languageDecoder: Decoder[Language] = Decoder.decodeString.flatMap {
+  implicit lazy val languageDecoder: Decoder[Language] = Decoder.decodeString.flatMap {
     case Scala2.id  => Decoder.const(Scala2)
     case _          => Decoder.failedWithMessage("Invalid language type")
   }
 
-  implicit val widgetInputDecoder: Decoder[WidgetInput] = List[Decoder[WidgetInput]](
+  implicit lazy val widgetInputDecoder: Decoder[WidgetInput] = List[Decoder[WidgetInput]](
     answerIdDecoder.widen,
     Decoder[SimpleCodeInput].widen,
     Decoder[TabbedCodeInput].widen

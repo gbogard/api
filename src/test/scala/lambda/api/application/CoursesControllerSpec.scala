@@ -26,15 +26,12 @@ class CoursesControllerSpec extends AsyncFunSpec with Matchers with AsyncMockFac
         val expectedCourses = lambda.library.courses[IO].unsafeRunSync().map(_.manifest)
 
         (coursesService.getCoursesManifests _).when().returns(IO.pure(expectedCourses))
+        (mediaHandler.toUrl _).when(*).returns("")
 
         val request = Request[IO](uri = Uri.unsafeFromString("/courses"))
         controller
           .run(request)
           .value
-          .map(res => {
-            println(res)
-            res
-          })
           .flatMap(_.get.as[Json])
           .map(body => {
             body shouldBe expectedCourses.asJson
@@ -45,12 +42,13 @@ class CoursesControllerSpec extends AsyncFunSpec with Matchers with AsyncMockFac
       it("Should return an empty list when the repository has no course") {
 
         (coursesService.getCoursesManifests _).when().returns(IO.pure(Nil))
+
         val request = Request[IO](uri = Uri.unsafeFromString("/courses"))
         controller.run(request)
           .value
-          .flatMap(_.get.as[String])
+          .flatMap(_.get.as[Json])
           .map(body => {
-            body shouldBe "[]"
+            body shouldBe Json.arr()
           })
           .unsafeToFuture()
       }
@@ -64,13 +62,14 @@ class CoursesControllerSpec extends AsyncFunSpec with Matchers with AsyncMockFac
         val course = lambda.library.courses[IO].unsafeRunSync().head
 
         (coursesService.getCourseById _).when(course.id).returns(OptionT.some(course))
+        (mediaHandler.toUrl _).when(*).returns("")
 
         val request = Request[IO](uri = Uri.unsafeFromString(s"/courses/${course.id.underlying}"))
         controller.run(request)
           .value
-          .flatMap(_.get.as[String])
+          .flatMap(_.get.as[Json])
           .map(body => {
-            body shouldBe course.asJson.noSpaces
+            body shouldBe course.asJson
           })
           .unsafeToFuture()
       }
