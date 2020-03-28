@@ -13,37 +13,25 @@ ThisBuild / resolvers += Resolver.githubPackagesRepo("lambdacademy-dev", "_")
 ThisBuild / githubOwner := "lambdacademy-dev"
 ThisBuild / githubRepository := "api"
 
-lazy val root = (project in file("."))
+lazy val api = (project in file("."))
   .settings(
-    name := "lambdacademy",
-    reStart := (reStart in infrastructure).evaluated
-  )
-  .aggregate(infrastructure, application)
-
-/**
-  * A project for business logic
-  */
-lazy val application = (project in file("application"))
-  .settings(
-    name := "application",
-    libraryDependencies ++= Cats.all ++ Seq(
-      domain,
-      tracing,
-      approvals % Test,
-      scalaTest % Test,
-      scalaMock % Test
-    )
-  )
-  .dependsOn(commons)
-
-/**
-  * A project for implementations of persistence layer, gateway endpoints,
-  * etc.
-  */
-lazy val infrastructure = (project in file("infrastructure"))
-  .settings(
-    name := "infrastructure",
-    mainClass in assembly := Some("lambda.infrastructure.gateway.Main"),
+    name := "lambdacademy-api",
+    libraryDependencies ++= Cats.all
+      ++ Log.all
+      ++ Http4s.all
+      ++ Circe.all
+      ++ PureConfig.all
+      ++ Seq(
+        domain,
+        library,
+        tracing,
+        scalaCodeRunner,
+        programExecutor,
+        commonsIO,
+        approvals % Test,
+        scalaTest % Test,
+        scalaMock % Test
+      ),
     assemblyJarName in assembly := "lambdacademy.jar",
     test in assembly := {},
     assemblyMergeStrategy in assembly := {
@@ -66,31 +54,6 @@ lazy val infrastructure = (project in file("infrastructure"))
       }
     },
     imageNames in docker := Seq(version.value, "LATEST").map(
-      version =>
-        ImageName(s"docker.pkg.github.com/${githubOwner.value}/${githubRepository.value}/lambda-api:$version")
-    ),
-    libraryDependencies ++= Cats.all
-      ++ Log.all
-      ++ Http4s.all
-      ++ Circe.all
-      ++ PureConfig.all
-      ++ Seq(
-        domain,
-        library,
-        tracing,
-        scalaCodeRunner,
-        programExecutor,
-        commonsIO,
-        approvals % Test,
-        scalaTest % Test,
-        scalaMock % Test
-      )
+      version => ImageName(s"docker.pkg.github.com/${githubOwner.value}/${githubRepository.value}/lambda-api:$version")
+    )
   )
-  .dependsOn(application, commons)
-  .enablePlugins(DockerPlugin)
-
-lazy val commons = project.settings(
-  libraryDependencies ++= Cats.all
-)
-
-ThisBuild / scalacOptions ++= BuildConfiguration.scalacOptions
