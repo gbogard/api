@@ -14,14 +14,16 @@ class CoursesService[F[_]: Sync](
 
   def getCoursesManifests(): F[List[CourseManifest]] = courseRepository.getCourses()
 
-  def getCourseById(id: CourseId): OptionT[F, Course] = courseRepository.getCourse(id)
+  def getCourseById(id: CourseId): F[Option[Course]] = courseRepository.getCourse(id)
+
+  def getManifestById(id: CourseId): F[Option[CourseManifest]] = courseRepository.getCourseManifest(id)
 
   def checkWidget(id: WidgetId, input: WidgetInput)(
       implicit tracingContext: TracingContext[F]
   ): EitherT[F, WidgetError, WidgetOutput] = {
     for {
       widget <- EitherT.fromOptionF(
-        courseRepository.getWidget(id).value,
+        courseRepository.getWidget(id),
         WidgetError.WidgetNotFound(id)
       )
       result <- widget match {

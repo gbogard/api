@@ -5,7 +5,7 @@ import org.http4s.implicits._
 import cats.effect.{Blocker, ContextShift, ExitCode, IO, Timer}
 import com.colisweb.tracing.TracingContextBuilder
 import com.typesafe.scalalogging.LazyLogging
-import lambda.api.domain.CoursesService
+import lambda.api.domain.{AuthenticationTokenVerifier, CoursesService}
 import lambda.domain.MediaHandler
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.server.middleware.{CORS, CORSConfig}
@@ -19,7 +19,8 @@ object Api extends LazyLogging {
     coursesService: CoursesService[IO],
     mediaHandler: MediaHandler,
     cs: ContextShift[IO],
-    timer: Timer[IO]
+    timer: Timer[IO],
+    verifier: AuthenticationTokenVerifier[IO]
   ): IO[ExitCode] = Blocker[IO] use { implicit blocker =>
 
     val services = CoursesController() <+> MediaController()

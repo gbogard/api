@@ -6,8 +6,7 @@
         </encoder>
     </appender>
 
-    <logger name="org.fusesource.scalate" level="OFF" />
-    <logger name="lambda.api.infrastructure.gateway.Api" level="INFO" />
+    <logger name="lambda" level="INFO" />
 
     <root level="WARN">
         <appender-ref ref="STDOUT" />

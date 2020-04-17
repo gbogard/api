@@ -22,6 +22,8 @@ lazy val api = (project in file("."))
       ++ Circe.all
       ++ PureConfig.all
       ++ Seq(
+        jwks,
+        jwt,
         domain,
         library,
         tracing,

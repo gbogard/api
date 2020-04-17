@@ -2,7 +2,7 @@ package lambda.api.application
 
 import java.util.UUID
 
-import cats.data.{EitherT, OptionT}
+import cats.data.EitherT
 import cats.effect.IO
 import com.colisweb.tracing._
 import io.circe._
@@ -61,7 +61,7 @@ class CoursesControllerSpec extends AsyncFunSpec with Matchers with AsyncMockFac
 
         val course = lambda.library.courses[IO].unsafeRunSync().head
 
-        (coursesService.getCourseById _).when(course.id).returns(OptionT.some(course))
+        (coursesService.getCourseById _).when(course.id).returns(IO.pure(Some(course)))
         (mediaHandler.toUrl _).when(*).returns("")
 
         val request = Request[IO](uri = Uri.unsafeFromString(s"/courses/${course.id.underlying}"))
@@ -76,7 +76,7 @@ class CoursesControllerSpec extends AsyncFunSpec with Matchers with AsyncMockFac
 
       it("Should return a 404 when no course is found") {
 
-        (coursesService.getCourseById _).when(*).returns(OptionT.none)
+        (coursesService.getCourseById _).when(*).returns(IO.pure(None))
 
         val request = Request[IO](uri = Uri.unsafeFromString(s"/courses/toto"))
         controller.run(request)

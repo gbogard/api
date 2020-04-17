@@ -9,6 +9,7 @@ case class Configuration(
   tmpFolder: String,
   scalaRunnerHost: String,
   scalaRunnerPort: Int,
+  jwksDomain: String
  )
 
 object Configuration {

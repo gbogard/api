@@ -34,6 +34,7 @@ object Main extends IOApp {
         implicit val interactiveWidgetsService = new InteractiveWidgetsService[IO]
         implicit val mediaHandler = new MediaHandlerInterpreter(config)
         implicit val coursesService =  new CoursesService[IO]
+        implicit val verfiier = new AuthenticationTokenVerifierInterpreter(config)
         Api()
       }
     } yield exitCode

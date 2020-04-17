@@ -24,21 +24,21 @@ class CourseRepositoryInterpreterSpec extends AnyFunSpec with Matchers {
 
     it("Should return a course when it exists in the library") {
       val course = atasteofscala.apply()
-      repo.getCourse(course.id).value.map(_ shouldBe Some(course)).unsafeRunSync()
+      repo.getCourse(course.id).map(_ shouldBe Some(course)).unsafeRunSync()
     }
 
     it("Should return a None when the course does not exist") {
-      repo.getCourse(CourseId("toto")).value.unsafeRunSync() shouldBe None
+      repo.getCourse(CourseId("toto")).unsafeRunSync() shouldBe None
     }
 
     it("Should return a widget when it exists in the library") {
       val course = atasteofscala.apply()
       val widget = course.pages.head.asInstanceOf[SimplePage].widgets.head
-      repo.getWidget(widget.id).value.map(_ shouldBe Some(widget)).unsafeRunSync()
+      repo.getWidget(widget.id).map(_ shouldBe Some(widget)).unsafeRunSync()
     }
 
     it("Should return a None when the widget does not exist") {
-      repo.getWidget(WidgetId("toto")).value.unsafeRunSync() shouldBe
+      repo.getWidget(WidgetId("toto")).unsafeRunSync() shouldBe
         None
     }
   }
