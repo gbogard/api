@@ -11,7 +11,7 @@ object Dependencies {
   lazy val programExecutor = "lambda" %% "program-executor" % "0.3.3"
   lazy val commonsIO = "commons-io" % "commons-io" % "2.6"
   lazy val jwks = "com.auth0" % "jwks-rsa" % "0.11.0"
-  lazy val jwt =   "com.pauldijou" %% "jwt-circe" % "1.1.0"
+  lazy val jwt =   "com.pauldijou" %% "jwt-circe" % "4.3.0"
 
   object PureConfig {
     private val version = "0.12.3"
