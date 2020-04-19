@@ -7,11 +7,10 @@ ThisBuild / organization := "lambda"
 ThisBuild / organizationName := "lambdacademy"
 ThisBuild / resolvers += Resolver.bintrayRepo("colisweb", "maven")
 
-ThisBuild / githubUser := "_"
-ThisBuild / githubTokenSource := Some(Environment("GITHUB_TOKEN"))
-ThisBuild / resolvers += Resolver.githubPackagesRepo("lambdacademy-dev", "_")
-ThisBuild / githubOwner := "lambdacademy-dev"
-ThisBuild / githubRepository := "api"
+githubOwner := "lambdacademy-dev"
+resolvers += Resolver.githubPackages("lambdacademy-dev")
+githubRepository := "api"
+githubTokenSource :=  TokenSource.Environment("GITHUB_TOKEN") || TokenSource.GitConfig("github.token")
 
 lazy val api = (project in file("."))
   .settings(
