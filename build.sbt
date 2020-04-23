@@ -1,8 +1,9 @@
 import sbtghpackages.TokenSource.Environment
 import Dependencies._
+import com.typesafe.sbt.packager.archetypes.scripts.BashStartScriptPlugin.autoImport.bashScriptExtraDefines
 
 ThisBuild / scalaVersion := "2.12.10"
-ThisBuild / version := "1.0.0"
+ThisBuild / version := "1.0.1"
 ThisBuild / organization := "lambda"
 ThisBuild / organizationName := "lambdacademy"
 ThisBuild / resolvers += Resolver.bintrayRepo("colisweb", "maven")
@@ -33,28 +34,20 @@ lazy val api = (project in file("."))
         scalaTest % Test,
         scalaMock % Test
       ),
-    assemblyJarName in assembly := "lambdacademy.jar",
-    test in assembly := {},
-    assemblyMergeStrategy in assembly := {
-      case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
-      case "application.conf"                  => MergeStrategy.concat
-      case _                                   => MergeStrategy.last
-    },
+    bashScriptExtraDefines += """addJava "-Dconfig.resource=application-prod.conf" """,
+    bashScriptExtraDefines += """addJava "-Dlogger.resource=logback-prod.xml" """,
     dockerfile in docker := {
+      val appDir: File = stage.value
+      val targetDir = "/app"
+
       new Dockerfile {
-        from("azul/zulu-openjdk-alpine:13")
-        add(assembly.value, "/app/lambdacademy.jar")
+        from("openjdk:13-alpine")
+        copy(appDir, targetDir, chown = "daemon:daemon")
         expose(8080)
-        entryPoint(
-          "java",
-          "-Dconfig.resource=application-prod.conf",
-          "-Dlogger.resource=prod-logback-prod.xml",
-          "-jar",
-          "/app/lambdacademy.jar"
-        )
+        entryPoint(s"$targetDir/bin/${executableScriptName.value}")
       }
     },
     imageNames in docker := Seq(version.value, "LATEST").map(
       version => ImageName(s"docker.pkg.github.com/${githubOwner.value}/${githubRepository.value}/lambda-api:$version")
     )
-  ).enablePlugins(DockerPlugin)
+  ).enablePlugins(sbtdocker.DockerPlugin, AshScriptPlugin)
