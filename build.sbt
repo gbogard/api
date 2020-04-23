@@ -57,4 +57,4 @@ lazy val api = (project in file("."))
     imageNames in docker := Seq(version.value, "LATEST").map(
       version => ImageName(s"docker.pkg.github.com/${githubOwner.value}/${githubRepository.value}/lambda-api:$version")
     )
-  )
+  ).enablePlugins(DockerPlugin)
