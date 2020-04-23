@@ -2,7 +2,7 @@ import sbtghpackages.TokenSource.Environment
 import Dependencies._
 
 ThisBuild / scalaVersion := "2.12.10"
-ThisBuild / version := "0.1.0-SNAPSHOT"
+ThisBuild / version := "1.0.0"
 ThisBuild / organization := "lambda"
 ThisBuild / organizationName := "lambdacademy"
 ThisBuild / resolvers += Resolver.bintrayRepo("colisweb", "maven")

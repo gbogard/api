@@ -6,7 +6,7 @@ object Dependencies {
   lazy val approvals = "com.github.writethemfirst" % "approvals-java" % "0.10.0"
   lazy val tracing = "com.colisweb" %% "scala-opentracing" % "0.1.0"
   lazy val domain = "lambda" %% "domain" % "0.4.8"
-  lazy val library = "lambda" %% "course-library" % "0.1.7"
+  lazy val library = "lambda" %% "course-library" % "0.1.9-SNAPSHOT"
   lazy val scalaCodeRunner = "lambda" %% "scala-runner-client" % "0.3.1"
   lazy val programExecutor = "lambda" %% "program-executor" % "0.3.3"
   lazy val commonsIO = "commons-io" % "commons-io" % "2.6"
