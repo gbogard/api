@@ -3,7 +3,7 @@ import Dependencies._
 import com.typesafe.sbt.packager.archetypes.scripts.BashStartScriptPlugin.autoImport.bashScriptExtraDefines
 
 ThisBuild / scalaVersion := "2.12.10"
-ThisBuild / version := "1.0.1"
+ThisBuild / version := "1.0.2"
 ThisBuild / organization := "lambda"
 ThisBuild / organizationName := "lambdacademy"
 ThisBuild / resolvers += Resolver.bintrayRepo("colisweb", "maven")
@@ -42,6 +42,8 @@ lazy val api = (project in file("."))
 
       new Dockerfile {
         from("openjdk:13-alpine")
+        // Required for the API to work properly
+        run("mkdir", "-p", "/app/tmp")
         copy(appDir, targetDir, chown = "daemon:daemon")
         expose(8080)
         entryPoint(s"$targetDir/bin/${executableScriptName.value}")
