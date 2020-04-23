@@ -3,7 +3,7 @@ name: Scala Steward
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '*/30 * * * *'
+    - cron:  '0 * * * *'
 env:
   GITHUB_USER: scala-steward
   GITHUB_TOKEN: ${{ secrets.STEWARD_TOKEN }}
@@ -29,3 +29,4 @@ jobs:
           --vcs-api-host "https://api.github.com" \
           --vcs-login $GITHUB_USER \
           --git-ask-pass "/opt/scala-steward/pass.sh" \
+          --e GITHUB_TOKEN=$GITHUB_TOKEN \
