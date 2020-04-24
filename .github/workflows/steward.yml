@@ -22,11 +22,10 @@ jobs:
           chmod +x $STEWARD_DIR/pass.sh
       - name: Run Scala Steward
         run: |
-          docker run -v "$(realpath $STEWARD_DIR):/opt/scala-steward" fthomas/scala-steward:0.5.0 \
+          docker run -e GITHUB_TOKEN=$GITHUB_TOKEN -v "$(realpath $STEWARD_DIR):/opt/scala-steward" fthomas/scala-steward:0.5.0 \
           --workspace  "/opt/scala-steward/workspace" \
           --repos-file "/opt/scala-steward/repos.md" \
           --git-author-email $EMAIL \
           --vcs-api-host "https://api.github.com" \
           --vcs-login $GITHUB_USER \
           --git-ask-pass "/opt/scala-steward/pass.sh" \
-          --e GITHUB_TOKEN=$GITHUB_TOKEN \
