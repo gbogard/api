@@ -12,6 +12,7 @@ import lambda.runners.scala.messages.Dependency
 class ScalaCodeRunnerInterpreter(client: ScalaRunnerClient) extends ScalaCodeRunner[IO] with StrictLogging {
 
   def runFiles(files: List[File], dependencies: List[ScalaDependency]): ProcessResult[IO] = {
+    println(("runFile", files))
     lambda.programexecutor.toEitherT(
       client.runFiles(files, dependencies.map(d => Dependency(d.org, d.name, d.version)))
     )

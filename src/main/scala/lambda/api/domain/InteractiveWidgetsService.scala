@@ -58,11 +58,14 @@ class InteractiveWidgetsService[F[_]: Sync](
   private def renderTemplateFiles(
       files: List[SourceFile],
       userInput: String
-  ): Resource[F, List[File]] =
+  ): Resource[F, List[File]] = if (files.nonEmpty) {
     for {
       baseFiles <- files.traverse(sourceFileHandler(_))
       output <- templateEngine.render(baseFiles, Some(userInput))
     } yield output
+  } else {
+    sourceFileHandler(SourceFile.RawText(userInput)).map(List(_))
+  }
 }
 
 object InteractiveWidgetsService {
