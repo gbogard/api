@@ -1,4 +1,4 @@
-addSbtPlugin("com.codecommit" % "sbt-github-packages" % "0.5.0")
+addSbtPlugin("com.codecommit" % "sbt-github-packages" % "0.5.1")
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.7.0")
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.9.1")
 addSbtPlugin("se.marcuslonnberg" % "sbt-docker" % "1.5.0")
